@@ -20,7 +20,7 @@ namespace array{
     {
         cout << text;
         for(int i = 0; i < tam; i++)
-            i == 9 ? cout << p[i] << endl : cout << p[i] << ",";
+            i == (tam - 1) ? cout << p[i] << endl : cout << p[i] << ",";
     }
     //----------------------
     void selectSort(int tam, int *p)
