@@ -25,7 +25,6 @@ namespace array{
     //----------------------
     void selectSort(int tam, int *p)
     {
-        //Find the minimum element
         for(int i = 0; i < tam - 1; i++) 
         {
             int min = i;
