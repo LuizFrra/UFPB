@@ -12,12 +12,14 @@ namespace array{
     {
         srand(time(NULL));
         for(int i = 0; i < tam; i++)
-            p[i] = (rand() % 10) + 1;
+            p[i] = (rand() % 100) + 1;
 
     }
     //-------------------------
     void print(int tam, const char *text, int *p)
     {
+        std::ios::sync_with_stdio(false);
+        std::cin.tie(0);
         cout << text;
         for(int i = 0; i < tam; i++)
             i == (tam - 1) ? cout << p[i] << endl : cout << p[i] << ",";
