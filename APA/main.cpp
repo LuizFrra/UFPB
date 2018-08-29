@@ -8,7 +8,9 @@ using std::endl;
 
 int main(int argc, char const *argv[])
 {
-    int array[TAM];// {2, 4, 8, 9, 3, 15, 21, 29, 12, 10};
+    //const size_t arrayTam = TAM;
+    int array[TAM] = {0};// {2, 4, 8, 9, 3, 15, 21, 29, 12, 10};
+    
     std::cout << "Selection Sort :" << "\n";
     array::fill(TAM, array); // preeencho o array com numeros aleatorios
     array::print(TAM, "My Array : " , array);    // printo o array desordenado
@@ -33,5 +35,19 @@ int main(int argc, char const *argv[])
     array::quicksort(array, 0, TAM - 1);
     array::print(TAM, "My Ordered Array : ", array);
 
+    cout << "\nCounting Sort" << "\n";
+    int *ordered = new int[TAM];
+    array::fill(TAM, array);
+    array::print(TAM, "My Array : ", array);
+    array::countinSort(TAM, array, ordered);
+    array::print(TAM, "My Ordered Array : ", ordered);
+    
+    cout << "\nHeap Sort" << "\n";
+    array::fill(TAM, array);
+    array::print(TAM, "My Array : ", array);
+    array::HeapSort(TAM, array);
+    array::print(TAM, "My Ordered Array : ", array);
+
+    delete [] ordered;
     return 0;
 }

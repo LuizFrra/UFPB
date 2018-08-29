@@ -147,6 +147,89 @@ namespace array{
         return 1;
     }
 
+    static const int GetMaxEl(const int tam, const int *array)
+    {
+        int max = array[0];
+        
+        for(int i = 1; i < tam; i++)
+            if(array[i] > max)
+                max = array[i];
+    
+        return max;
+    }
+
+    void countinSort(const int tam, const int *array, int *orderedArray)
+    {
+        int max = GetMaxEl(tam, array);
+        
+        int *freqEl = new int[max + 1]; // Ja começa com todos os valores == 0
+        //Contabilizando frequencia
+        for(int i = 0; i < tam; i++)
+            freqEl[array[i]]++;
+        //Propagando a frequencia
+        for(int i = 1; i < max + 1; i++)
+            freqEl[i] += freqEl[i - 1];
+        
+        for(int j = tam - 1 ; j >= 0; j--)
+        {
+            orderedArray[freqEl[array[j]] - 1] = array[j];
+            freqEl[array[j]]--;
+        }
+        
+        delete [] freqEl ;
+
+    }
+
+    void MaxHeapify(const int tam, int *array, const int index)
+    {
+        /*Dado elemento i :
+          Pai de i: (i - 1)/2
+          filho esquerdo : 2i + 1
+          filho direito : 2i + 2
+          comprimento : tam
+          tamanho_heap : numero de elemtos no heap : tam - indicepai
+        */
+        int father = ((index - 1)/2) ;
+        //(index -1)/2 < 0 ? father = (((index - 1)/2)* 1) : father = (index - 1)/2 ;
+        int leftChild = (2 * index) + 1;
+        int rightChild = (2 * index) + 2;
+        int tam_heap = tam - father - 1;
+        int max = index;
+
+        if( leftChild <= tam_heap && array[leftChild] > array[max])
+            max = leftChild;
+        if( rightChild <= tam_heap && array[rightChild] > array[max])
+            max = rightChild;
+        if( max != index)
+        {
+            int aux = array[max];
+            array[max] = array[index];
+            array[index] = aux;
+            MaxHeapify(tam_heap ,array, max);
+        }
+    }
+
+    void buildMaxHeap(const int tam, int *array)
+    {
+        int tam_heap = tam - 1;
+
+        for(int i = (tam / 2) - 1 ; i >= 0; i--)
+            MaxHeapify(tam, array, i);
+
+    }
+
+    void HeapSort(const int tam, int *array)
+    {
+        buildMaxHeap(tam, array);
+
+        for(int i = tam - 1; i >= 0; i--)
+        {
+            int aux = array[0];
+            array[0] = array[i];
+            array[i] = aux;
+            MaxHeapify(i, array, 0);
+        }
+    }
 
 }
 
