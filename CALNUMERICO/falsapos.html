@@ -1,0 +1,26 @@
+<!doctype <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <script src="https://unpkg.com/mathjs@5.1.1/dist/math.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-1.35.2.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+</head>
+<body>
+    <form id="form">
+        <label for="eq">Equação : <input type="text" id="eq" placeholder="Digite a Equação"></label> <br><br>
+        <label for="x0">Valor Aproxima x0 : <input type="text" id="x0" placeholder="Digite um valor para x0"></label> <br><br>
+        <label for="x1">Valor Aproxima x1 : <input type="text" id="x1" placeholder="Digite um valor para x1"></label> <br><br>
+        <label for="tol">TOL : <input type="text" id="tol" placeholder="Digite um valor para a tolerancia"></label> <br><br>
+        <label for="epoch">Num Iterações : <input type="text" id="epoch" placeholder="Digite a quantiade max de interações"></label> <br><br>
+
+        <input type="submit" value="Plote"/>
+    </form>
+    <div id="plot"></div>
+    <div id="resultado"></div>
+    <script src="falsaposi.js"></script>
+</body>
+</html>
