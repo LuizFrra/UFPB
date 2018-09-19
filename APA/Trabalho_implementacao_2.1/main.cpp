@@ -13,7 +13,7 @@ int main(int argc, char const **argv)
         cout << "\nFile Opened\n";
     else
     {
-        cerr << "\nFile Not Opened\n";
+        throw std::runtime_error("\nFile Not Opened\n");
         return 1;
     }
 

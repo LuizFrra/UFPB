@@ -11,6 +11,8 @@ class Krustal
         std::fstream file;
         char line[400];
         std::vector<std::vector<int> > numbers;
+        std::vector<int> uniqueNum;
+        int NVertices;
 
     public:
 
