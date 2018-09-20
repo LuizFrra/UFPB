@@ -20,6 +20,7 @@ class Krustal
         static int GetInfoContent(Krustal *krustalInstance);
         static int OpenFile(Krustal *krustalInstance, const char *argv);
         static void PrintNumbers(Krustal *krustalInstance);
+        static int NVertice(Krustal *krustalInstance);
 
 };
 

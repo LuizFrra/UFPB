@@ -37,18 +37,18 @@ int Krustal::GetInfoContent(Krustal *krustalInstance)
             row.push_back(0);
 
         while(number >> num)
-        {  
-            //krustalInstance->uniqueNum.push_back(num);
             row.push_back(num);
-        }
-
+        
         ++j;
         krustalInstance->numbers.push_back(row);
 
     }
+    
+    ++krustalInstance->NVertices;
+    krustalInstance->numbers.push_back(std::vector<int>(krustalInstance->numbers[0].size()));
 
     for(size_t i = 0; i < krustalInstance->NVertices; i++)
-        for(size_t j = 0; krustalInstance->numbers[i][j] == 0; j++)
+        for(size_t j = 0; krustalInstance->numbers[i][j] == 0 && j < krustalInstance->numbers[0].size() - 1; j++)
                 krustalInstance->numbers[i][j] = krustalInstance->numbers[j][i];
 
     return 0;
@@ -61,4 +61,10 @@ void Krustal::PrintNumbers(Krustal *krustalInstance)
         for(auto c : k)        
             cout << c << " ";
     }
+}
+
+
+int Krustal::NVertice(Krustal *krustalInstance)
+{
+    return krustalInstance->NVertices;
 }
