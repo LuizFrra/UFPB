@@ -1,5 +1,4 @@
 #include "krustal.h"
-#include <iostream>
 
 using std::cout;
 using std::cerr;
@@ -7,9 +6,9 @@ using std::cerr;
 int main(int argc, char const **argv)
 {
     cout << "\nTrying Open File ... ";
-    Krustal k;
+    Krustal *k = new Krustal();
     
-    if(Krustal::OpenFile(&k, argv[1]))
+    if(Krustal::OpenFile(k, argv[1]))
         cout << "\nFile Opened\n";
     else
     {
@@ -18,9 +17,18 @@ int main(int argc, char const **argv)
     }
 
     cout << "Trying Get Content Of File ... ";
-    Krustal::GetInfoContent(&k);
-    cout << "\nContent Got, Numbers of Vertices :  " << Krustal::NVertice(&k) << "\n"; 
-    Krustal::PrintNumbers(&k);
+    Krustal::GetInfoContent(k);
+    cout << "\nContent Got, Numbers of Vertices :  " << Krustal::NVertice(k) << "\n"; 
+    Krustal::PrintNumbers(k);
+    
+    cout << "\n";
+
+    Krustal::CreateEdges(k);
+    Krustal::SortKrustal(k);
+    cout << "\nPrint Sorted Edges : \n";
+    Krustal::PrintEdges(k);
+    
+    cout << "\n";
 
     return 0;
 }
