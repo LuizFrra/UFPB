@@ -10,16 +10,11 @@ Krustal::Krustal()
     NVertices = 0;
 }
 
-int Krustal::OpenBmp(Krustal *krustalInstance, const char *argv)
+int Krustal::OpenFile(Krustal *krustalInstance, const char *argv)
 { 
     krustalInstance->file.open(argv, std::fstream::in);
     
     return krustalInstance->file.is_open() == 1 ? 1 : 0;
-}
-
-int Krustal::ReadBmp(Krustal *krustalInstance)
-{
-    return 0;
 }
 
 int Krustal::GetInfoContent(Krustal *krustalInstance)
@@ -27,7 +22,11 @@ int Krustal::GetInfoContent(Krustal *krustalInstance)
     std::vector<int> row;
     int num = 0;
     int j = 1;
-    for(std::string line; std::getline(krustalInstance->file, line);)
+    
+    std::string Nv;
+    getline(krustalInstance->file, Nv);
+
+    for(std::string line; getline(krustalInstance->file, line);)
     {
         std::vector<int> row;
         int num = 0;
@@ -50,7 +49,6 @@ int Krustal::GetInfoContent(Krustal *krustalInstance)
 
     for(size_t i = 0; i < krustalInstance->NVertices; i++)
         for(size_t j = 0; krustalInstance->numbers[i][j] == 0; j++)
-            if(krustalInstance->numbers[j].size() > i)
                 krustalInstance->numbers[i][j] = krustalInstance->numbers[j][i];
 
     return 0;

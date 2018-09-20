@@ -18,8 +18,7 @@ class Krustal
 
         Krustal();
         static int GetInfoContent(Krustal *krustalInstance);
-        static int OpenBmp(Krustal *krustalInstance, const char *argv);
-        static int ReadBmp(Krustal *krustalInstance);
+        static int OpenFile(Krustal *krustalInstance, const char *argv);
         static void PrintNumbers(Krustal *krustalInstance);
 
 };

@@ -9,7 +9,7 @@ int main(int argc, char const **argv)
     cout << "\nTrying Open File ... ";
     Krustal k;
     
-    if(Krustal::OpenBmp(&k, argv[1]))
+    if(Krustal::OpenFile(&k, argv[1]))
         cout << "\nFile Opened\n";
     else
     {
