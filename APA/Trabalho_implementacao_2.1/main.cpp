@@ -18,7 +18,7 @@ int main(int argc, char const **argv)
 
     cout << "Trying Get Content Of File ... ";
     Krustal::GetInfoContent(k);
-    cout << "\nContent Got, Numbers of Vertices :  " << Krustal::NVertice(k) << "\n"; 
+    cout << "\nContent Got, Numbers of Vertices :  " << Krustal::FNEdges(k) << "\n"; 
     Krustal::PrintNumbers(k);
     
     cout << "\n";

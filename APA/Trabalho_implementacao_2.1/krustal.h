@@ -13,6 +13,7 @@ struct edge
     int source;
     int destine;
     int weight;
+    int set;
 };
 
 
@@ -20,11 +21,10 @@ class Krustal
 {
     private:
 
-        struct edge **_edge; // Use this to create the Conexions
+        struct edge *_edge; // Use this to create the Conexions
         std::fstream file;
         std::vector<std::vector<int> > numbers;
         //std::vector<int> uniqueNum;
-        int NVertices;
         int NEdges;
         int *NConj;
         static int QuickSort(edge *_edges, int start, int end);
@@ -36,7 +36,7 @@ class Krustal
         static int GetInfoContent(Krustal *krustalInstance);
         static int OpenFile(Krustal *krustalInstance, const char *argv);
         static void PrintNumbers(Krustal *krustalInstance);
-        static int NVertice(Krustal *krustalInstance);
+        static int FNEdges(Krustal *krustalInstance);
         static int CreateEdges(Krustal *krustalInstance);
         static void PrintEdges(Krustal *krustalInstance);
         static void SortKrustal(Krustal *krustalInstance);
