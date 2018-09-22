@@ -24,11 +24,13 @@ class Krustal
         struct edge *_edge; // Use this to create the Conexions
         std::fstream file;
         std::vector<std::vector<int> > numbers;
-        //std::vector<int> uniqueNum;
+        std::vector<edge> MinTree;
         int NEdges;
         int *NConj;
+        size_t WidthArray;
         static int QuickSort(edge *_edges, int start, int end);
         static int Partition(edge *_edges, int start, int end); 
+        static void Union(edge edges, edge _edge, Krustal *krustalInstance);
 
     public:
 
@@ -40,7 +42,8 @@ class Krustal
         static int CreateEdges(Krustal *krustalInstance);
         static void PrintEdges(Krustal *krustalInstance);
         static void SortKrustal(Krustal *krustalInstance);
-        
+        static void GetMinTree(Krustal *krustalInstance);
+        static void PrintMinTree(Krustal *krustalInstance);
 };
 
 

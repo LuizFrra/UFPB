@@ -24,10 +24,13 @@ int main(int argc, char const **argv)
     cout << "\n";
 
     Krustal::CreateEdges(k);
+    //Krustal::PrintEdges(k);
     Krustal::SortKrustal(k);
     cout << "\nPrint Sorted Edges : \n";
-    Krustal::PrintEdges(k);
-    
+    //Krustal::PrintEdges(k);
+    Krustal::GetMinTree(k);
+    //Krustal::PrintEdges(k);
+    Krustal::PrintMinTree(k);
     cout << "\n";
 
     return 0;

@@ -5,6 +5,7 @@ using std::cout;
 Krustal::Krustal()
 {
     NEdges = 0;
+    WidthArray = 0;
 }
 
 int Krustal::OpenFile(Krustal *krustalInstance, const char *argv)
@@ -54,7 +55,8 @@ int Krustal::GetInfoContent(Krustal *krustalInstance)
 
 void Krustal::PrintNumbers(Krustal *krustalInstance)
 {
-    for(auto k : krustalInstance->numbers){
+    for(auto k : krustalInstance->numbers)
+    {
         cout << "\n";
         for(auto c : k)        
             cout << c << " ";
@@ -70,20 +72,23 @@ int Krustal::FNEdges(Krustal *krustalInstance)
 int Krustal::CreateEdges(Krustal *krustalInstance)
 {
     const int edges = krustalInstance->NEdges;
-    const int widthEdge = (edges * edges) - edges;
+    const int widthEdge = (edges*(edges + 1)/2) - edges;
     krustalInstance->_edge = new edge[widthEdge];
-
+    cout << widthEdge;
     for(size_t i = 0, k = 0; i < edges; i++)
     {
         for(size_t j = 0; j < edges; j++)
         {
             if(i != j)
             {
-                krustalInstance->_edge[k].weight = krustalInstance->numbers[i][j];
-                krustalInstance->_edge[k].destine = j;
-                krustalInstance->_edge[k].source = i;
-                krustalInstance->_edge[k].set = i;
-                k++;
+                if(i < j)
+                {
+                    krustalInstance->_edge[k].weight = krustalInstance->numbers[i][j];
+                    krustalInstance->_edge[k].destine = j;
+                    krustalInstance->_edge[k].source = i;
+                    krustalInstance->_edge[k].set = i;
+                    k++;
+                }
             }
 
         }
@@ -131,19 +136,52 @@ int Krustal::Partition(edge *_edges, int start, int end)
 void Krustal::SortKrustal(Krustal *krustalInstance)
 {
     int edges = krustalInstance->NEdges;
+    const int widthEdge = (edges*(edges + 1)/2) - edges;
 
-    QuickSort(krustalInstance->_edge, 0, (edges * edges) - edges - 1);
+    QuickSort(krustalInstance->_edge, 0, widthEdge);
 
 }
 
 void Krustal::PrintEdges(Krustal *krustalInstance)
 {
     int edges = krustalInstance->NEdges;
-    int widthEdge =  (edges * edges) - edges - 1;
-     
-    for(size_t i = 0; i <= widthEdge; i++)
-        cout << "\n Edge Source : " << krustalInstance->_edge[i].source  << " Edge Destine : " << krustalInstance->_edge[i].destine << " Price : " << krustalInstance->_edge[i].weight << ".\n";    
+    const int widthEdge = (edges*(edges + 1)/2) - edges;
+        
+    for(size_t i = 0; i < widthEdge; i++)
+        cout << "\n Edge Source : " << krustalInstance->_edge[i].source  << " Edge Destine : " << krustalInstance->_edge[i].destine << " Price : " << krustalInstance->_edge[i].weight << " Set: " << krustalInstance->_edge[i].set << "\n";    
     
     cout << "\n";
     
+}
+
+void Krustal::GetMinTree(Krustal *krustalInstance)
+{
+    int edges = krustalInstance->NEdges;
+    const int widthEdge = (edges*(edges + 1)/2) - edges;
+    
+    for(size_t i = 0; i < widthEdge - 1; i++)
+        if(krustalInstance->_edge[i].set != krustalInstance->_edge[i + 1].set)
+            Union(krustalInstance->_edge[i], krustalInstance->_edge[i + 1], krustalInstance);
+        
+}
+
+void Krustal::Union(edge edges, edge _edge, Krustal *krustalInstance)
+{
+    int Nedges = krustalInstance->NEdges;
+    const int widthEdge = (Nedges*(Nedges + 1)/2) - Nedges;
+
+    for(size_t i = 0; i < widthEdge; i++)
+        if(krustalInstance->_edge[i].set == _edge.set)
+            krustalInstance->_edge[i].set = edges.set;
+        
+    //cout << edges->set << "  " << _edge->set << "\n";
+    
+    krustalInstance->MinTree.push_back(_edge);
+        
+}
+
+void Krustal::PrintMinTree(Krustal *krustalInstance)
+{
+    for(auto k : krustalInstance->MinTree)
+        cout << k.source << " To " << k.destine << " Price " << k.weight <<"\n";
 }
