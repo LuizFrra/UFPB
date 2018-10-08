@@ -21,7 +21,7 @@ class Krustal
 {
     private:
 
-        struct edge *_edge; // Use this to create the Conexions
+        struct edge *_edge;
         std::fstream file;
         std::vector<std::vector<int> > numbers;
         std::vector<edge> MinTree;

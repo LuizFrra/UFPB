@@ -8,7 +8,7 @@ int main(int argc, char const **argv)
     cout << "\nTrying Open File ... ";
     Krustal *k = new Krustal();
     
-    if(Krustal::OpenFile(k, argv[1]))
+    if(Krustal::OpenFile(k, "/home/luiz/Desktop/Git/UFPB/APA/Trabalho_implementacao_2.1/instancias de teste/dij10.txt"))
         cout << "\nFile Opened\n";
     else
     {
@@ -24,10 +24,10 @@ int main(int argc, char const **argv)
     cout << "\n";
 
     Krustal::CreateEdges(k);
-    //Krustal::PrintEdges(k);
+    Krustal::PrintEdges(k);
     Krustal::SortKrustal(k);
     cout << "\nPrint Sorted Edges : \n";
-    //Krustal::PrintEdges(k);
+    Krustal::PrintEdges(k);
     Krustal::GetMinTree(k);
     //Krustal::PrintEdges(k);
     Krustal::PrintMinTree(k);
