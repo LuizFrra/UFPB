@@ -55,9 +55,7 @@ void Prim::PrintMatrix(Prim *PrimInstance)
     {
         std::cout << "\n";
         for(size_t j  = 0; j < PrimInstance->nVertices; j++)
-            std::cout << PrimInstance->vertices[i][j] << " ";
-            
-        
+            std::cout << PrimInstance->vertices[i][j] << " ";        
     }
 }
 
