@@ -84,17 +84,18 @@ void Prim::primMST(Prim *PrimInstance)
 {
     PrimInstance->solution = new int[PrimInstance->nVertices];
     int key[PrimInstance->nVertices];
-    bool mstSet[PrimInstance->nVertices];
+    bool mstSet[PrimInstance->nVertices] = {false};
 
     for(int &i : key)
         i = INT_MAX;
-
+    
     key[0] = 0;
     PrimInstance->solution[0] = -1;
 
     for(size_t i = 0; i < PrimInstance->nVertices - 1; i++)
     {
         int minIndex = MinVertexKey(PrimInstance, key, mstSet);
+        std::cout << minIndex << " \n";
         mstSet[minIndex] = true;
         
         for(size_t j = 0; j < PrimInstance->nVertices; j++)
