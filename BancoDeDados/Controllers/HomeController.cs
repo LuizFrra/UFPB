@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using BancoDeDados.Models;
-using BancoDeDados.Models.DataBase;
+using BancoDeDados.Services.LoginRegister;
 
 namespace BancoDeDados.Controllers
 {

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace BancoDeDados.Controllers
 {
@@ -9,7 +10,8 @@ namespace BancoDeDados.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return View("index");
+            var name = HttpContext.User.FindFirst("Nome").Value.ToString();
+            return View("index", name);
         }
     }
 }

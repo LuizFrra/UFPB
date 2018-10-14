@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using MySql.Data.MySqlClient;
+using BancoDeDados.Models;
 
-namespace BancoDeDados.Models.DataBase
+namespace BancoDeDados.Services.LoginRegister
 {
     public interface IDataBase
     {

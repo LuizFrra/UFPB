@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using BancoDeDados.Models;
 
-namespace BancoDeDados.Models.DataBase
+namespace BancoDeDados.Services.LoginRegister
 {
     public class DataBase : IDataBase
     {
