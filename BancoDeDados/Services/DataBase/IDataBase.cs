@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using MySql.Data.MySqlClient;
 using BancoDeDados.Models;
 
-namespace BancoDeDados.Services.LoginRegister
+namespace BancoDeDados.Services.DataBase
 {
     public interface IDataBase
     {
@@ -12,6 +12,7 @@ namespace BancoDeDados.Services.LoginRegister
         bool VerifyExistEmail(string email);
         bool AuthenticationLogin(HttpContext context, Login data);
         Dictionary<string,string> VerifyAuth(string email, string password);
+        List<Dictionary<string, string>> SearchFor(string userName);
 
     }
 }

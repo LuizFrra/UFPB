@@ -1,0 +1,28 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Collections.Generic;
+@model List<Dictionary<string,string>>
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+        <form asp-action="SearchUser">
+            <input name="name" placeholder="Nome"><br>
+            <input type="submit" value="Buscar"><br>
+        </form>
+        <div>
+            @if(Model != null)
+            {
+                foreach(var item in Model)
+                {
+                    foreach(var i in item.Values)
+                    {
+                        @i
+                    }
+                }
+            }
+        </div>
+    </body>
+</html>

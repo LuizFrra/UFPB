@@ -9,8 +9,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BancoDeDados.Models;
+using System;
 
-namespace BancoDeDados.Services.LoginRegister
+namespace BancoDeDados.Services.DataBase
 {
     public class DataBase : IDataBase
     {
@@ -20,6 +21,54 @@ namespace BancoDeDados.Services.LoginRegister
         public DataBase(IConfiguration configuration)
         {
             connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
+        
+        public List<Dictionary<string, string>> SearchFor(string userName)
+        {
+            List<Dictionary<string,string>> listaData = new List<Dictionary<string,string>>();
+
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = "SELECT Nome, City, ImagePath FROM Users WHERE Nome = @userName";
+                    command.Parameters.AddWithValue("userName", userName);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        while(reader.Read())
+                        {
+                            Dictionary<string,string> data   = new Dictionary<string, string>();
+
+                            data.Add("Nome", reader.GetString("Nome"));
+                            
+                            if(reader.IsDBNull(1))
+                                data.Add("Cidade", "A Definir");
+                            else
+                                data.Add("Cidade", reader.GetString("City"));
+
+                            if(reader.IsDBNull(1))
+                                data.Add("ImagePath", "A Definir");
+                            else
+                                data.Add("ImagePath", reader.GetString("ImagePath"));
+
+                            listaData.Add(data);                           
+                        }
+
+                        connection.Close();
+                        return listaData;
+                    }
+                }
+
+                connection.Close();
+                return null;
+            }           
         }
 
         public bool AuthenticationLogin(HttpContext context, Login data)
