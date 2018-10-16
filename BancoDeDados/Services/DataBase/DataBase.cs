@@ -53,7 +53,7 @@ namespace BancoDeDados.Services.DataBase
                             else
                                 data.Add("Cidade", reader.GetString("City"));
 
-                            if(reader.IsDBNull(1))
+                            if(reader.IsDBNull(2))
                                 data.Add("ImagePath", "A Definir");
                             else
                                 data.Add("ImagePath", reader.GetString("ImagePath"));
@@ -139,11 +139,12 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = "INSERT INTO Users(Nome, Email, Pass) VALUES (@Name, @Email, @Pass)";
+                    command.CommandText = "INSERT INTO Users(Nome, Email, Pass, ImagePath) VALUES (@Name, @Email, @Pass, @ImagePath)";
 
                     command.Parameters.AddWithValue("Name", user.Name);
                     command.Parameters.AddWithValue("Email", user.Email);
                     command.Parameters.AddWithValue("Pass", user.Password);
+                    command.Parameters.AddWithValue("ImagePath", "~/images/user.png");
 
                     int nRowsAffected = command.ExecuteNonQuery();
 

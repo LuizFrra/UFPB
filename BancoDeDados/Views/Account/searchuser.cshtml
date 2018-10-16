@@ -13,14 +13,19 @@
             <input type="submit" value="Buscar"><br>
         </form>
         <div>
+            <a asp-action="Index">Inicio</a>
             @if(Model != null)
             {
-                foreach(var item in Model)
+                @foreach(var item in Model)
                 {
-                    foreach(var i in item.Values)
-                    {
-                        @i
-                    }
+                    <div>
+                        @{
+                            var c = @item["ImagePath"];
+                        }
+                        <img src="@Url.Content(c)">
+                        @item["Nome"]
+                        @item["Cidade"]
+                    </div><br>
                 }
             }
         </div>

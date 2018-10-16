@@ -35,9 +35,9 @@ namespace BancoDeDados
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseAuthentication();
-
             app.UseStaticFiles();
+            
+            app.UseAuthentication();
 
             app.UseMvc(routes => {
                 routes.MapRoute(name: "Default", 
