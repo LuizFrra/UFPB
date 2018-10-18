@@ -34,11 +34,17 @@ namespace BancoDeDados.Controllers
             
             if(!string.IsNullOrEmpty(name))
             {
-                data = dataBase.SearchFor(name);
+                data = dataBase.SearchForName(name);
                 return View("searchuser", data);
             }
             
             return View("searchuser", null);
+        }
+
+        [HttpGet]
+        public string Profile(string id)
+        {
+            return "oi " + id;
         }
     }
 }

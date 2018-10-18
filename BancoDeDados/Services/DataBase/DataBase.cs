@@ -23,7 +23,7 @@ namespace BancoDeDados.Services.DataBase
             connectionString = configuration.GetConnectionString("DefaultConnection");
         }
         
-        public List<Dictionary<string, string>> SearchFor(string userName)
+        public List<Dictionary<string, string>> SearchForName(string userName)
         {
             List<Dictionary<string,string>> listaData = new List<Dictionary<string,string>>();
 
@@ -35,7 +35,7 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = "SELECT Nome, City, ImagePath FROM Users WHERE Nome = @userName";
+                    command.CommandText = "SELECT UserID, Nome, City, ImagePath FROM Users WHERE Nome = @userName";
                     command.Parameters.AddWithValue("userName", userName);
 
                     MySqlDataReader reader = command.ExecuteReader();
@@ -46,17 +46,14 @@ namespace BancoDeDados.Services.DataBase
                         {
                             Dictionary<string,string> data   = new Dictionary<string, string>();
 
+                            data.Add("UserID", reader.GetString("UserID"));
                             data.Add("Nome", reader.GetString("Nome"));
-                            
-                            if(reader.IsDBNull(1))
+                            data.Add("ImagePath", reader.GetString("ImagePath"));
+
+                            if(reader.IsDBNull(2))
                                 data.Add("Cidade", "A Definir");
                             else
                                 data.Add("Cidade", reader.GetString("City"));
-
-                            if(reader.IsDBNull(2))
-                                data.Add("ImagePath", "A Definir");
-                            else
-                                data.Add("ImagePath", reader.GetString("ImagePath"));
 
                             listaData.Add(data);                           
                         }

@@ -12,7 +12,7 @@ namespace BancoDeDados.Services.DataBase
         bool VerifyExistEmail(string email);
         bool AuthenticationLogin(HttpContext context, Login data);
         Dictionary<string,string> VerifyAuth(string email, string password);
-        List<Dictionary<string, string>> SearchFor(string userName);
+        List<Dictionary<string, string>> SearchForName(string userName);
 
     }
 }

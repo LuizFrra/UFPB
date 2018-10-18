@@ -19,11 +19,13 @@
                 @foreach(var item in Model)
                 {
                     <div>
-                        @{
-                            var c = @item["ImagePath"];
-                        }
-                        <img src="@Url.Content(c)">
-                        @item["Nome"]
+
+                        <img src='@Url.Content(@item["ImagePath"])'>
+                        
+                        <a type="hidden" asp-controller="Account" asp-action="Profile" asp-route-id='@item["UserID"]'>
+                            @item["Nome"]
+                        </a>
+
                         @item["Cidade"]
                     </div><br>
                 }
