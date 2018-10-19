@@ -4,6 +4,8 @@ using BancoDeDados.Services.DataBase;
 using System.Collections.Generic;
 using BancoDeDados.Models;
 using Microsoft.AspNetCore.Http;
+using System;
+using Microsoft.AspNetCore.Routing;
 
 namespace BancoDeDados.Controllers
 {
@@ -58,7 +60,8 @@ namespace BancoDeDados.Controllers
             
             return View("profile", data);
         }
-    
+
+        [HttpPost]
         public IActionResult DoPost(string post, IFormFile image)
         {
             string userID = HttpContext.User.FindFirst("UserID").Value.ToString();
@@ -67,6 +70,28 @@ namespace BancoDeDados.Controllers
                 dataBase.DoPost(userID, post, image);
                 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult DoComment(string texto, string publicacaoID)
+        {
+            if(!string.IsNullOrEmpty(texto) && !string.IsNullOrEmpty(publicacaoID))
+            {
+                string UserID  = HttpContext.User.FindFirst("UserID").Value.ToString();
+                dataBase.DoComment(UserID, publicacaoID, texto);
+            }
+            
+            return RedirectToAction("ViewComments", new RouteValueDictionary( new {Controller = "Account", Action="Viewcomments", postID = publicacaoID}));
+        }
+        /*https://stackoverflow.com/questions/1257482/redirecttoaction-with-parameter -> explicção desse redirectoaction */
+
+        [HttpGet]
+        public IActionResult ViewComments(string postID)
+        {
+            CommentsView comments =  new CommentsView();
+            comments.comentarios = dataBase.GetComments(postID);
+            comments.PublicacaoID = postID;
+            return View("comentarios", comments);
         }
     }
 }

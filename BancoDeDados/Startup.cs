@@ -42,7 +42,10 @@ namespace BancoDeDados
             app.UseMvc(routes => {
                 routes.MapRoute(name: "Default", 
                 template: "{controller=Home}/{action=Index}/{Id?}");
+
             });
+
+            
 
             app.Run(async (context) =>
             {

@@ -24,6 +24,75 @@ namespace BancoDeDados.Services.DataBase
         }
         
         
+        public List<Comentarios> GetComments(string postID)
+        {
+            List<Comentarios> data = new List<Comentarios>();
+
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Users.Nome, Users.UserID, Users.ImagePath, Comentario.ComentarioID,
+                    Comentario.Texto FROM Users, Publicacao, Comentario WHERE @postID = Comentario.PublicacaoID
+                    && Users.UserID = Comentario.UserID";
+                    command.Parameters.AddWithValue("@postID", postID);
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        while(reader.Read())
+                        {
+                            Comentarios comentarios = new Comentarios();
+                            comentarios.UserID = reader.GetString("UserID");
+                            comentarios.UserName = reader.GetString("Nome");
+                            comentarios.UserImage = reader.GetString("ImagePath");
+
+                            comentarios.ComentarioID = reader.GetString("ComentarioID");
+                            comentarios.Texto = reader.GetString("Texto");
+
+                            data.Add(comentarios);
+
+                        }
+                        connection.Close();
+                        return data;
+                    }
+
+                }
+                connection.Close();
+                return null;
+            }
+        }
+
+        public bool DoComment(string userID, string postID, string text)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = "INSERT INTO Comentario(UserID, PublicacaoID, Texto ) VALUES (@userID, @postID, @text)";
+                    command.Parameters.AddWithValue("userID", userID);
+                    command.Parameters.AddWithValue("postID", postID);
+                    command.Parameters.AddWithValue("text", text);
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 1)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
         public List<Posts> GetPosts()
         {
             List<Posts> posts = new List<Posts>();
@@ -37,7 +106,7 @@ namespace BancoDeDados.Services.DataBase
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
                     command.CommandText = $@"SELECT Publicacao.PublicacaoID, Publicacao.UserID, Publicacao.Imagem, 
-                    Publicacao.Texto, Users.Nome FROM Publicacao, Users WHERE Users.UserID = Publicacao.UserID;
+                    Publicacao.Texto, Users.Nome, Users.ImagePath FROM Publicacao, Users WHERE Users.UserID = Publicacao.UserID;
 ";
                     MySqlDataReader reader = command.ExecuteReader();
                     if(reader.HasRows)
@@ -59,7 +128,8 @@ namespace BancoDeDados.Services.DataBase
                             }
                             
                             data.UserName = reader.GetString("Nome");
-
+                            data.UserImage = reader.GetString("ImagePath");
+                            
                             if(!reader.IsDBNull(2))
                                 data.ImagePath = reader.GetString("Imagem");
                             

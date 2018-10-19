@@ -14,5 +14,7 @@ namespace BancoDeDados.Services.DataBase
         Dictionary<string, string> SearchUserByID(string id);
         bool DoPost(string userID, string post, IFormFile image);
         List<Posts> GetPosts();
+        List<Comentarios> GetComments(string postID);
+        bool DoComment(string userID, string postID, string text);
     }
 }

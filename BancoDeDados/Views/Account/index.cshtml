@@ -31,8 +31,9 @@
             @if(Model.Posts != null){
                 foreach(var item in @Model.Posts)
                 {
-                    <h1><a asp-action="Profile" asp-route-id="@item.UserID">
-                        @item.UserName
+                    <h1>
+                        <a asp-action="Profile" asp-route-id="@item.UserID">
+                            @item.UserName <img src="@Url.Content(@item.UserImage)">
                         </a>
                     </h1>
                     if(!string.IsNullOrEmpty(@item.Text))
@@ -44,6 +45,7 @@
                     {
                         <img src='@Url.Content(@item.ImagePath)' width="128px" height="128px">
                     }
+                    <a type="hidden" asp-action="ViewComments" asp-controller="Account" asp-route-postID="@item.PublicacaoID"                                                                                                                                      >Comentarios</a>
                 }
             }
         </div>

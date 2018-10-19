@@ -8,6 +8,7 @@ namespace BancoDeDados.Models
 
         public int PublicacaoID { get; set; }
         
+        public string UserImage { get; set; }
         public int UserID { get; set; }
 
         public string UserName { get; set; }
