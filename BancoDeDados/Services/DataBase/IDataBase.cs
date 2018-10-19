@@ -1,7 +1,5 @@
-
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
-using MySql.Data.MySqlClient;
 using BancoDeDados.Models;
 
 namespace BancoDeDados.Services.DataBase
@@ -13,6 +11,8 @@ namespace BancoDeDados.Services.DataBase
         bool AuthenticationLogin(HttpContext context, Login data);
         Dictionary<string,string> VerifyAuth(string email, string password);
         List<Dictionary<string, string>> SearchForName(string userName);
-
+        Dictionary<string, string> SearchUserByID(string id);
+        bool DoPost(string userID, string post, IFormFile image);
+        List<Posts> GetPosts();
     }
 }

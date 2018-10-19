@@ -1,5 +1,5 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
+@model BancoDeDados.Models.PostsIndex
 <!DOCTYPE html>
 
 <html>
@@ -9,7 +9,7 @@
     <body>
         <h4>
             <img src="~/images/user.png" >
-            Bem Vindo @Model
+            Bem Vindo @Model.UserLogged
         </h4>
         <div>
             <a asp-action="SearchUser">Buscar pessoas</a>
@@ -19,6 +19,33 @@
             <a>configurações</a>
             <a>Mural</a>
             <a>grupos</a>
+        </div>
+        <div>
+            <form asp-action="DoPost" enctype="multipart/form-data">
+                <textarea name="post" placeholder="O Que voce está sentido hoje ?" maxlength="500"></textarea><br>
+                <input type="file" name="image"> 
+                <input type="submit" value="postar"><br>
+            </form>
+        </div>
+        <div>
+            @if(Model.Posts != null){
+                foreach(var item in @Model.Posts)
+                {
+                    <h1><a asp-action="Profile" asp-route-id="@item.UserID">
+                        @item.UserName
+                        </a>
+                    </h1>
+                    if(!string.IsNullOrEmpty(@item.Text))
+                    {
+                        @item.Text
+                    }
+
+                    if(!string.IsNullOrEmpty(@item.ImagePath))
+                    {
+                        <img src='@Url.Content(@item.ImagePath)' width="128px" height="128px">
+                    }
+                }
+            }
         </div>
     </body>
 </html>

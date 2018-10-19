@@ -1,15 +1,15 @@
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Session;
 using System.Security.Claims;
 using System.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using BancoDeDados.Models;
 using System;
+using System.Linq;
+using System.IO;
 
 namespace BancoDeDados.Services.DataBase
 {
@@ -23,6 +23,142 @@ namespace BancoDeDados.Services.DataBase
             connectionString = configuration.GetConnectionString("DefaultConnection");
         }
         
+        
+        public List<Posts> GetPosts()
+        {
+            List<Posts> posts = new List<Posts>();
+
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Publicacao.PublicacaoID, Publicacao.UserID, Publicacao.Imagem, 
+                    Publicacao.Texto, Users.Nome FROM Publicacao, Users WHERE Users.UserID = Publicacao.UserID;
+";
+                    MySqlDataReader reader = command.ExecuteReader();
+                    if(reader.HasRows)
+                    {
+                        while(reader.Read())
+                        {
+                            int id = 0;
+                            Posts data = new Posts();
+                            if(Int32.TryParse(reader.GetString("UserID"), out id))
+                            {
+                                data.UserID = id;
+                                id = 0;
+                            }
+                            
+                            if(Int32.TryParse(reader.GetString("PublicacaoID"), out id))
+                            {
+                                data.PublicacaoID = id;
+                                id = 0;
+                            }
+                            
+                            data.UserName = reader.GetString("Nome");
+
+                            if(!reader.IsDBNull(2))
+                                data.ImagePath = reader.GetString("Imagem");
+                            
+                            if(!reader.IsDBNull(3))
+                                data.Text = reader.GetString("Texto");
+
+                            posts.Add(data);
+                        }
+                        
+                        connection.Close();
+                        var sort = from r in posts orderby Guid.NewGuid() ascending select r;
+                        posts = sort.ToList();
+                        return posts;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+
+        }
+
+        public bool DoPost(string userID,string post, IFormFile image)
+        {
+
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = "INSERT INTO Publicacao (UserID, Imagem, Texto) VALUES (@UserID, @Imagem, @Texto)";
+                    
+                    command.Parameters.AddWithValue("UserID", userID);
+
+                    if(!string.IsNullOrEmpty(post))
+                        command.Parameters.AddWithValue("Texto", post);
+                    
+                    if(image != null)
+                    {
+                        
+                        string fileName = DateTime.Now.ToString("yyyymmddMMsss") + "_" + userID + Path.GetExtension(image.FileName);
+                        FileStream stream = new FileStream("wwwroot/images/" + fileName, FileMode.Create);
+                        image.CopyTo(stream);
+                        command.Parameters.AddWithValue("Imagem", "~/images/" + fileName);
+                    }
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 1)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
+        public Dictionary<string, string> SearchUserByID(string id)
+        {
+            Dictionary<string, string> data = new Dictionary<string, string>();
+            
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = "SELECT Nome, City, ImagePath FROM Users WHERE UserID = @id LIMIT 1";
+                    command.Parameters.AddWithValue("id", id);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+
+                        data.Add("Nome", reader.GetString("Nome"));
+                        data.Add("ImagePath", reader.GetString("ImagePath"));
+
+                        if(reader.IsDBNull(1))
+                            data.Add("City", "A Definir");
+                        else
+                            data.Add("City", reader.GetString("City"));
+
+                        connection.Close();
+                        return data;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+        }
+
         public List<Dictionary<string, string>> SearchForName(string userName)
         {
             List<Dictionary<string,string>> listaData = new List<Dictionary<string,string>>();

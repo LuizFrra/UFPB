@@ -1,0 +1,24 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Dictionary<string, string>;
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+
+        <img src='@Url.Content(@Model["ImagePath"])'><br>
+        
+        <h1>
+                @Model["Nome"]
+        </h1>
+        
+        @Model["City"] 
+        <br>
+
+        <a>Amigos</a>
+        <a>Amigos em Comum</a>
+    </body>
+</html>
