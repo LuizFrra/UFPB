@@ -5,15 +5,12 @@ namespace BancoDeDados
 {
     public class Respostas
     {
-        public int RespostaID { get; set; }
+        public string ComentarioID { get; set; }
+        public string UserImage { get; set; }
+        public string UserID { get; set; }
+        public string UserName { get; set; }
 
         [Required]
-        public int UserID { get; set; }
-
-        [Required]
-        public int ComentarioID { get; set; }
-
-        [MaxLength(500), Required]
         public string Texto { get; set; }
     }
 }

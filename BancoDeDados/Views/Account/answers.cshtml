@@ -1,0 +1,39 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model BancoDeDados.Models.RespostasView;
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+        @if(Model.respostas == null)
+        {
+            <p>seja o primeiro a responder este comentario</p>
+        }
+        else
+        {
+            foreach(var item in Model.respostas)
+            {
+                <div>
+                    <a asp-action="Profile" asp-controller="Account" asp-route-id="@item.UserID">
+                        <img src="@Url.Content(item.UserImage)">
+                        <p>
+                            @item.UserName
+                        </p>
+                    </a>
+                    <p>
+                        @item.Texto
+                    </p>
+                </div>
+            }
+        }
+        
+        <form asp-action="DoAnswer" asp-controller="Account">
+            <input type="text" required name="texto" placeholder="Digite aqui sua resposta">
+            <input type="hidden" required name="commentID" value="@Model.comentarioID">
+            <input type="submit" value="Responder">
+        </form>
+    </body>
+</html>

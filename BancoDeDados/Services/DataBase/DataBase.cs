@@ -23,7 +23,72 @@ namespace BancoDeDados.Services.DataBase
             connectionString = configuration.GetConnectionString("DefaultConnection");
         }
         
-        
+        public List<Respostas> GetAnswer(string commentID)
+        {
+            List<Respostas> data = new List<Respostas>();
+
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Respostas.UserID, Users.Nome, Users.ImagePath ,Respostas.Texto, Respostas.ComentarioID FROM Respostas
+                    , Users WHERE Respostas.ComentarioID = @commentID && Users.UserID = Respostas.UserID";
+                    command.Parameters.AddWithValue("commentID", commentID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        while(reader.Read())
+                        {
+                            Respostas respostas = new Respostas();
+                            respostas.UserID = reader.GetString("UserID");
+                            respostas.UserImage = reader.GetString("ImagePath");
+                            respostas.UserName = reader.GetString("Nome");
+                            respostas.ComentarioID = reader.GetString("ComentarioID");
+                            respostas.Texto = reader.GetString("Texto");
+
+                            data.Add(respostas);
+                        }
+                        connection.Close();
+                        return data;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+        }
+
+        public bool DoAnswer(string userID, string commentID, string texto)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"INSERT INTO Respostas(UserID, ComentarioID, Texto) VALUES (@userID, @commentID, @texto)";
+                    command.Parameters.AddWithValue("userID", userID);
+                    command.Parameters.AddWithValue("commentID", commentID);
+                    command.Parameters.AddWithValue("texto", texto);
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 1)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
         public List<Comentarios> GetComments(string postID)
         {
             List<Comentarios> data = new List<Comentarios>();
@@ -36,7 +101,7 @@ namespace BancoDeDados.Services.DataBase
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
                     command.CommandText = $@"SELECT Users.Nome, Users.UserID, Users.ImagePath, Comentario.ComentarioID,
-                    Comentario.Texto FROM Users, Publicacao, Comentario WHERE @postID = Comentario.PublicacaoID
+                    Comentario.Texto FROM Users, Comentario WHERE @postID = Comentario.PublicacaoID
                     && Users.UserID = Comentario.UserID";
                     command.Parameters.AddWithValue("@postID", postID);
                     MySqlDataReader reader = command.ExecuteReader();

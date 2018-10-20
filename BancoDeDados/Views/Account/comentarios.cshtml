@@ -24,7 +24,7 @@
                             @item.UserName
                         </a>
                         <p>@item.Texto</p>
-                        <a>Responder</a>
+                        <a asp-controller="Account" asp-action="ViewAnswers" asp-route-commentID="@item.ComentarioID">Responder</a>
                     </div>
                 }
             }

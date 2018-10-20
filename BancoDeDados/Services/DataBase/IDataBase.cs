@@ -16,5 +16,7 @@ namespace BancoDeDados.Services.DataBase
         List<Posts> GetPosts();
         List<Comentarios> GetComments(string postID);
         bool DoComment(string userID, string postID, string text);
+        List<Respostas> GetAnswer(string commentID);
+        bool DoAnswer(string userID, string commentID, string texto);
     }
 }

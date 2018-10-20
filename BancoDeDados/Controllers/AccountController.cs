@@ -93,5 +93,27 @@ namespace BancoDeDados.Controllers
             comments.PublicacaoID = postID;
             return View("comentarios", comments);
         }
+
+        [HttpPost]
+        public IActionResult DoAnswer(string texto, string commentID)
+        {
+            string userID = HttpContext.User.FindFirst("UserID").Value.ToString();
+
+            if(!string.IsNullOrEmpty(texto) && !string.IsNullOrEmpty(commentID))
+                dataBase.DoAnswer(userID, commentID, texto);
+
+
+            return RedirectToAction("ViewAnswers", new RouteValueDictionary( new {Controller = "Account", Action="ViewAnswers", commentID = commentID}));
+        }
+
+        [HttpGet]
+        public IActionResult ViewAnswers(string commentID)
+        {
+            RespostasView respostas = new RespostasView();
+            respostas.comentarioID = commentID;
+            respostas.respostas = dataBase.GetAnswer(commentID);
+            
+            return View("answers", respostas);
+        }
     }
 }
