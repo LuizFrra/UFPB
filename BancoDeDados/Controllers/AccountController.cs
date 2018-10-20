@@ -52,13 +52,13 @@ namespace BancoDeDados.Controllers
         [HttpGet]
         public IActionResult Profile(string id)
         {
-            
-            Dictionary<string, string> data = new Dictionary<string, string>();
+            string userID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            //Dictionary<string, string> data = new Dictionary<string, string>();
 
-            if(!string.IsNullOrEmpty(id))
-                data = dataBase.SearchUserByID(id);
+            //if(!string.IsNullOrEmpty(id))
+                //data = dataBase.SearchUserByID(id);
             
-            return View("profile", data);
+            return View("profile");//, data);
         }
 
         [HttpPost]

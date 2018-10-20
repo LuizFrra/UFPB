@@ -256,9 +256,9 @@ namespace BancoDeDados.Services.DataBase
             }
         }
 
-        public Dictionary<string, string> SearchUserByID(string id)
+        public Relation SearchUserByID(string id)
         {
-            Dictionary<string, string> data = new Dictionary<string, string>();
+            Relation data = new Relation();
             
             using(MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -268,25 +268,16 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = "SELECT Nome, City, ImagePath FROM Users WHERE UserID = @id LIMIT 1";
+                    command.CommandText = "SELECT UserID, Nome, City, ImagePath FROM Users WHERE UserID = @id LIMIT 1";
                     command.Parameters.AddWithValue("id", id);
 
                     MySqlDataReader reader = command.ExecuteReader();
 
                     if(reader.HasRows)
                     {
-                        reader.Read();
+                        
 
-                        data.Add("Nome", reader.GetString("Nome"));
-                        data.Add("ImagePath", reader.GetString("ImagePath"));
-
-                        if(reader.IsDBNull(1))
-                            data.Add("City", "A Definir");
-                        else
-                            data.Add("City", reader.GetString("City"));
-
-                        connection.Close();
-                        return data;
+                        return null;
                     }
                 }
                 connection.Close();

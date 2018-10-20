@@ -11,7 +11,7 @@ namespace BancoDeDados.Services.DataBase
         bool AuthenticationLogin(HttpContext context, Login data);
         Dictionary<string,string> VerifyAuth(string email, string password);
         List<Dictionary<string, string>> SearchForName(string userName);
-        Dictionary<string, string> SearchUserByID(string id);
+        Relation SearchUserByID(string id);
         bool DoPost(string userID, string post, IFormFile image);
         List<Posts> GetPosts();
         List<Comentarios> GetComments(string postID);
