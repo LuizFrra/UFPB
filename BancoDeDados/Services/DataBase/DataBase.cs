@@ -158,7 +158,7 @@ namespace BancoDeDados.Services.DataBase
             }
         }
 
-        public List<Posts> GetPosts()
+        public List<Posts> GetPostsFriends(string myID)
         {
             List<Posts> posts = new List<Posts>();
 
@@ -170,9 +170,13 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = $@"SELECT Publicacao.PublicacaoID, Publicacao.UserID, Publicacao.Imagem, 
-                    Publicacao.Texto, Users.Nome, Users.ImagePath FROM Publicacao, Users WHERE Users.UserID = Publicacao.UserID;
-";
+                    command.CommandText = $@"SELECT Publicacao.UserID, Nome, ImagePath, PublicacaoID, Imagem, Texto 
+                                            FROM Publicacao, Users, Relacionamento 
+                                            WHERE Publicacao.UserID != @myID && Publicacao.UserID = Users.UserID && Relacionamento.UserID1 = @myID
+                                            && Relacionamento.UserID2 = Users.UserID && Relacionamento.Status = 3";
+
+                    command.Parameters.AddWithValue("myID", myID);
+
                     MySqlDataReader reader = command.ExecuteReader();
                     if(reader.HasRows)
                     {
@@ -195,10 +199,10 @@ namespace BancoDeDados.Services.DataBase
                             data.UserName = reader.GetString("Nome");
                             data.UserImage = reader.GetString("ImagePath");
                             
-                            if(!reader.IsDBNull(2))
+                            if(!reader.IsDBNull(4))
                                 data.ImagePath = reader.GetString("Imagem");
                             
-                            if(!reader.IsDBNull(3))
+                            if(!reader.IsDBNull(5))
                                 data.Text = reader.GetString("Texto");
 
                             posts.Add(data);

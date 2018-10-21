@@ -21,9 +21,11 @@ namespace BancoDeDados.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+
             PostsIndex postsIndex = new PostsIndex();
             
-            postsIndex.Posts = dataBase.GetPosts();
+            postsIndex.Posts = dataBase.GetPostsFriends(myID);
             
             postsIndex.UserLogged = HttpContext.User.FindFirst("Nome").Value.ToString();
 

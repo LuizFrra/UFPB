@@ -13,7 +13,7 @@ namespace BancoDeDados.Services.DataBase
         List<Dictionary<string, string>> SearchForName(string userName);
         Relation SearchUserByID(string myID, string userID);
         bool DoPost(string userID, string post, IFormFile image);
-        List<Posts> GetPosts();
+        List<Posts> GetPostsFriends(string myID);
         List<Comentarios> GetComments(string postID);
         bool DoComment(string userID, string postID, string text);
         List<Respostas> GetAnswer(string commentID);

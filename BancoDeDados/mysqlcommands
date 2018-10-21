@@ -39,11 +39,6 @@ CREATE TABLE RelationGU(
 	FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
-
-SELECT Users.UserID, Users.Nome, Relacionamento.Status FROM Users LEFT JOIN Relacionamento ON Relacionamento.UserID1 = 1 && Relacionamento.UserID2 = 3 WHERE Users.UserID = 3;
-QUERY FUDIDA DA AMIZADE DESGRAÇADA ARROMBADA
-
-
 CREATE TABLE Publicacao(
 	PublicacaoID int PRIMARY KEY AUTO_INCREMENT,
 	UserID int NOT NULL,
