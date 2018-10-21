@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Authorization;
 using BancoDeDados.Services.DataBase;
 using System.Collections.Generic;
@@ -52,13 +53,19 @@ namespace BancoDeDados.Controllers
         [HttpGet]
         public IActionResult Profile(string id)
         {
-            string userID = HttpContext.User.FindFirst("UserID").Value.ToString();
-            //Dictionary<string, string> data = new Dictionary<string, string>();
 
-            //if(!string.IsNullOrEmpty(id))
-                //data = dataBase.SearchUserByID(id);
+            string userID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            Relation relation = new Relation();
+
+            if(id != userID && !string.IsNullOrEmpty(id))
+                relation = dataBase.SearchUserByID(userID, id);
+            else
+            {
+                relation = dataBase.SearchUserByID(userID, id);
+                relation.Status = "10";
+            }
             
-            return View("profile");//, data);
+            return View("profile", relation);
         }
 
         [HttpPost]
@@ -114,6 +121,37 @@ namespace BancoDeDados.Controllers
             respostas.respostas = dataBase.GetAnswer(commentID);
             
             return View("answers", respostas);
+        }
+    
+        [HttpGet]
+        public IActionResult SendFriend(string userID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.SendFriend(myID, userID);
+            return RedirectToAction("Profile", new RouteValueDictionary(new {Controller = "Account", Action ="Profile", id = userID}));
+        }
+
+        [HttpGet]
+        public IActionResult CancelFriendRequest(string userID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.CancelFriendRequest(myID, userID);
+            return RedirectToAction("Profile", new RouteValueDictionary(new {Controller = "Account", Action ="Profile", id = userID}));
+        }
+    
+        [HttpGet]
+        public IActionResult AcceptFriendRequest(string userID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.AcceptFriendRequest(myID, userID);
+            return RedirectToAction("Profile", new RouteValueDictionary(new {Controller = "Account", Action ="Profile", id = userID}));
+        }
+
+        public IActionResult UndoFriend(string userID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.UndoFriend(myID, userID);
+            return RedirectToAction("Profile", new RouteValueDictionary(new {Controller = "Account", Action ="Profile", id = userID}));
         }
     }
 }

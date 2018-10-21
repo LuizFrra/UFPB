@@ -256,7 +256,7 @@ namespace BancoDeDados.Services.DataBase
             }
         }
 
-        public Relation SearchUserByID(string id)
+        public Relation SearchUserByID(string myID, string userID)
         {
             Relation data = new Relation();
             
@@ -268,16 +268,33 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = "SELECT UserID, Nome, City, ImagePath FROM Users WHERE UserID = @id LIMIT 1";
-                    command.Parameters.AddWithValue("id", id);
+                    command.CommandText = $@"SELECT Users.UserID, Users.Nome, Users.City, Users.ImagePath, Users.Visibility, Relacionamento.Status FROM Users 
+                    LEFT JOIN Relacionamento ON Relacionamento.UserID1 = @myID && Relacionamento.UserID2 = @userID WHERE Users.UserID = @userID LIMIT 1";
+                    command.Parameters.AddWithValue("myID", myID);
+                    command.Parameters.AddWithValue("userID", userID);
 
                     MySqlDataReader reader = command.ExecuteReader();
 
                     if(reader.HasRows)
                     {
+                        reader.Read();
+                        data.UserID = reader.GetString("UserID");
+                        data.UserName = reader.GetString("Nome");
+                        data.ImagePath = reader.GetString("ImagePath");
+                        data.Visibility = reader.GetString("Visibility");
                         
+                        if(reader.IsDBNull(5))
+                            data.Status = null;
+                        else
+                            data.Status = reader.GetString("Status");
 
-                        return null;
+                        if(reader.IsDBNull(2))
+                            data.City = "A Definir";
+                        else
+                            data.City = reader.GetString("City");
+
+                        connection.Close();   
+                        return data;
                     }
                 }
                 connection.Close();
@@ -445,6 +462,113 @@ namespace BancoDeDados.Services.DataBase
                 connection.Close();
                 return true;
 
+            }
+        }
+
+        public bool SendFriend(string myID, string userID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"INSERT INTO Relacionamento VALUES(@myID, @userID, 1), (@userID, @myID, 2)";
+                    command.Parameters.AddWithValue("myID", myID);
+                    command.Parameters.AddWithValue("userID", userID);
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 2)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
+        public bool CancelFriendRequest(string myID, string userID)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"DELETE FROM Relacionamento WHERE (UserID1 = @myID && UserID2 = @userID) 
+                    || ( UserID1 = @userID && UserID2 = @myID)";
+                    command.Parameters.AddWithValue("userID", userID);
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 2)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
+        public bool AcceptFriendRequest(string myID, string userID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"UPDATE Relacionamento SET Status = 3 WHERE (UserID1 = @myID && UserID2 = @userID) ||
+                    (UserID1 = @userID && UserID2 = @myID)";
+                    command.Parameters.AddWithValue("myID", myID);
+                    command.Parameters.AddWithValue("userID", userID);
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 2)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
+        public bool UndoFriend(string myID, string userID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"DELETE FROM Relacionamento WHERE (UserID1 = @myID && UserID2 = @userID) 
+                    || ( UserID1 = @userID && UserID2 = @myID)";
+                    command.Parameters.AddWithValue("userID", userID);
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 2)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
             }
         }
     }
