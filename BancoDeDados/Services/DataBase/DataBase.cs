@@ -170,10 +170,10 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = $@"SELECT Publicacao.UserID, Nome, ImagePath, PublicacaoID, Imagem, Texto 
-                                            FROM Publicacao, Users, Relacionamento 
-                                            WHERE Publicacao.UserID != @myID && Publicacao.UserID = Users.UserID && Relacionamento.UserID1 = @myID
-                                            && Relacionamento.UserID2 = Users.UserID && Relacionamento.Status = 3";
+                    command.CommandText = $@"SELECT Publicacao.UserID, Nome, ImagePath, Publicacao.PublicacaoID, Imagem, Texto  
+                    FROM Publicacao, Users, Relacionamento, MuralUsers 
+                    WHERE MuralUsers.UserID != @myID && Publicacao.UserID != @myID && Publicacao.UserID = Users.UserID && Relacionamento.UserID1 = @myID 
+                    && Relacionamento.UserID2 = Users.UserID && Relacionamento.Status = 3 && MuralUsers.PublicacaoID = Publicacao.PublicacaoID";
 
                     command.Parameters.AddWithValue("myID", myID);
 
@@ -182,20 +182,11 @@ namespace BancoDeDados.Services.DataBase
                     {
                         while(reader.Read())
                         {
-                            int id = 0;
+                            
                             Posts data = new Posts();
-                            if(Int32.TryParse(reader.GetString("UserID"), out id))
-                            {
-                                data.UserID = id;
-                                id = 0;
-                            }
-                            
-                            if(Int32.TryParse(reader.GetString("PublicacaoID"), out id))
-                            {
-                                data.PublicacaoID = id;
-                                id = 0;
-                            }
-                            
+
+                            data.UserID = reader.GetString("UserID");
+                            data.PublicacaoID = reader.GetString("PublicacaoID");
                             data.UserName = reader.GetString("Nome");
                             data.UserImage = reader.GetString("ImagePath");
                             
@@ -220,7 +211,7 @@ namespace BancoDeDados.Services.DataBase
 
         }
 
-        public bool DoPost(string userID,string post, IFormFile image)
+        public bool DoPost(string myID, string userID,string post, IFormFile image)
         {
 
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -231,9 +222,9 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = "INSERT INTO Publicacao (UserID, Imagem, Texto) VALUES (@UserID, @Imagem, @Texto)";
+                    command.CommandText = "INSERT INTO Publicacao (UserID, Imagem, Texto) VALUES (@myID, @Imagem, @Texto); SELECT LAST_INSERT_ID()";
                     
-                    command.Parameters.AddWithValue("UserID", userID);
+                    command.Parameters.AddWithValue("myID", myID);
 
                     if(!string.IsNullOrEmpty(post))
                         command.Parameters.AddWithValue("Texto", post);
@@ -246,13 +237,22 @@ namespace BancoDeDados.Services.DataBase
                         image.CopyTo(stream);
                         command.Parameters.AddWithValue("Imagem", "~/images/" + fileName);
                     }
-
-                    int nRowsAffected = command.ExecuteNonQuery();
-
-                    if(nRowsAffected == 1)
+                    
+                    int result = Convert.ToInt32(command.ExecuteScalar());
+                    
+                    
+                    if(result > 0)
                     {
-                        connection.Close();
-                        return true;
+                        command.CommandText = $@"INSERT INTO MuralUsers(UserID, PublicacaoID) VALUES(@userID, @postID);";
+                        command.Parameters.AddWithValue("@postID", result);
+                        command.Parameters.AddWithValue("userID", userID);
+                        int nRowsAffected = command.ExecuteNonQuery();
+
+                        if(nRowsAffected == 1)
+                        {
+                            connection.Close();
+                            return true;
+                        }
                     }
                 }
                 connection.Close();
@@ -574,6 +574,62 @@ namespace BancoDeDados.Services.DataBase
                 connection.Close();
                 return false;
             }
+        }
+
+        public List<Posts> GetPostsMural(string myID, string userID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                List<Posts> posts = new List<Posts>();
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Users.Nome, Users.ImagePath, MuralUsers.UserID, Publicacao.UserID AS puserID, Publicacao.PublicacaoID, 
+                                            Publicacao.Imagem, Publicacao.Texto FROM Publicacao, MuralUsers, Users WHERE MuralUsers.UserID = @userID 
+                                            && MuralUsers.PublicacaoID = Publicacao.PublicacaoID && Users.UserID = Publicacao.UserID";
+
+
+                    command.Parameters.AddWithValue("userID", userID);
+                    MySqlDataReader reader = command.ExecuteReader();
+                    
+                    if(reader.HasRows)
+                    {
+                        while(reader.Read())
+                        {
+
+                            Posts data = new Posts();
+                            
+                            if(myID == reader.GetString("puserID"))
+                                data.UserDoPost = null;
+                            else
+                                data.UserDoPost = reader.GetString("puserID");
+
+                            data.UserID = reader.GetString("UserID");
+                            data.PublicacaoID = reader.GetString("PublicacaoID");
+                            data.UserName = reader.GetString("Nome");
+                            data.UserImage = reader.GetString("ImagePath");
+                            
+                            if(!reader.IsDBNull(5))
+                                data.ImagePath = reader.GetString("Imagem");
+                            
+                            if(!reader.IsDBNull(6))
+                                data.Text = reader.GetString("Texto");
+
+                            posts.Add(data);
+                        }
+                        
+                        connection.Close();
+                        var sort = from r in posts orderby Guid.NewGuid() ascending select r;
+                        posts = sort.ToList();
+                        return posts;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+            
         }
     }
 }

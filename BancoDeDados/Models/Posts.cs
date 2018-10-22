@@ -5,11 +5,13 @@ namespace BancoDeDados.Models
 {
     public class Posts
     {
-
-        public int PublicacaoID { get; set; }
+        public string UserDoPost { get; set; }
+        
+        public string PublicacaoID { get; set; }
         
         public string UserImage { get; set; }
-        public int UserID { get; set; }
+        
+        public string UserID { get; set; }
 
         public string UserName { get; set; }
 

@@ -56,29 +56,37 @@ namespace BancoDeDados.Controllers
         public IActionResult Profile(string id)
         {
 
-            string userID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
             Relation relation = new Relation();
 
-            if(id != userID && !string.IsNullOrEmpty(id))
-                relation = dataBase.SearchUserByID(userID, id);
+            if(id != myID && !string.IsNullOrEmpty(id))
+                relation = dataBase.SearchUserByID(myID, id);
             else
             {
-                relation = dataBase.SearchUserByID(userID, id);
+                relation = dataBase.SearchUserByID(myID, id);
                 relation.Status = "10";
             }
             
+            relation.posts = dataBase.GetPostsMural(myID, id);
+
             return View("profile", relation);
         }
 
         [HttpPost]
-        public IActionResult DoPost(string post, IFormFile image)
+        public IActionResult DoPost(string userID, string post, IFormFile image)
         {
-            string userID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
 
+            if(string.IsNullOrEmpty(userID))
+            {
+                userID = myID;
+                dataBase.DoPost(myID, userID, post, image);
+                return RedirectToAction("Index");
+            }
             if(!string.IsNullOrEmpty(post) || image != null)
-                dataBase.DoPost(userID, post, image);
+                dataBase.DoPost(myID, userID, post, image);
                 
-            return RedirectToAction("Index");
+            return RedirectToAction("Profile", new RouteValueDictionary(new {Controller = "Account", Action ="Profile", id = userID}));
         }
 
         [HttpPost]

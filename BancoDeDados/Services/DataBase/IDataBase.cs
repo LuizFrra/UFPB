@@ -12,7 +12,7 @@ namespace BancoDeDados.Services.DataBase
         Dictionary<string,string> VerifyAuth(string email, string password);
         List<Dictionary<string, string>> SearchForName(string userName);
         Relation SearchUserByID(string myID, string userID);
-        bool DoPost(string userID, string post, IFormFile image);
+        bool DoPost(string myID,string userID, string post, IFormFile image);
         List<Posts> GetPostsFriends(string myID);
         List<Comentarios> GetComments(string postID);
         bool DoComment(string userID, string postID, string text);
@@ -22,5 +22,6 @@ namespace BancoDeDados.Services.DataBase
         bool CancelFriendRequest(string myID, string userID);
         bool AcceptFriendRequest(string myID, string userID);
         bool UndoFriend(string myID, string userID);
+        List<Posts> GetPostsMural(string myID, string userID);
     }
 }

@@ -17,7 +17,6 @@
             <a>Perfil</a>
             <a>grupos</a>
             <a>configurações</a>
-            <a>Mural</a>
             <a>grupos</a>
         </div>
         <div>
@@ -45,7 +44,7 @@
                     {
                         <img src='@Url.Content(@item.ImagePath)' width="128px" height="128px">
                     }
-                    <a type="hidden" asp-action="ViewComments" asp-controller="Account" asp-route-postID="@item.PublicacaoID"                                                                                                                                      >Comentarios</a>
+                    <a type="hidden" asp-action="ViewComments" asp-controller="Account" asp-route-postID="@item.PublicacaoID">Comentarios</a>
                 }
             }
         </div>

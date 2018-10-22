@@ -43,6 +43,57 @@
 
             <a>Amigos</a>
             <a>Amigos em Comum</a>
+            @if(Model.Visibility == "0")
+            {
+                <form asp-action="DoPost" enctype="multipart/form-data">
+                    <textarea name="post" placeholder="O Que voce está sentido hoje ?" maxlength="500"></textarea><br>
+                    <input type="file" name="image"> 
+                    <input type="hidden" name="userID" value="@Model.UserID">
+                    <input type="submit" value="postar"><br>
+                </form>
+            }
+            @if(Model.posts != null)
+            {
+                foreach(var item in Model.posts)
+                {
+                    if(item.UserDoPost == null)
+                    {
+                        <h1>
+                            <p>Voce Postou</p>
+                            @item.UserName <img src="@Url.Content(@item.UserImage)">
+                        </h1>
+                        if(!string.IsNullOrEmpty(@item.Text))
+                        {
+                            @item.Text
+                        }
+
+                        if(!string.IsNullOrEmpty(@item.ImagePath))
+                        {
+                            <img src='@Url.Content(@item.ImagePath)' width="128px" height="128px">
+                        }
+                        <a type="hidden" asp-action="ViewComments" asp-controller="Account" asp-route-postID="@item.PublicacaoID">Comentarios</a>
+                    }
+                    else
+                    {
+                        <h1>
+                            <a asp-action="Profile" asp-route-id="@item.UserDoPost">
+                                @item.UserName <img src="@Url.Content(@item.UserImage)">
+                            </a>
+                        </h1>
+                        if(!string.IsNullOrEmpty(@item.Text))
+                        {
+                            @item.Text
+                        }
+
+                        if(!string.IsNullOrEmpty(@item.ImagePath))
+                        {
+                            <img src='@Url.Content(@item.ImagePath)' width="128px" height="128px">
+                        }
+                        <a type="hidden" asp-action="ViewComments" asp-controller="Account" asp-route-postID="@item.PublicacaoID">Comentarios</a>
+                    
+                    }
+                }
+            }
         
     </body>
 </html>
