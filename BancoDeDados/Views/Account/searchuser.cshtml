@@ -13,7 +13,7 @@
             <input type="submit" value="Buscar"><br>
         </form>
         <div>
-            <a asp-action="Index">Inicio</a>
+            <p><a asp-controller="Account" asp-action="Index">Voltar para o Incio</a></p>
             @if(Model != null)
             {
                 @foreach(var item in Model)

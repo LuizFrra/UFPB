@@ -9,6 +9,8 @@ namespace BancoDeDados.Models
     {
         public string UserLogged { get; set; }
 
+        public string UserLoggedID { get; set; }
+
         public List<Posts> Posts { get; set; }
 
         public PostsIndex()

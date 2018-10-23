@@ -28,6 +28,7 @@ namespace BancoDeDados.Controllers
             postsIndex.Posts = dataBase.GetPostsFriends(myID);
             
             postsIndex.UserLogged = HttpContext.User.FindFirst("Nome").Value.ToString();
+            postsIndex.UserLoggedID = myID;
 
             return View("index", postsIndex);
         }
@@ -157,6 +158,7 @@ namespace BancoDeDados.Controllers
             return RedirectToAction("Profile", new RouteValueDictionary(new {Controller = "Account", Action ="Profile", id = userID}));
         }
 
+        [HttpGet]
         public IActionResult UndoFriend(string userID)
         {
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();

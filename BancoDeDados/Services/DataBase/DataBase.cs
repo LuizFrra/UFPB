@@ -318,8 +318,8 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = "SELECT UserID, Nome, City, ImagePath FROM Users WHERE Nome = @userName";
-                    command.Parameters.AddWithValue("userName", userName);
+                    command.CommandText = "SELECT UserID, Nome, City, ImagePath FROM Users WHERE Nome LIKE @userName";
+                    command.Parameters.AddWithValue("userName", userName + "%");
 
                     MySqlDataReader reader = command.ExecuteReader();
 

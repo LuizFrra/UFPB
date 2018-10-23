@@ -13,11 +13,9 @@
         </h4>
         <div>
             <a asp-action="SearchUser">Buscar pessoas</a>
-            <a>Buscar grupos</a>
-            <a>Perfil</a>
+            <a type="hidden" asp-controller="Account" asp-action="Profile" asp-route-id='@Model.UserLoggedID'>Perfil</a>
             <a>grupos</a>
             <a>configurações</a>
-            <a>grupos</a>
         </div>
         <div>
             <form asp-action="DoPost" enctype="multipart/form-data">
