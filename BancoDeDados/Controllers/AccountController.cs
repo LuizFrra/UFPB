@@ -34,6 +34,13 @@ namespace BancoDeDados.Controllers
         }
 
         [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete("Auth");
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
         public IActionResult SearchUser()
         {
             return View("searchuser");
@@ -165,5 +172,7 @@ namespace BancoDeDados.Controllers
             dataBase.UndoFriend(myID, userID);
             return RedirectToAction("Profile", new RouteValueDictionary(new {Controller = "Account", Action ="Profile", id = userID}));
         }
+    
+        
     }
 }

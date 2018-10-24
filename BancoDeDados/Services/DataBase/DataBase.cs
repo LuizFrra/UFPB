@@ -576,6 +576,42 @@ namespace BancoDeDados.Services.DataBase
             }
         }
 
+        public List<Friends> GetFriends(string userID)
+        {
+            List<Friends> friends = new List<Friends>();
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(ConnectionState.Open == connection.State)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Users.UserID, Users.Nome, Users.ImagePath, Users.City FROM Users, Relacionamento 
+                                            WHERE Relacionamento.UserID1 = @userID && Relacionamento.UserID2 = Users.UserID && Relacionamento.Status = 3";
+                    command.Parameters.AddWithValue("userID", userID);
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        while(reader.Read())
+                        {
+                            Friends data = new Friends();
+                            data.UserID = reader.GetString("UserID");
+                            data.UserName = reader.GetString("Nome");
+                            data.ImagePath = reader.GetString("ImagePath");
+                            data.City = reader.GetString("City");
+
+                            friends.Add(data);
+                        }
+                        connection.Close();
+                        return friends;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+        }
+
         public List<Posts> GetPostsMural(string myID, string userID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))

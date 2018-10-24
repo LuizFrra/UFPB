@@ -42,10 +42,10 @@
             @Model.City 
             <br>
 
-            <a>Amigos</a>
-            <a>Amigos em Comum</a>
-            @if(Model.Visibility == "0")
+            @if(Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1"))
             {
+                <a>Amigos</a>
+                <a>Amigos em Comum</a>
                 <form asp-action="DoPost" enctype="multipart/form-data">
                     <textarea name="post" placeholder="O Que voce está sentido hoje ?" maxlength="500"></textarea><br>
                     <input type="file" name="image"> 
@@ -53,7 +53,7 @@
                     <input type="submit" value="postar"><br>
                 </form>
             }
-            @if(Model.posts != null)
+            @if(Model.posts != null && (Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1")))
             {
                 foreach(var item in Model.posts)
                 {

@@ -23,5 +23,6 @@ namespace BancoDeDados.Services.DataBase
         bool AcceptFriendRequest(string myID, string userID);
         bool UndoFriend(string myID, string userID);
         List<Posts> GetPostsMural(string myID, string userID);
+        List<Friends> GetFriends(string userID);
     }
 }
