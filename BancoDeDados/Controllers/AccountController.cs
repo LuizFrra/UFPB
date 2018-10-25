@@ -29,7 +29,7 @@ namespace BancoDeDados.Controllers
             
             postsIndex.UserLogged = HttpContext.User.FindFirst("Nome").Value.ToString();
             postsIndex.UserLoggedID = myID;
-
+            postsIndex.ImagePath = HttpContext.User.FindFirst("ImagePath").Value.ToString();
             return View("index", postsIndex);
         }
 
@@ -173,6 +173,33 @@ namespace BancoDeDados.Controllers
             return RedirectToAction("Profile", new RouteValueDictionary(new {Controller = "Account", Action ="Profile", id = userID}));
         }
     
-        
+        public IActionResult GetFriends(string userID)
+        {
+            if(string.IsNullOrEmpty(userID))
+                userID = HttpContext.User.FindFirst("UserID").Value.ToString();
+
+            List<Friends> friends = new List<Friends>();
+
+            friends = dataBase.GetFriends(userID);
+            
+            return View("Friends", friends);
+        }
+    
+        [HttpGet]
+        public IActionResult ChangePerfil()
+        {
+            return View("config");
+        }
+
+        [HttpPost]
+        public IActionResult ChangePerfil(IFormFile image, string visibility, string cidade, string pass)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            
+            if(image != null || !string.IsNullOrEmpty(visibility) || !string.IsNullOrEmpty(cidade))
+                dataBase.ChangePerfil(myID, image, visibility, cidade, pass);
+            
+            return RedirectToAction("Index");
+        }
     }
 }

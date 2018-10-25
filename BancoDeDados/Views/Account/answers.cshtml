@@ -9,6 +9,7 @@
     </head>
     <body>
         <p><a asp-controller="Account" asp-action="Index">Voltar para o Incio</a></p>
+        <a href="javascript: history.go(-1)">Voltar Para os Comentarios</a><br>
         
         @if(Model.respostas == null)
         {
@@ -20,7 +21,7 @@
             {
                 <div>
                     <a asp-action="Profile" asp-controller="Account" asp-route-id="@item.UserID">
-                        <img src="@Url.Content(item.UserImage)">
+                        <img src="@Url.Content(item.UserImage)" style="width:30px; height:30px;">
                         <p>
                             @item.UserName
                         </p>

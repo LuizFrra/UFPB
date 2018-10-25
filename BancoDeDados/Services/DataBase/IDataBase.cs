@@ -24,5 +24,6 @@ namespace BancoDeDados.Services.DataBase
         bool UndoFriend(string myID, string userID);
         List<Posts> GetPostsMural(string myID, string userID);
         List<Friends> GetFriends(string userID);
-    }
+        bool ChangePerfil(string userID, IFormFile image, string visibility, string city, string pass)
+;    }
 }

@@ -8,6 +8,7 @@
 
     </head>
     <body>
+        <a href="javascript: history.go(-1)">Voltar Anterior</a>
         <p><a asp-controller="Account" asp-action="Index">Voltar para o Incio</a></p>
         @if(Model.Status == "4")
         {
@@ -33,7 +34,7 @@
             <a asp-controller="Account" asp-action="UndoFriend" asp-route-userID="@Model.UserID">Desfazer Amizade</a>
             <a>Bloquear Usuário</a><br><br>
         }
-            <img src='@Url.Content(@Model.ImagePath)'><br>
+            <img src='@Url.Content(@Model.ImagePath)' style="width:30px; height:30px;"><br>
             
             <h1>
                     @Model.UserName
@@ -42,10 +43,18 @@
             @Model.City 
             <br>
 
-            @if(Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1"))
+            @if(Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1") || Model.Status == "10")
             {
-                <a>Amigos</a>
-                <a>Amigos em Comum</a>
+                if(Model.Status == "10")
+                {
+                    <a asp-action="GetFriends" asp-controller="Account" asp-route-userID="@Model.UserID">Meus Amigos</a>
+                }
+                else
+                {
+                    <a asp-action="GetFriends" asp-controller="Account" asp-route-userID="@Model.UserID">Amigos</a>
+                    <a>Amigos em Comum</a>
+
+                }
                 <form asp-action="DoPost" enctype="multipart/form-data">
                     <textarea name="post" placeholder="O Que voce está sentido hoje ?" maxlength="500"></textarea><br>
                     <input type="file" name="image"> 
@@ -53,7 +62,7 @@
                     <input type="submit" value="postar"><br>
                 </form>
             }
-            @if(Model.posts != null && (Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1")))
+            @if(Model.posts != null && (Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1")) || Model.Status == "10")
             {
                 foreach(var item in Model.posts)
                 {
@@ -61,7 +70,7 @@
                     {
                         <h1>
                             <p>Voce Postou</p>
-                            @item.UserName <img src="@Url.Content(@item.UserImage)">
+                            @item.UserName <img src="@Url.Content(@item.UserImage)" style="width:30px; height:30px;">
                         </h1>
                         if(!string.IsNullOrEmpty(@item.Text))
                         {
@@ -78,7 +87,7 @@
                     {
                         <h1>
                             <a asp-action="Profile" asp-route-id="@item.UserDoPost">
-                                @item.UserName <img src="@Url.Content(@item.UserImage)">
+                                @item.UserName <img src="@Url.Content(@item.UserImage)" style="width:30px; height:30px;">
                             </a>
                         </h1>
                         if(!string.IsNullOrEmpty(@item.Text))

@@ -11,6 +11,8 @@ namespace BancoDeDados.Models
 
         public string UserLoggedID { get; set; }
 
+        public string ImagePath {get; set; }
+
         public List<Posts> Posts { get; set; }
 
         public PostsIndex()

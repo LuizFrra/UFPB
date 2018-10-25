@@ -8,6 +8,17 @@
 
     </head>
     <body>
-        
+        <form asp-action="ChangePerfil" enctype="multipart/form-data">
+            <input type="text" name="cidade" placeholder="Cidade"><br>
+            Privacidade : 
+            <select name="visibility">
+                <option value="0">publico</option>
+                <option value="1">Amigos</option>
+            </select><br>
+            Imagem:
+            <input type="file" name="image"><br>
+            <input type="password" required placeholder="Senha Para Confirmar a Identidade" name="pass" style="width:220px;"><br>
+            <input type="submit" value="Modificar">
+        </form>
     </body>
 </html>

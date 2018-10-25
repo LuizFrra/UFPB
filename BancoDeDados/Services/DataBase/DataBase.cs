@@ -361,7 +361,8 @@ namespace BancoDeDados.Services.DataBase
                 {
                     new Claim("UserID", user["UserID"]),
                     new Claim("Nome", user["Nome"]),
-                    new Claim(ClaimTypes.Role, "User")    
+                    new Claim(ClaimTypes.Role, "User"),
+                    new Claim("ImagePath", user["ImagePath"])    
                 };
                 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -383,7 +384,7 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = $@"SELECT UserID, Nome FROM Users WHERE Email = @email && Pass = @password";
+                    command.CommandText = $@"SELECT UserID, Nome, ImagePath FROM Users WHERE Email = @email && Pass = @password";
 
                     command.Parameters.AddWithValue("email", email);
                     command.Parameters.AddWithValue("password", password);
@@ -396,6 +397,7 @@ namespace BancoDeDados.Services.DataBase
                         Dictionary<string,string> data = new Dictionary<string,string>();
                         data.Add("UserID", user.GetString(0));
                         data.Add("Nome", user.GetString(1));
+                        data.Add("ImagePath", user.GetString("ImagePath"));
 
                         connection.Close();
                         return data;
@@ -599,8 +601,12 @@ namespace BancoDeDados.Services.DataBase
                             data.UserID = reader.GetString("UserID");
                             data.UserName = reader.GetString("Nome");
                             data.ImagePath = reader.GetString("ImagePath");
-                            data.City = reader.GetString("City");
-
+                            
+                            if(reader.IsDBNull(3))
+                                data.City = "A Definir";
+                            else
+                                data.City = reader.GetString("City");
+                            
                             friends.Add(data);
                         }
                         connection.Close();
@@ -666,6 +672,58 @@ namespace BancoDeDados.Services.DataBase
                 return null;
             }
             
+        }
+        
+        public bool ChangePerfil(string userID, IFormFile image, string visibility, string city, string pass)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Users.Nome, Users.City, Users.Visibility, Users.Pass FROM Users WHERE UserID = @userID LIMIT 1";
+                    command.Parameters.AddWithValue("userID", userID);
+                    MySqlDataReader reader = command.ExecuteReader();
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+
+                        if(reader.GetString("Pass") == pass)
+                        {
+                            command.CommandText = "UPDATE Users SET Visibility = @visibility";
+                        
+                            if(!string.IsNullOrEmpty(city))
+                            {
+                                command.CommandText += ", City = @city";
+                                command.Parameters.AddWithValue("city", city);
+                            }
+                            if(image != null)
+                            {
+                                string fileName = DateTime.Now.ToString("yyyymmddMMsss") + "_" + userID + Path.GetExtension(image.FileName);
+                                FileStream stream = new FileStream("wwwroot/images/" + fileName, FileMode.Create);
+                                image.CopyTo(stream);
+                                command.CommandText += ", ImagePath = @imagem";
+                                command.Parameters.AddWithValue("imagem", "~/images/" + fileName);
+                            }
+                            command.CommandText += " WHERE UserID = @userID";
+                            command.Parameters.AddWithValue("visibility", visibility);
+                            reader.Close();
+                            int nRowsAffected = command.ExecuteNonQuery();
+
+                            if(nRowsAffected == 1)
+                            {
+                                connection.Close();
+                                return true;
+                            }
+
+                        }
+                    }
+                }
+                connection.Close();
+                return false;
+            }
         }
     }
 }

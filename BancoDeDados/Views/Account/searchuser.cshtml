@@ -20,7 +20,7 @@
                 {
                     <div>
 
-                        <img src='@Url.Content(@item["ImagePath"])'>
+                        <img src='@Url.Content(@item["ImagePath"])' style="width:30px; height:30px;">
                         
                         <a type="hidden" asp-controller="Account" asp-action="Profile" asp-route-id='@item["UserID"]'>
                             @item["Nome"]

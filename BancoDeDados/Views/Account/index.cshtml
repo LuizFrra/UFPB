@@ -8,14 +8,15 @@
     </head>
     <body>
         <h4>
-            <img src="~/images/user.png" >
+            <img src="@Url.Content(@Model.ImagePath)" style="width:30px; height:30px;" >
             Bem Vindo @Model.UserLogged
         </h4>
         <div>
             <a asp-action="SearchUser">Buscar pessoas</a>
             <a type="hidden" asp-controller="Account" asp-action="Profile" asp-route-id='@Model.UserLoggedID'>Perfil</a>
             <a>grupos</a>
-            <a>configurações</a>
+            <a asp-action="ChangePerfil" asp-controller="Account" >configurações</a>
+            <a asp-action="Logout" asp-controller="Account">Sair</a>
         </div>
         <div>
             <form asp-action="DoPost" enctype="multipart/form-data">
@@ -30,7 +31,7 @@
                 {
                     <h1>
                         <a asp-action="Profile" asp-route-id="@item.UserID">
-                            @item.UserName <img src="@Url.Content(@item.UserImage)">
+                            @item.UserName <img src="@Url.Content(@item.UserImage)" style="width:30px; height:30px;">
                         </a>
                     </h1>
                     if(!string.IsNullOrEmpty(@item.Text))
