@@ -202,5 +202,30 @@ namespace BancoDeDados.Controllers
             
             return RedirectToAction("Logout");
         }
+    
+        public IActionResult DeleteAnswer(string commentID, string answersID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.DeleteAnswer(myID, answersID);
+            return RedirectToAction("ViewAnswers", new RouteValueDictionary(new {Controller = "Account", Action ="ViewAnswers", commentID = commentID}));
+        }
+    
+        public IActionResult DeleteComment(string postID, string commentID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.DeleteComment(myID, commentID);
+            return RedirectToAction("ViewComments", new RouteValueDictionary(new{Controller = "Account", Action="ViewComments", postID = postID}));
+        }
+
+        public IActionResult DeletePost(string muralID, string postID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.DeletePost(myID, postID);
+            
+            if(string.IsNullOrEmpty(muralID))
+                return RedirectToAction("Index");
+
+            return RedirectToAction("Profile", new RouteValueDictionary(new{Controller = "Account", Action="Profile", id = muralID}));
+        }
     }
 }

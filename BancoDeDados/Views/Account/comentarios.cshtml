@@ -30,7 +30,7 @@
                             <p>@item.Texto</p>
                             @if(Model.myID == Model.MUserID || Model.myID == Model.AuthorIDPublicacao || Model.myID == item.UserID)
                             {
-                                <a>Apagar</a>
+                                <a asp-action="DeleteComment" asp-controller="Account" asp-route-postID="@Model.PublicacaoID" asp-route-commentID="@item.ComentarioID">Apagar</a>
                             }
                             <a asp-controller="Account" asp-action="ViewAnswers" asp-route-commentID="@item.ComentarioID">Responder</a>
                         </div>

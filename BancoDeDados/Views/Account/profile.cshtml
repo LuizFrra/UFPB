@@ -84,7 +84,7 @@
                         }
                         if(Model.myID == item.UserID || Model.myID == Model.MuralUserID)
                         {
-                            <a>Apagar</a>
+                            <a asp-action="DeletePost" asp-controller="Account" asp-route-muralID="@Model.MuralUserID" asp-route-postID="@item.PublicacaoID">Apagar</a>
                         }
                         <a type="hidden" asp-action="ViewComments" asp-controller="Account" asp-route-postID="@item.PublicacaoID">Comentarios</a>
                     }

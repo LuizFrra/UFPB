@@ -32,7 +32,7 @@
                             @item.Texto
                             @if(Model.myID == item.UserID || Model.myID == Model.MuralUserIDPost || Model.myID == Model.AuthorIDPost || Model.myID == Model.AuthorIDCommnet)
                             {   
-                                <a>Apagar</a>
+                                <a asp-action="DeleteAnswer" asp-controller="Account" asp-route-commentID="@Model.comentarioID" asp-route-answersID="@item.RespostaID">Apagar</a>
                             }
                         </p>
                     </div>

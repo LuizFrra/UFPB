@@ -62,6 +62,7 @@ namespace BancoDeDados.Services.DataBase
                             respostas.UserName = reader.GetString("Nome");
                             respostas.UserImage = reader.GetString("ImagePath");
                             respostas.Texto = reader.GetString("Texto");
+                            respostas.RespostaID = reader.GetString("RespostaID");
 
                             if(reader.IsDBNull(8))
                                 respostas.Status = null;
@@ -766,17 +767,123 @@ namespace BancoDeDados.Services.DataBase
 
         public bool DeleteAnswer(string myID, string answerID)
         {
-            throw new NotImplementedException();
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Respostas.UserID, MuralUsers.UserID as MUser, Comentario.UserID CUser, 
+                    Publicacao.UserID as PUser from Respostas, MuralUsers, Comentario, Publicacao WHERE Respostas.RespostaID = @answerID &&
+                    Respostas.ComentarioID = Comentario.ComentarioID AND Comentario.PublicacaoID = Publicacao.PublicacaoID AND 
+                    Publicacao.PublicacaoID = MuralUsers.PublicacaoID;";
+                    command.Parameters.AddWithValue("answerID", answerID);
+                    
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+
+                        if(myID == reader.GetString("UserID") || myID == reader.GetString("MUser") || myID == reader.GetString("CUser")
+                        || myID == reader.GetString("PUser"))
+                        {
+                            command.CommandText = $@"DELETE FROM Respostas WHERE RespostaID = @answerID";
+                            reader.Close();
+                            int nRowsAffected = command.ExecuteNonQuery();
+
+                            if(nRowsAffected == 1)
+                            {
+                                connection.Close();
+                                return true;
+                            }
+                        }
+                    }
+
+                }
+                connection.Close();
+                return false;
+            }
         }
 
         public bool DeleteComment(string myID, string commentID)
         {
-            throw new NotImplementedException();
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Publicacao.UserID as PUserID, Comentario.UserID as CUserID ,MuralUsers.UserID as MUSerID 
+                    FROM Publicacao, Comentario,  MuralUsers WHERE Comentario.ComentarioID = @commentID && Publicacao.PublicacaoID = Comentario.PublicacaoID 
+                    && Comentario.PublicacaoID = MuralUsers.PublicacaoID LIMIT 1";
+                    command.Parameters.AddWithValue("commentID", commentID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+
+                        if(myID == reader.GetString("PUserID") || myID == reader.GetString("CUserID") || myID == reader.GetString("MUserID"))
+                        {
+                            command.CommandText = $@"DELETE FROM Comentario WHERE Comentario.ComentarioID = @commentID";
+                            reader.Close();
+
+                            int nRowsAffected = command.ExecuteNonQuery();
+
+                            if(nRowsAffected == 1)
+                            {
+                                connection.Close();
+                                return true;
+                            }
+                        }
+
+                    }
+                }
+                connection.Close();
+                return false;
+            }
         }
 
         public bool DeletePost(string myID, string postID)
         {
-            throw new NotImplementedException();
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT MuralUsers.UserID as MUserID, Publicacao.UserID as PUserID FROM Publicacao, MuralUsers 
+                    WHERE Publicacao.PublicacaoID = @postID AND MuralUsers.PublicacaoID = Publicacao.PublicacaoID LIMIT 1";
+                    command.Parameters.AddWithValue("postID", postID);
+
+                    MySqlDataReader reader =  command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+
+                        if(myID == reader.GetString("MUserID") || myID == reader.GetString("PUserID"))
+                        {
+                            reader.Close();
+                            command.CommandText = $@"DELETE FROM Publicacao WHERE Publicacao.PublicacaoID = @postID";
+                            int nRowsAffected = command.ExecuteNonQuery();
+
+                            if(nRowsAffected == 1)
+                            {
+                                connection.Close();
+                                return true;
+                            }
+                        }
+                    }
+                }
+                connection.Close();
+                return false;
+            }
         }
     }
 }
