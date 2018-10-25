@@ -4,9 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace BancoDeDados.Models
 {
     public class Posts
-    {
-        public string UserDoPost { get; set; }
-        
+    {   
         public string PublicacaoID { get; set; }
         
         public string UserImage { get; set; }
@@ -18,9 +16,9 @@ namespace BancoDeDados.Models
         public string ImagePath { get; set; }
 
         [MaxLength(500), MinLength(1)]
-        public string Text { get; set; }
+        public string Texto { get; set; }
 
-        
+        public string Status { get; set; }        
 
 
     }

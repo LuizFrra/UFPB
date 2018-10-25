@@ -77,7 +77,7 @@ namespace BancoDeDados.Controllers
                 relation = dataBase.SearchUserByID(myID, id);
                 relation.Status = "10";
             }
-            
+            relation.myID = myID;
             relation.posts = dataBase.GetPostsMural(myID, id);
 
             return View("profile", relation);
@@ -115,9 +115,9 @@ namespace BancoDeDados.Controllers
         [HttpGet]
         public IActionResult ViewComments(string postID)
         {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
             CommentsView comments =  new CommentsView();
-            comments.comentarios = dataBase.GetComments(postID);
-            comments.PublicacaoID = postID;
+            comments = dataBase.GetComments(myID, postID);
             return View("comentarios", comments);
         }
 

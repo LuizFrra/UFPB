@@ -20,14 +20,21 @@
             {
                 foreach(var item in Model.comentarios)
                 {
-                    <div>
-                        <a asp-action="Profile" asp-controller="Account" asp-route-id="@item.UserID">
-                            <img src="@Url.Content(item.UserImage)"style="width:30px; height:30px;">
-                            @item.UserName
-                        </a>
-                        <p>@item.Texto</p>
-                        <a asp-controller="Account" asp-action="ViewAnswers" asp-route-commentID="@item.ComentarioID">Responder</a>
-                    </div>
+                    if(item.Status != "4" || item.Status != "6")
+                    {
+                        <div>
+                            <a asp-action="Profile" asp-controller="Account" asp-route-id="@item.UserID">
+                                <img src="@Url.Content(item.UserImage)"style="width:30px; height:30px;">
+                                @item.UserName
+                            </a>
+                            <p>@item.Texto</p>
+                            @if(Model.myID == Model.MUserID || Model.myID == Model.AuthorIDPublicacao || Model.myID == item.UserID)
+                            {
+                                <a>Apagar</a>
+                            }
+                            <a asp-controller="Account" asp-action="ViewAnswers" asp-route-commentID="@item.ComentarioID">Responder</a>
+                        </div>
+                    }
                 }
             }
         </div>

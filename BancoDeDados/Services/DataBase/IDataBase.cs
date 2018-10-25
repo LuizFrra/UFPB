@@ -14,7 +14,7 @@ namespace BancoDeDados.Services.DataBase
         Relation SearchUserByID(string myID, string userID);
         bool DoPost(string myID,string userID, string post, IFormFile image);
         List<Posts> GetPostsFriends(string myID);
-        List<Comentarios> GetComments(string postID);
+        CommentsView GetComments(string myID, string postID);
         bool DoComment(string userID, string postID, string text);
         RespostasView GetAnswer(string myID, string commentID);
         bool DoAnswer(string userID, string commentID, string texto);
@@ -24,6 +24,10 @@ namespace BancoDeDados.Services.DataBase
         bool UndoFriend(string myID, string userID);
         List<Posts> GetPostsMural(string myID, string userID);
         List<Friends> GetFriends(string userID);
-        bool ChangePerfil(string userID, IFormFile image, string visibility, string city, string pass)
-;    }
+        bool ChangePerfil(string userID, IFormFile image, string visibility, string city, string pass);
+        bool DeleteAnswer(string myID, string answerID);
+        bool DeleteComment(string myID, string commentID);
+        bool DeletePost(string myID, string postID);
+
+   }
 }

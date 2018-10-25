@@ -4,10 +4,11 @@ namespace BancoDeDados.Models
 {
     public class Relation
     {
-        public string UserID { get; set; }
-        public string UserName { get; set; }
-        public string City { get; set; }
-        public string ImagePath { get; set; }
+        public string myID { get; set; }
+        public string MuralUserID { get; set; }
+        public string MuralUserName { get; set; }
+        public string MuralUserCity { get; set; }
+        public string MuralUserImagePath { get; set; }
         public string Visibility { get; set; }
         public string Status { get; set; }
 

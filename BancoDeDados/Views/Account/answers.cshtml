@@ -19,21 +19,24 @@
         {
             foreach(var item in Model.respostas)
             {
-                <div>
-                    <a asp-action="Profile" asp-controller="Account" asp-route-id="@item.UserID">
-                        <img src="@Url.Content(item.UserImage)" style="width:30px; height:30px;">
+                if(item.Status != "4" || item.Status != "6")
+                {
+                    <div>
+                        <a asp-action="Profile" asp-controller="Account" asp-route-id="@item.UserID">
+                            <img src="@Url.Content(item.UserImage)" style="width:30px; height:30px;">
+                            <p>
+                                @item.UserName
+                            </p>
+                        </a>
                         <p>
-                            @item.UserName
+                            @item.Texto
+                            @if(Model.myID == item.UserID || Model.myID == Model.MuralUserIDPost || Model.myID == Model.AuthorIDPost || Model.myID == Model.AuthorIDCommnet)
+                            {   
+                                <a>Apagar</a>
+                            }
                         </p>
-                    </a>
-                    <p>
-                        @item.Texto
-                        @if(@Model.myID == item.UserID)
-                        {   
-                            <p>apagar</p>
-                        }
-                    </p>
-                </div>
+                    </div>
+                }
             }
         }
         
