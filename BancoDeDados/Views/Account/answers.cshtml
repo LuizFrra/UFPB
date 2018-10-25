@@ -28,6 +28,10 @@
                     </a>
                     <p>
                         @item.Texto
+                        @if(@Model.myID == item.UserID)
+                        {   
+                            <p>apagar</p>
+                        }
                     </p>
                 </div>
             }

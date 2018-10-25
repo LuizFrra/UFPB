@@ -16,20 +16,24 @@ namespace BancoDeDados.Controllers
         
         private readonly IDataBase dataBase;
 
-        public AccountController(IDataBase _dataBase) => dataBase = _dataBase;
+        public AccountController(IDataBase _dataBase)
+        {
+            dataBase = _dataBase;
+
+        }
         
         [HttpGet]
         public IActionResult Index()
         {
-            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
 
             PostsIndex postsIndex = new PostsIndex();
             
-            postsIndex.Posts = dataBase.GetPostsFriends(myID);
-            
-            postsIndex.UserLogged = HttpContext.User.FindFirst("Nome").Value.ToString();
-            postsIndex.UserLoggedID = myID;
+            postsIndex.UserLoggedID = HttpContext.User.FindFirst("UserID").Value.ToString();
             postsIndex.ImagePath = HttpContext.User.FindFirst("ImagePath").Value.ToString();
+            postsIndex.UserLogged = HttpContext.User.FindFirst("Nome").Value.ToString();
+
+            postsIndex.Posts = dataBase.GetPostsFriends(postsIndex.UserLoggedID);
+
             return View("index", postsIndex);
         }
 
@@ -63,7 +67,6 @@ namespace BancoDeDados.Controllers
         [HttpGet]
         public IActionResult Profile(string id)
         {
-
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
             Relation relation = new Relation();
 
@@ -84,7 +87,6 @@ namespace BancoDeDados.Controllers
         public IActionResult DoPost(string userID, string post, IFormFile image)
         {
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
-
             if(string.IsNullOrEmpty(userID))
             {
                 userID = myID;
@@ -100,10 +102,10 @@ namespace BancoDeDados.Controllers
         [HttpPost]
         public IActionResult DoComment(string texto, string publicacaoID)
         {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
             if(!string.IsNullOrEmpty(texto) && !string.IsNullOrEmpty(publicacaoID))
             {
-                string UserID  = HttpContext.User.FindFirst("UserID").Value.ToString();
-                dataBase.DoComment(UserID, publicacaoID, texto);
+                dataBase.DoComment(myID, publicacaoID, texto);
             }
             
             return RedirectToAction("ViewComments", new RouteValueDictionary( new {Controller = "Account", Action="Viewcomments", postID = publicacaoID}));
@@ -122,10 +124,9 @@ namespace BancoDeDados.Controllers
         [HttpPost]
         public IActionResult DoAnswer(string texto, string commentID)
         {
-            string userID = HttpContext.User.FindFirst("UserID").Value.ToString();
-
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
             if(!string.IsNullOrEmpty(texto) && !string.IsNullOrEmpty(commentID))
-                dataBase.DoAnswer(userID, commentID, texto);
+                dataBase.DoAnswer(myID, commentID, texto);
 
 
             return RedirectToAction("ViewAnswers", new RouteValueDictionary( new {Controller = "Account", Action="ViewAnswers", commentID = commentID}));
@@ -134,9 +135,9 @@ namespace BancoDeDados.Controllers
         [HttpGet]
         public IActionResult ViewAnswers(string commentID)
         {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
             RespostasView respostas = new RespostasView();
-            respostas.comentarioID = commentID;
-            respostas.respostas = dataBase.GetAnswer(commentID);
+            respostas = dataBase.GetAnswer(myID, commentID);
             
             return View("answers", respostas);
         }
@@ -175,8 +176,9 @@ namespace BancoDeDados.Controllers
     
         public IActionResult GetFriends(string userID)
         {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
             if(string.IsNullOrEmpty(userID))
-                userID = HttpContext.User.FindFirst("UserID").Value.ToString();
+                userID = myID;
 
             List<Friends> friends = new List<Friends>();
 
@@ -193,13 +195,12 @@ namespace BancoDeDados.Controllers
 
         [HttpPost]
         public IActionResult ChangePerfil(IFormFile image, string visibility, string cidade, string pass)
-        {
-            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
-            
+        {   
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();     
             if(image != null || !string.IsNullOrEmpty(visibility) || !string.IsNullOrEmpty(cidade))
                 dataBase.ChangePerfil(myID, image, visibility, cidade, pass);
             
-            return RedirectToAction("Index");
+            return RedirectToAction("Logout");
         }
     }
 }

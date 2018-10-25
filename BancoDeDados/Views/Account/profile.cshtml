@@ -62,7 +62,7 @@
                     <input type="submit" value="postar"><br>
                 </form>
             }
-            @if(Model.posts != null && (Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1")) || Model.Status == "10")
+            @if(Model.posts != null && ((Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1")) || Model.Status == "10"))
             {
                 foreach(var item in Model.posts)
                 {

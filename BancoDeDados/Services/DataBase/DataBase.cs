@@ -23,9 +23,11 @@ namespace BancoDeDados.Services.DataBase
             connectionString = configuration.GetConnectionString("DefaultConnection");
         }
         
-        public List<Respostas> GetAnswer(string commentID)
+        public RespostasView GetAnswer(string myID,string commentID)
         {
-            List<Respostas> data = new List<Respostas>();
+            RespostasView answers = new RespostasView();
+            answers.comentarioID = commentID;
+            answers.myID = myID;
 
             using(MySqlConnection connection = new MySqlConnection(connectionString))
             {
@@ -34,31 +36,43 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = $@"SELECT Respostas.UserID, Users.Nome, Users.ImagePath ,Respostas.Texto, Respostas.ComentarioID FROM Respostas
-                    , Users WHERE Respostas.ComentarioID = @commentID && Users.UserID = Respostas.UserID";
+                    command.CommandText = $@"SELECT x.RespostaID, x.UserID, Users.Nome, Users.ImagePath, x.Texto, MuralUsers.UserID as MUserID, 
+                    Publicacao.UserID as PUserID, Comentario.UserID as CUserID, Relacionamento.Status FROM MuralUsers, Users, Publicacao, Comentario, 
+                    Respostas as x LEFT JOIN Relacionamento ON (Relacionamento.UserID1 = @myID && Relacionamento.UserID2 = x.UserID)
+                    WHERE Comentario.PublicacaoID = Publicacao.PublicacaoID && Comentario.ComentarioID = @commentID && 
+                    x.ComentarioID = Comentario.ComentarioID && Users.UserID = x.UserID && MuralUsers.PublicacaoID = Publicacao.PublicacaoID;";
+                    
                     command.Parameters.AddWithValue("commentID", commentID);
+                    command.Parameters.AddWithValue("myID", myID);
 
                     MySqlDataReader reader = command.ExecuteReader();
 
                     if(reader.HasRows)
                     {
-                        while(reader.Read())
+                        reader.Read();
+                        answers.MuralUserIDPost = reader.GetString("MUserID");
+                        answers.AuthorIDPost = reader.GetString("PUserID");
+                        answers.AuthorIDCommnet = reader.GetString("CUserID");
+                        
+                        do
                         {
                             Respostas respostas = new Respostas();
+                            
                             respostas.UserID = reader.GetString("UserID");
-                            respostas.UserImage = reader.GetString("ImagePath");
                             respostas.UserName = reader.GetString("Nome");
-                            respostas.ComentarioID = reader.GetString("ComentarioID");
+                            respostas.UserImage = reader.GetString("ImagePath");
                             respostas.Texto = reader.GetString("Texto");
 
-                            data.Add(respostas);
-                        }
+                            answers.respostas.Add(respostas);
+                        }while(reader.Read());
+                        
                         connection.Close();
-                        return data;
+                        return answers;
                     }
                 }
+                answers.respostas = null;
                 connection.Close();
-                return null;
+                return answers;
             }
         }
 

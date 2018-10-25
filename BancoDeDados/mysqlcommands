@@ -35,7 +35,7 @@ CREATE TABLE RelationGU(
 	UserID int NOT NULL,
 	Staff BOOLEAN DEFAULT 0,
 	PRIMARY KEY (GrupoID, UserID),
-	FOREIGN KEY (GrupoID) REFERENCES Grupo(GrupoID),
+	FOREIGN KEY (GrupoID) REFERENCES Grupo(GrupoID) ON DELETE CASCADE,
 	FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
@@ -52,7 +52,7 @@ CREATE TABLE Comentario(
 	UserID int NOT NULL,
 	PublicacaoID int NOT NULL,
 	Texto varchar(500) NOT NULL,	
-	FOREIGN KEY (PublicacaoID) REFERENCES Publicacao(PublicacaoID),
+	FOREIGN KEY (PublicacaoID) REFERENCES Publicacao(PublicacaoID) ON DELETE CASCADE,
 	FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
@@ -63,7 +63,7 @@ CREATE TABLE Respostas
 	ComentarioID int NOT NULL,
 	Texto varchar(500) NOT NULL,
 	FOREIGN KEY (UserID) REFERENCES Users(UserID),
-	FOREIGN KEY (ComentarioID) REFERENCES Comentario(ComentarioID)
+	FOREIGN KEY (ComentarioID) REFERENCES Comentario(ComentarioID) ON DELETE CASCADE
 	
 );
 
@@ -71,15 +71,15 @@ CREATE TABLE MuralGrupo
 (
 	GrupoID int NOT NULL,
 	PublicacaoID int NOT NULL,
-	FOREIGN KEY (GrupoID) REFERENCES Grupo(GrupoID),
-	FOREIGN KEY (PublicacaoID) REFERENCES Publicacao(PublicacaoID),
+	FOREIGN KEY (GrupoID) REFERENCES Grupo(GrupoID) ON DELETE CASCADE,
+	FOREIGN KEY (PublicacaoID) REFERENCES Publicacao(PublicacaoID) ON DELETE CASCADE,
 );
 
 CREATE TABLE MuralUsers
 (
 	UserID int NOT NULL,
 	PublicacaoID int NOT NULL,
-	FOREIGN KEY (PublicacaoID) REFERENCES Publicacao(PublicacaoID),
+	FOREIGN KEY (PublicacaoID) REFERENCES Publicacao(PublicacaoID) DATELE ON CASCADE,
 	FOREIGN KEY (UserID) REFERENCES Users(UserID),
 	
 );

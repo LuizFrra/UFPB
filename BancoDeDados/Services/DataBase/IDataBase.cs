@@ -16,7 +16,7 @@ namespace BancoDeDados.Services.DataBase
         List<Posts> GetPostsFriends(string myID);
         List<Comentarios> GetComments(string postID);
         bool DoComment(string userID, string postID, string text);
-        List<Respostas> GetAnswer(string commentID);
+        RespostasView GetAnswer(string myID, string commentID);
         bool DoAnswer(string userID, string commentID, string texto);
         bool SendFriend(string myID, string userID);
         bool CancelFriendRequest(string myID, string userID);
