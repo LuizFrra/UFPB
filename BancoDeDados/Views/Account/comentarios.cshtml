@@ -20,7 +20,7 @@
             {
                 foreach(var item in Model.comentarios)
                 {
-                    if(item.Status != "4" || item.Status != "6")
+                    if(@item.Status != "4" && @item.Status != "6")
                     {
                         <div>
                             <a asp-action="Profile" asp-controller="Account" asp-route-id="@item.UserID">

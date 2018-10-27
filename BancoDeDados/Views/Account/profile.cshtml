@@ -10,86 +10,89 @@
     <body>
         <a href="javascript: history.go(-1)">Voltar Anterior</a>
         <p><a asp-controller="Account" asp-action="Index">Voltar para o Incio</a></p>
-        @if(Model.Status == "4")
+        @if(Model.Status == "4" || Model.Status == "6")
         {
             <h1>Este Usuário Não Existe</h1>
         }
-        else if(Model.Status == null)
+        else
         {
-            <a asp-action="SendFriend" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Enviar Amizade</a>
-            <a>Bloquear Usuário</a><br><br>
-        }
-        else if(Model.Status == "1")
-        {
-            <a asp-action="CancelFriendRequest" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Cancelar Pedido de Amizade</a>
-            <a>Bloquear Usuário</a><br><br>
-        }
-        else if(Model.Status == "2")
-        {
-            <a asp-controller="Account" asp-action="AcceptFriendRequest" asp-route-userID="@Model.MuralUserID">Aceitar Pedido de Amizade</a>
-            <a>Bloquear Usuário</a><br><br>
-        }
-        else if(Model.Status == "3")
-        {
-            <a asp-controller="Account" asp-action="UndoFriend" asp-route-userID="@Model.MuralUserID">Desfazer Amizade</a>
-            <a>Bloquear Usuário</a><br><br>
-        }
-            <img src='@Url.Content(@Model.MuralUserImagePath)' style="width:30px; height:30px;"><br>
-            
-            <h1>
-                    @Model.MuralUserName
-            </h1>
-            
-            @Model.MuralUserCity 
-            <br>
-
-            @if(Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1") || Model.Status == "10")
+            if(Model.Status == null)
             {
-                if(Model.Status == "10")
-                {
-                    <a asp-action="GetFriends" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Meus Amigos</a>
-                }
-                else
-                {
-                    <a asp-action="GetFriends" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Amigos</a>
-                    <a>Amigos em Comum</a>
-
-                }
-                <form asp-action="DoPost" enctype="multipart/form-data">
-                    <textarea name="post" placeholder="O Que voce está sentido hoje ?" maxlength="500"></textarea><br>
-                    <input type="file" name="image"> 
-                    <input type="hidden" name="userID" value="@Model.MuralUserID">
-                    <input type="submit" value="postar"><br>
-                </form>
+                <a asp-action="SendFriend" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Enviar Amizade</a>
+                <a asp-action="BlockUser" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Bloquear Usuário</a><br><br>
             }
-            @if(Model.posts != null && ((Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1")) || Model.Status == "10"))
+            else if(Model.Status == "1")
             {
-                foreach(var item in Model.posts)
-                {       
-                    if(item.Status != "4" || item.Status != "6")
-                    {
-                        <h1>
-                            <a asp-action="Profile" asp-route-id="@item.UserID">
-                                @item.UserName <img src="@Url.Content(@item.UserImage)" style="width:30px; height:30px;">
-                            </a>
-                        </h1>
-                        if(!string.IsNullOrEmpty(@item.Texto))
-                        {
-                            @item.Texto
-                        }
+                <a asp-action="CancelFriendRequest" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Cancelar Pedido de Amizade</a>
+                <a asp-action="BlockUser" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Bloquear Usuário</a><br><br>
+            }
+            else if(Model.Status == "2")
+            {
+                <a asp-controller="Account" asp-action="AcceptFriendRequest" asp-route-userID="@Model.MuralUserID">Aceitar Pedido de Amizade</a>
+                <a asp-action="BlockUser" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Bloquear Usuário</a><br><br>
+            }
+            else if(Model.Status == "3")
+            {
+                <a asp-controller="Account" asp-action="UndoFriend" asp-route-userID="@Model.MuralUserID">Desfazer Amizade</a>
+                <a asp-action="BlockUser" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Bloquear Usuário</a><br><br>
+            }
+                <img src='@Url.Content(@Model.MuralUserImagePath)' style="width:30px; height:30px;"><br>
+                
+                <h1>
+                        @Model.MuralUserName
+                </h1>
+                
+                @Model.MuralUserCity 
+                <br>
 
-                        if(!string.IsNullOrEmpty(@item.ImagePath))
+                @if(Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1") || Model.Status == "10")
+                {
+                    if(Model.Status == "10")
+                    {
+                        <a asp-action="GetFriends" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Meus Amigos</a>
+                    }
+                    else
+                    {
+                        <a asp-action="GetFriends" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Amigos</a>
+                        <a>Amigos em Comum</a>
+
+                    }
+                    <form asp-action="DoPost" enctype="multipart/form-data">
+                        <textarea name="post" placeholder="O Que voce está sentido hoje ?" maxlength="500"></textarea><br>
+                        <input type="file" name="image"> 
+                        <input type="hidden" name="userID" value="@Model.MuralUserID">
+                        <input type="submit" value="postar"><br>
+                    </form>
+                }
+                @if(Model.posts != null && ((Model.Visibility == "0" || (Model.Status == "3" && Model.Visibility == "1")) || Model.Status == "10"))
+                {
+                    foreach(var item in Model.posts)
+                    {       
+                        if(item.Status != "4" && item.Status != "6")
                         {
-                            <img src='@Url.Content(@item.ImagePath)' width="128px" height="128px">
+                            <h1>
+                                <a asp-action="Profile" asp-route-id="@item.UserID">
+                                    @item.UserName <img src="@Url.Content(@item.UserImage)" style="width:30px; height:30px;">
+                                </a>
+                            </h1>
+                            if(!string.IsNullOrEmpty(@item.Texto))
+                            {
+                                @item.Texto
+                            }
+
+                            if(!string.IsNullOrEmpty(@item.ImagePath))
+                            {
+                                <img src='@Url.Content(@item.ImagePath)' width="128px" height="128px">
+                            }
+                            if(Model.myID == item.UserID || Model.myID == Model.MuralUserID)
+                            {
+                                <a asp-action="DeletePost" asp-controller="Account" asp-route-muralID="@Model.MuralUserID" asp-route-postID="@item.PublicacaoID">Apagar</a>
+                            }
+                            <a type="hidden" asp-action="ViewComments" asp-controller="Account" asp-route-postID="@item.PublicacaoID">Comentarios</a>
                         }
-                        if(Model.myID == item.UserID || Model.myID == Model.MuralUserID)
-                        {
-                            <a asp-action="DeletePost" asp-controller="Account" asp-route-muralID="@Model.MuralUserID" asp-route-postID="@item.PublicacaoID">Apagar</a>
-                        }
-                        <a type="hidden" asp-action="ViewComments" asp-controller="Account" asp-route-postID="@item.PublicacaoID">Comentarios</a>
                     }
                 }
-            }
+        }
         
     </body>
 </html>

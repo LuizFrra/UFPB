@@ -57,7 +57,8 @@ namespace BancoDeDados.Controllers
             
             if(!string.IsNullOrEmpty(name))
             {
-                data = dataBase.SearchForName(name);
+                string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+                data = dataBase.SearchForName(myID, name);
                 return View("searchuser", data);
             }
             
@@ -174,6 +175,7 @@ namespace BancoDeDados.Controllers
             return RedirectToAction("Profile", new RouteValueDictionary(new {Controller = "Account", Action ="Profile", id = userID}));
         }
     
+        [HttpGet]
         public IActionResult GetFriends(string userID)
         {
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
@@ -187,6 +189,30 @@ namespace BancoDeDados.Controllers
             return View("Friends", friends);
         }
     
+        [HttpGet]
+        public IActionResult BlockUser(string userID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.BlockUser(myID, userID);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult UsersBlocks()
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            List<Relation> relations = dataBase.GetBlockUsers(myID);
+            return View("usersblocks", relations);
+        }
+        
+        [HttpGet]
+        public IActionResult UnLockUser(string userID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.UnLockUser(myID, userID);
+            return RedirectToAction("UsersBlocks");
+        }
+
         [HttpGet]
         public IActionResult ChangePerfil()
         {
@@ -203,6 +229,7 @@ namespace BancoDeDados.Controllers
             return RedirectToAction("Logout");
         }
     
+        [HttpGet]
         public IActionResult DeleteAnswer(string commentID, string answersID)
         {
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
@@ -210,6 +237,7 @@ namespace BancoDeDados.Controllers
             return RedirectToAction("ViewAnswers", new RouteValueDictionary(new {Controller = "Account", Action ="ViewAnswers", commentID = commentID}));
         }
     
+        [HttpGet]
         public IActionResult DeleteComment(string postID, string commentID)
         {
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
@@ -217,6 +245,7 @@ namespace BancoDeDados.Controllers
             return RedirectToAction("ViewComments", new RouteValueDictionary(new{Controller = "Account", Action="ViewComments", postID = postID}));
         }
 
+        [HttpGet]
         public IActionResult DeletePost(string muralID, string postID)
         {
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
@@ -226,6 +255,129 @@ namespace BancoDeDados.Controllers
                 return RedirectToAction("Index");
 
             return RedirectToAction("Profile", new RouteValueDictionary(new{Controller = "Account", Action="Profile", id = muralID}));
+        }
+
+        [HttpGet]
+        public IActionResult Group()
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            List<Groups> groups = dataBase.GetGroups(myID);
+            return View("groups", groups);
+        }
+
+        [HttpGet]
+        public IActionResult CreateGroup()
+        {
+            return View("creategroups");
+        }
+
+        [HttpPost]
+        public IActionResult CreateGroup(Groups groups)
+        {
+            if(ModelState.IsValid)
+            {
+                string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+                dataBase.CreateGroup(myID, groups);
+            }
+            return View("group");
+        }
+
+        [HttpGet]
+        public IActionResult JoinGroup(string groupID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            
+            if(!string.IsNullOrEmpty(groupID))
+                dataBase.JoinGroup(myID, groupID);
+            
+            return RedirectToAction("Group");
+        }
+
+        [HttpGet]
+        public IActionResult CancelJoinGroup(string groupID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            
+            if(!string.IsNullOrEmpty(groupID))
+                dataBase.RemoveStatusFromGroup(myID, groupID);
+            
+            return RedirectToAction("Group");
+        }
+
+        [HttpGet]
+        public IActionResult OutGroup(string groupID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            
+            if(!string.IsNullOrEmpty(groupID))
+                dataBase.RemoveStatusFromGroup(myID, groupID);
+
+            return RedirectToAction("Group");
+        }
+
+        [HttpGet]
+        public IActionResult ManageGroup(string groupID)
+        {
+            
+            if(!string.IsNullOrEmpty(groupID))
+            {
+                string myID =  HttpContext.User.FindFirst("UserID").Value.ToString();
+                ManageGroup users = new ManageGroup();
+                users = dataBase.ManageGroup(myID, groupID);
+                return View("managegroup", users);
+            }
+
+            return RedirectToAction("Group");
+        }
+
+        [HttpGet]
+        public IActionResult AcceptUserGroup(string userID, string groupID)
+        {
+            if(!string.IsNullOrEmpty(userID) && !string.IsNullOrEmpty(groupID))
+                dataBase.ManageUserGroup(userID, groupID, 2);
+
+            return RedirectToAction("ManageGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ManageGroup",groupID = groupID}));
+        }
+
+        [HttpGet]
+        public IActionResult BeAdmin(string userID, string groupID)
+        {
+            if(!string.IsNullOrEmpty(userID) && !string.IsNullOrEmpty(groupID))
+                dataBase.ManageUserGroup(userID, groupID, 3);
+
+            return RedirectToAction("ManageGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ManageGroup",groupID = groupID}));   
+        }
+
+        [HttpGet]
+        public IActionResult KickOut(string userID, string groupID)
+        {
+            if(!string.IsNullOrEmpty(userID) && !string.IsNullOrEmpty(groupID))
+                dataBase.RemoveStatusFromGroup(userID, groupID);
+
+            return RedirectToAction("ManageGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ManageGroup",groupID = groupID}));          
+        }
+
+        [HttpGet]
+        public IActionResult BlockUserGroup(string userID, string groupID)
+        {
+            if(!string.IsNullOrEmpty(userID) && !string.IsNullOrEmpty(groupID))
+                dataBase.ManageUserGroup(userID, groupID, 4);
+
+            return RedirectToAction("ManageGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ManageGroup",groupID = groupID}));           
+        }
+
+        [HttpGet]
+        public IActionResult UnblockUserGroup(string userID, string groupID)
+        {         
+            if(!string.IsNullOrEmpty(groupID) && !string.IsNullOrEmpty(userID))
+                dataBase.RemoveStatusFromGroup(userID, groupID);  
+
+            return RedirectToAction("ManageGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ManageGroup",groupID = groupID}));          
+        }
+    
+        public IActionResult ChangeGroup(string groupID)
+        {
+            return RedirectToAction("ManageGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ManageGroup", groupID = groupID}));
         }
     }
 }

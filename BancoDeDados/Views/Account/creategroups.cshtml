@@ -1,0 +1,20 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model BancoDeDados.Models.Groups
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+        <a asp-action="Group" asp-controller="Account">Voltar para Páginica Anterior</a>
+        <a asp-action="Index" asp-controller="Account">Voltar para o Inicio</a>
+        <form asp-controller="Account" asp-action="CreateGroup" enctype="multipart/form-data">
+                <input asp-for="Nome" placeholder="Nome do Grupo" required><br>
+                <input asp-for="Descricao" placeholder="Descrição"><br>
+                Imagem do Grupo : <input type="file" asp-for="Image"><br>
+                <input type="submit" value="Criar">
+        </form>
+
+    </body>
+</html>

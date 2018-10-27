@@ -1,0 +1,53 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model BancoDeDados.Models.ManageGroup;
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+
+        <a asp-action="Group" asp-controller="Account">Voltar para Páginica Anterior</a>
+        <a asp-action="Index" asp-controller="Account">Voltar para o Inicio</a><br>
+        <a>Configurar Grupo</a>
+        @if(Model.Users != null)
+        {
+            <h1>Usuarios : </h1><br>
+
+            foreach(var item in Model.Users)
+            {
+                <a asp-controller="Account" asp-action="Profile" asp-route-id="@item.UserID">
+                    <img src="@Url.Content(@item.ImagePath)" style="width:30px; height:30px;">@item.UserName
+                </a>@item.City
+                if(item.Status == "1")
+                {
+                    <a asp-controller="Account" asp-action="AcceptUserGroup" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Aceitar</a>
+                    <a asp-controller="Account" asp-action="KickOut" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Recusar</a>
+                    <a asp-controller="Account" asp-action="BlockUserGroup" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Bloquear</a> 
+                }
+                if(item.Status == "2")
+                {
+                    <a asp-controller="Account" asp-action="KickOut" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Recusar</a>
+                    <a asp-controller="Account" asp-action="BeAdmin" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Tornar Admin</a>
+                    <a asp-controller="Account" asp-action="BlockUserGroup" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Bloquear</a>
+                }
+                if(item.Status == "3")
+                {
+                    <p>Este Usuário é um ADM</p>
+                }
+                if(item.Status == "4")
+                {
+                    <a asp-controller="Account" asp-action="UnblockUserGroup" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Desbloquear</a>
+                }
+
+
+            }
+        }
+        else
+        {
+            <h1>Sem Usuários para Gerenciar</h1>
+        }
+    </body>
+</html>

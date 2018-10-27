@@ -18,16 +18,18 @@
             {
                 @foreach(var item in Model)
                 {
+                    if(item["Status"] != "4" && item["Status"] != "6" )
+                    {
                     <div>
+                            <img src='@Url.Content(@item["ImagePath"])' style="width:30px; height:30px;">
+                            
+                            <a type="hidden" asp-controller="Account" asp-action="Profile" asp-route-id='@item["UserID"]'>
+                                @item["Nome"]
+                            </a>
 
-                        <img src='@Url.Content(@item["ImagePath"])' style="width:30px; height:30px;">
-                        
-                        <a type="hidden" asp-controller="Account" asp-action="Profile" asp-route-id='@item["UserID"]'>
-                            @item["Nome"]
-                        </a>
-
-                        @item["Cidade"]
-                    </div><br>
+                            @item["Cidade"]
+                        </div><br>
+                    }
                 }
             }
         </div>

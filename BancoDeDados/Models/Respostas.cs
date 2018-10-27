@@ -1,7 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace BancoDeDados
+namespace BancoDeDados.Models
 {
     public class Respostas
     {

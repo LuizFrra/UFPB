@@ -10,7 +10,7 @@ namespace BancoDeDados.Services.DataBase
         bool VerifyExistEmail(string email);
         bool AuthenticationLogin(HttpContext context, Login data);
         Dictionary<string,string> VerifyAuth(string email, string password);
-        List<Dictionary<string, string>> SearchForName(string userName);
+        List<Dictionary<string, string>> SearchForName(string myID, string userName);
         Relation SearchUserByID(string myID, string userID);
         bool DoPost(string myID,string userID, string post, IFormFile image);
         List<Posts> GetPostsFriends(string myID);
@@ -22,12 +22,20 @@ namespace BancoDeDados.Services.DataBase
         bool CancelFriendRequest(string myID, string userID);
         bool AcceptFriendRequest(string myID, string userID);
         bool UndoFriend(string myID, string userID);
+        bool BlockUser(string myID, string userID);
+        List<Relation> GetBlockUsers(string myID);
+        bool UnLockUser(string myID, string userID);
         List<Posts> GetPostsMural(string myID, string userID);
         List<Friends> GetFriends(string userID);
         bool ChangePerfil(string userID, IFormFile image, string visibility, string city, string pass);
         bool DeleteAnswer(string myID, string answerID);
         bool DeleteComment(string myID, string commentID);
         bool DeletePost(string myID, string postID);
-
+        bool CreateGroup(string myID, Groups groups);
+        List<Groups> GetGroups(string myID);
+        bool JoinGroup(string myID, string groupID);
+        bool RemoveStatusFromGroup(string myID, string groupID);
+        ManageGroup ManageGroup(string myID, string groupID);
+        bool ManageUserGroup(string userID, string groupID, int status);
    }
 }

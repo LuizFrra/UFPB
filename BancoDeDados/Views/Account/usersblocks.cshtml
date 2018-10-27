@@ -1,0 +1,21 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<BancoDeDados.Models.Relation>;
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+        <a asp-action="Index" asp-controller="Account">Voltar Para o Inicio</a>
+        <h1>LISTA DE USUÁRIOS BLOQUEADOS : </h1>
+        @if(Model != null)
+        {
+            foreach(var item in Model)
+            {
+                <p>@item.MuralUserName</p><a asp-action="UnLockUser" asp-controller="Account" asp-route-userID="@item.MuralUserID">Desbloquear</a>
+            }
+        }
+    </body>
+</html>

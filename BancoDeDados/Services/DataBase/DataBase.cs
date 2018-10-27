@@ -342,7 +342,7 @@ namespace BancoDeDados.Services.DataBase
             }
         }
 
-        public List<Dictionary<string, string>> SearchForName(string userName)
+        public List<Dictionary<string, string>> SearchForName(string myID, string userName)
         {
             List<Dictionary<string,string>> listaData = new List<Dictionary<string,string>>();
 
@@ -354,7 +354,9 @@ namespace BancoDeDados.Services.DataBase
                 {
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = connection;
-                    command.CommandText = "SELECT UserID, Nome, City, ImagePath FROM Users WHERE Nome LIKE @userName";
+                    command.CommandText = $@"SELECT u.UserID, u.Nome, u.City, u.ImagePath, r.Status FROM Users as u LEFT JOIN 
+                    Relacionamento as r ON (r.UserID1 = @myID && r.UserID2 = u.UserID) WHERE Nome LIKE @username && UserID != @myID";
+                    command.Parameters.AddWithValue("myID", myID);
                     command.Parameters.AddWithValue("userName", userName + "%");
 
                     MySqlDataReader reader = command.ExecuteReader();
@@ -368,6 +370,11 @@ namespace BancoDeDados.Services.DataBase
                             data.Add("UserID", reader.GetString("UserID"));
                             data.Add("Nome", reader.GetString("Nome"));
                             data.Add("ImagePath", reader.GetString("ImagePath"));
+                            
+                            if(reader.IsDBNull(4))
+                                data.Add("Status", null);
+                            else
+                                data.Add("Status", reader.GetString("Status"));
 
                             if(reader.IsDBNull(2))
                                 data.Add("Cidade", "A Definir");
@@ -601,6 +608,104 @@ namespace BancoDeDados.Services.DataBase
                     command.Parameters.AddWithValue("userID", userID);
                     command.Parameters.AddWithValue("myID", myID);
 
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 2)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
+        public bool BlockUser(string myID, string userID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"DELETE Publicacao FROM Publicacao INNER JOIN MuralUsers ON 
+                    (MuralUsers.PublicacaoID = Publicacao.PublicacaoID) WHERE (Publicacao.UserID = @myID AND MuralUsers.UserID = @userID) || 
+                    (Publicacao.UserID = @userID AND MuralUsers.UserID = @myID)";
+                    command.Parameters.AddWithValue("userID", userID);
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = $@"DELETE FROM Relacionamento WHERE (UserID1 = @myID && UserID2 = @userID) || (UserID1 = @userID && UserID2 = @myID)";
+                    command.ExecuteNonQuery();
+                    command.CommandText = $@"INSERT INTO Relacionamento VALUES (@myID, @UserID, 4), (@userID, @myID, 6)";
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 2)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+        
+        public List<Relation> GetBlockUsers(string myID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@" SELECT u.Nome, u.UserID FROM Users as u INNER JOIN Relacionamento as r ON 
+                    (r.UserID1 = @myID &&  r.UserID2 = u.UserID && r.Status = 4)";  
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        List<Relation> relations = new List<Relation>();
+                        while(reader.Read())
+                        {
+                            Relation relation = new Relation();
+
+                            relation.MuralUserName = reader.GetString("Nome");
+                            relation.MuralUserID = reader.GetString("UserID");
+
+                            relations.Add(relation);
+
+                        }
+
+                        connection.Close();
+                        return relations;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+        }
+
+        public bool UnLockUser(string myID, string userID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"DELETE r FROM Relacionamento as r WHERE (r.UserID1 = @myID && r.UserID2 = @userID && r.Status = 4) || 
+                    (r.UserID1 = @userID && r.UserID2 = @myID && r.Status = 6)";
+                    command.Parameters.AddWithValue("myID", myID);
+                    command.Parameters.AddWithValue("userID", userID);
+                    
                     int nRowsAffected = command.ExecuteNonQuery();
 
                     if(nRowsAffected == 2)
@@ -883,6 +988,252 @@ namespace BancoDeDados.Services.DataBase
                 }
                 connection.Close();
                 return false;
+            }
+        }
+    
+        public bool CreateGroup(string myID, Groups groups)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"INSERT INTO Grupo(Nome, Descricao, Foto) VALUES(@nome, @descricao, @foto); SELECT LAST_INSERT_ID()";
+                    command.Parameters.AddWithValue("nome", groups.Nome);
+
+                    if(string.IsNullOrEmpty(groups.Descricao))
+                        command.Parameters.AddWithValue("descricao", "Sem Descrição");
+                    else
+                        command.Parameters.AddWithValue("descricao", groups.Descricao);
+                    
+                    if(groups.Image == null)
+                        command.Parameters.AddWithValue("foto", "~/images/grupo.png");
+                    else
+                    {
+                        string fileName = DateTime.Now.ToString("yyyymmddMMsss") + "_" + myID + Path.GetExtension(groups.Image.FileName);
+                        FileStream stream = new FileStream("wwwroot/images/" + fileName, FileMode.Create);
+                        groups.Image.CopyTo(stream);
+                        command.Parameters.AddWithValue("foto", "~/images/" + fileName);
+                    }
+
+                    UInt64 grupoID = (UInt64)(command.ExecuteScalar());
+
+                    if(grupoID > 0)
+                    {
+                        command.CommandText = $@"INSERT INTO RelacionamentoGU(GrupoID, UserID, Status) VALUES (@grupoID, @myID, 3);
+                        INSERT INTO GrupoAdmin(GrupoID, UserID) VALUES (@grupoID, @myID)";
+                        command.Parameters.AddWithValue("myID", myID);
+                        command.Parameters.AddWithValue("grupoID", grupoID);
+                        
+                        int nRowsAffected = command.ExecuteNonQuery();
+                        
+                        if(nRowsAffected == 2)
+                        {
+                            connection.Close();
+                            return true;
+                        }
+                    }
+                    
+                }
+                connection.Close();
+                return false;
+            }
+        }
+    
+        public List<Groups> GetGroups(string myID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(ConnectionState.Open == connection.State)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@" SELECT g.GrupoID, g.Nome, g.Descricao, g.Foto, relg.Status as RelGrupo FROM Grupo as g LEFT JOIN 
+                    RelacionamentoGU as relg ON (relg.UserID = @myID && relg.GrupoID = g.GrupoID)";
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        List<Groups> groups = new List<Groups>();
+                        while(reader.Read())
+                        {
+                            Groups group =  new Groups();
+
+                            if(reader.IsDBNull(4) || (reader.GetString("RelGrupo") != "4" && reader.GetString("RelGrupo") != "6"))
+                            {
+                                group.groupID = reader.GetString("GrupoID");
+                                group.Nome = reader.GetString("Nome");
+                                group.Descricao = reader.GetString("Descricao");
+                                group.ImagePath = reader.GetString("Foto");
+                                
+                                if(reader.IsDBNull(4))
+                                    group.Status = "0";
+                                else
+                                    group.Status = reader.GetString("RelGrupo");
+                            }
+                            groups.Add(group);  
+                        }
+                        connection.Close();
+                        return groups;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+        }
+
+        public bool JoinGroup(string myID, string groupID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Visibilidade FROM Grupo WHERE GrupoID = @groupID LIMIT 1";
+                    command.Parameters.AddWithValue("groupID", groupID);
+                    
+                    MySqlDataReader reader = command.ExecuteReader();
+                    string visibilidade = "";
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+                        visibilidade = reader.GetString("Visibilidade");
+                    }
+                    
+                    if(visibilidade == "0")
+                        command.CommandText = $@"INSERT INTO RelacionamentoGU(GrupoID, UserID, Status) VALUES (@groupID, @myID, 2)";
+                    else
+                        command.CommandText = $@"INSERT INTO RelacionamentoGU(GrupoID, UserID, Status) VALUES (@groupID, @myID, 1)";
+                    
+                    command.Parameters.AddWithValue("myID", myID);
+                    reader.Close();
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 1)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }   
+        }
+
+        public bool RemoveStatusFromGroup(string myID, string groupID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"DELETE RelacionamentoGU FROM RelacionamentoGU WHERE GrupoID = @groupID && UserID = @myID";
+                    command.Parameters.AddWithValue("myID", myID);
+                    command.Parameters.AddWithValue("groupID", groupID);
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 1)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
+        public ManageGroup ManageGroup(string myID, string groupID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                ManageGroup users = new ManageGroup();
+                users.groupID = groupID;
+                connection.Open();
+
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT rgu.UserID FROM RelacionamentoGU as rgu WHERE rgu.UserID = @myID AND rgu.GrupoID = @groupID 
+                                            AND rgu.Status = 3";
+                    command.Parameters.AddWithValue("myID", myID);
+                    command.Parameters.AddWithValue("groupID", groupID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+                    
+                    if(reader.HasRows)
+                    {
+                        reader.Close();
+                        command.CommandText = $@"SELECT rgu.Status, rgu.UserID, u.Nome, u.ImagePath, u.City FROM RelacionamentoGU as rgu 
+                        LEFT JOIN Users as u ON (u.UserID = rgu.UserID) WHERE rgu.GrupoID = @groupID && rgu.UserID != @myID";
+
+                        reader = command.ExecuteReader();
+
+                        if(reader.HasRows)
+                        {
+                            while(reader.Read())
+                            {
+                                UsersGroups user = new UsersGroups();
+                                user.UserID = reader.GetString("UserID");
+                                user.UserName = reader.GetString("Nome");
+                                user.ImagePath = reader.GetString("ImagePath");
+                                user.Status = reader.GetString("Status");
+
+                                if(reader.IsDBNull(4))
+                                    user.City = "A Definir";
+                                else
+                                    user.City = reader.GetString("City");
+                                
+                                users.Users.Add(user);
+                            }
+                            connection.Close();
+                            return users;
+                        }
+                    }
+                }
+                users.Users = null;
+                connection.Close();
+                return users;
+            }
+        }
+
+        public bool ManageUserGroup(string userID, string groupID, int status)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"UPDATE  RelacionamentoGU SET Status = @status WHERE GrupoID = @groupID AND UserID = @UserID";
+                    command.Parameters.AddWithValue("UserID", userID);
+                    command.Parameters.AddWithValue("groupID", groupID);
+                    command.Parameters.AddWithValue("status", status);
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 1)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+            return false;
             }
         }
     }

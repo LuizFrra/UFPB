@@ -14,7 +14,7 @@
         <div>
             <a asp-action="SearchUser">Buscar pessoas</a>
             <a type="hidden" asp-controller="Account" asp-action="Profile" asp-route-id='@Model.UserLoggedID'>Perfil</a>
-            <a>grupos</a>
+            <a asp-action="Group" asp-controller="Account">grupos</a>
             <a asp-action="ChangePerfil" asp-controller="Account" >configurações</a>
             <a asp-action="Logout" asp-controller="Account">Sair</a>
         </div>

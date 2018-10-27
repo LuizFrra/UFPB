@@ -30,14 +30,30 @@ CREATE TABLE Grupo(
 	Foto varchar(1024)
 );
 
-CREATE TABLE RelationGU(
+CREATE TABLE GrupoAdmin(
 	GrupoID int NOT NULL,
 	UserID int NOT NULL,
-	Staff BOOLEAN DEFAULT 0,
+	FOREIGN KEY (GrupoID) REFERENCES Grupo(GrupoID) ON DELETE CASCADE,
+	FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+CREATE TABLE RelacionamentoGU(
+	GrupoID int NOT NULL,
+	UserID int NOT NULL,
+	Status int NOT NULL DEFAULT 1,
 	PRIMARY KEY (GrupoID, UserID),
 	FOREIGN KEY (GrupoID) REFERENCES Grupo(GrupoID) ON DELETE CASCADE,
 	FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
+PEGAR OS GRUPOS DISPONIVEIS + SITUACAO DO USUARIO COM ESTE GRUPOS
+VAI NA TABELA DE GRUPO, PEGA O ID DO CRIADOR, CHECA SE ESTÁ BLOQUEADO E DEFINE O STATUS, PEGA O ID DO GRUPO VAI NA RELACAO E DEFINE A SITUACAO NO GRUPO
+
+SELECT g.Nome, g.Descricao, g.Foto, MAX(r.Status) as RelationADMIN FROM Grupo as g, RelationGU as rg LEFT JOIN Relacionamento as r ON ( r.UserID1 = 3 AND r.UserID2 = rg.UserID ) WHERE rg.Staff = 1 AND g.GrupoID = rg.GrupoID GROUP BY g.GrupoID;
+
+PEGAR O STATUS DO USUARIO COM O GRUPO AGORA :
+
+SELECT g.GrupoID, g.Nome, g.Descricao, g.Foto, rg.Status as UserStatus, MAX(r.Status) as RelationADMIN FROM Grupo as g LEFT JOIN RelationGU as rg ON (rg.UserID = 3 && rg.GrupoID = g.GrupoID) LEFT JOIN Relacionamento as r ON (r.UserID1 = 3 AND r.UserID2 = rg.UserID AND rg.Staff = 1) GROUP BY g.GrupoID;
+
 
 CREATE TABLE Publicacao(
 	PublicacaoID int PRIMARY KEY AUTO_INCREMENT,
