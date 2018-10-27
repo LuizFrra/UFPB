@@ -18,5 +18,6 @@ namespace BancoDeDados.Models
         public string Visibility { get; set; }
 
         public string Status { get; set; }
+
     }
 }

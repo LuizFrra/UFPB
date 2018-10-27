@@ -374,10 +374,19 @@ namespace BancoDeDados.Controllers
 
             return RedirectToAction("ManageGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ManageGroup",groupID = groupID}));          
         }
-    
+
+        [HttpGet]
         public IActionResult ChangeGroup(string groupID)
         {
-            return RedirectToAction("ManageGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ManageGroup", groupID = groupID}));
+            return View("changegroup", groupID);
+        }
+
+        [HttpPost]
+        public IActionResult ChangeGroup(Groups group)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.ChangeGroup(myID, group);
+            return RedirectToAction("ChangeGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ChangeGroup", groupID = group.groupID}));
         }
     }
 }

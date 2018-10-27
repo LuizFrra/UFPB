@@ -37,5 +37,6 @@ namespace BancoDeDados.Services.DataBase
         bool RemoveStatusFromGroup(string myID, string groupID);
         ManageGroup ManageGroup(string myID, string groupID);
         bool ManageUserGroup(string userID, string groupID, int status);
+        bool ChangeGroup(string myID, Groups group);
    }
 }

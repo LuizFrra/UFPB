@@ -1236,5 +1236,64 @@ namespace BancoDeDados.Services.DataBase
             return false;
             }
         }
+
+        public bool ChangeGroup(string myID, Groups group)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT rgu.UserID FROM RelacionamentoGU as rgu WHERE rgu.UserID = @myID && rgu.GrupoID = @grupoID && Status = 3 LIMIT 1";
+                    command.Parameters.AddWithValue("myID", myID);
+                    command.Parameters.AddWithValue("grupoID", group.groupID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Close();
+                        command.CommandText = $@"UPDATE Grupo SET Visibilidade = @visibilidade";
+                        command.Parameters.AddWithValue("visibilidade", group.Visibility);
+                        
+                        if(!string.IsNullOrEmpty(group.Descricao))
+                        {
+                            command.CommandText += ", Descricao = @descricao";
+                            command.Parameters.AddWithValue("descricao", group.Descricao);
+                        }
+
+                        if(!string.IsNullOrEmpty(group.Nome))
+                        {
+                            command.CommandText += ", Nome = @nome";
+                            command.Parameters.AddWithValue("nome", group.Nome);
+                        }
+
+                        if(group.Image != null)
+                        {
+                            string fileName = DateTime.Now.ToString("yyyymmddMMsss") + "_" + myID + Path.GetExtension(group.Image.FileName);
+                            FileStream stream = new FileStream("wwwroot/images/" + fileName, FileMode.Create);
+                            group.Image.CopyTo(stream);
+                            command.CommandText += ", Foto = @foto";
+                            command.Parameters.AddWithValue("foto", "~/images/" + fileName);      
+                        }
+                        
+                        command.CommandText += " WHERE GrupoID = @grupoID";
+
+                        int nRowsAffected = command.ExecuteNonQuery();
+
+                        if(nRowsAffected == 1)
+                        {
+                            connection.Close();
+                            return false;
+                        }
+
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
     }
 }

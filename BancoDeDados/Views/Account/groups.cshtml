@@ -18,7 +18,7 @@
             {
                 if(item.Status != "4" && item.Status != "6")
                 {
-                    <img src="@Url.Content(@item.ImagePath)"> @item.Nome
+                    <img src="@Url.Content(@item.ImagePath)" style="width:30px; height:30px;"> @item.Nome
                     <p>Descrição : @item.Descricao</p>
                     if(item.Status == "0")
                     {

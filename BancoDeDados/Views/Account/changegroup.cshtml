@@ -1,0 +1,22 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<body>
+    <head>
+
+    </head>
+    <body>
+        <a asp-controller="Account" asp-action="ManageGroup" asp-route-groupID="@Model">Voltar para o Gerenciador</a><br>
+        <a asp-controller="Account" asp-action="Index">Voltar para o incio</a><br>
+        <form enctype="multipart/form-data" asp-action="ChangeGroup" method="POST">
+            <input name="Nome" placeholder="Nome"><br>
+            <input name="Descricao" placeholder="Descrição"><br>
+            <input type="hidden" value="@Model" name="groupID">
+            <select name="Visibility">
+                <option value="0">Publico</option>
+                <option value="1">Privado</option>
+            </select><br>
+            Imagem do Grupo : <input type="file" name="Image"><br>
+            <input type="submit" value="Mudar">
+        </form>
+    </body>
+</body>

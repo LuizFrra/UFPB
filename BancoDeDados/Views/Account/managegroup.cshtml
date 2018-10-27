@@ -11,7 +11,7 @@
 
         <a asp-action="Group" asp-controller="Account">Voltar para Páginica Anterior</a>
         <a asp-action="Index" asp-controller="Account">Voltar para o Inicio</a><br>
-        <a>Configurar Grupo</a>
+        <a asp-action="ChangeGroup" asp-controller="Account" asp-route-groupID="@Model.groupID">Configurar Grupo</a>
         @if(Model.Users != null)
         {
             <h1>Usuarios : </h1><br>
@@ -29,7 +29,7 @@
                 }
                 if(item.Status == "2")
                 {
-                    <a asp-controller="Account" asp-action="KickOut" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Recusar</a>
+                    <a asp-controller="Account" asp-action="KickOut" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Expulsar</a>
                     <a asp-controller="Account" asp-action="BeAdmin" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Tornar Admin</a>
                     <a asp-controller="Account" asp-action="BlockUserGroup" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Bloquear</a>
                 }
