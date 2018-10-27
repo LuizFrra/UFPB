@@ -23,6 +23,7 @@ namespace BancoDeDados.Services.DataBase
             connectionString = configuration.GetConnectionString("DefaultConnection");
         }
         
+        #region Função utilizada para pegar as respostas de um comentario
         public RespostasView GetAnswer(string myID,string commentID)
         {
             RespostasView answers = new RespostasView();
@@ -81,7 +82,9 @@ namespace BancoDeDados.Services.DataBase
                 return answers;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para responder um comentário
         public bool DoAnswer(string userID, string commentID, string texto)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -108,7 +111,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para pegar os comentário em um post
         public CommentsView GetComments(string myID, string postID)
         {
             CommentsView comments = new CommentsView();
@@ -165,7 +170,9 @@ namespace BancoDeDados.Services.DataBase
                 return comments;
             }
         }
-
+        #endregion 
+        
+        #region Função utilizada para realizar um comentário
         public bool DoComment(string userID, string postID, string text)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -192,7 +199,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para pegar os posts de amigo e exibir na pagina inicial
         public List<Posts> GetPostsFriends(string myID)
         {
             List<Posts> posts = new List<Posts>();
@@ -246,7 +255,9 @@ namespace BancoDeDados.Services.DataBase
             }
 
         }
-
+        #endregion
+        
+        #region Função utilizada para realizar um Post
         public bool DoPost(string myID, string userID,string post, IFormFile image)
         {
 
@@ -295,7 +306,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para buscar um usuário por ID
         public Relation SearchUserByID(string myID, string userID)
         {
             Relation data = new Relation();
@@ -341,7 +354,9 @@ namespace BancoDeDados.Services.DataBase
                 return null;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para buscar um usuário pelo Nome %
         public List<Dictionary<string, string>> SearchForName(string myID, string userName)
         {
             List<Dictionary<string,string>> listaData = new List<Dictionary<string,string>>();
@@ -393,7 +408,9 @@ namespace BancoDeDados.Services.DataBase
                 return null;
             }           
         }
-
+        #endregion
+        
+        #region Função utilizada para criar uma sessão de login
         public bool AuthenticationLogin(HttpContext context, Login data)
         {
             var user = VerifyAuth(data.Email, data.Password);
@@ -416,7 +433,9 @@ namespace BancoDeDados.Services.DataBase
             }
             return false;
         }
-
+        #endregion
+        
+        #region Função utilizada para validar os dados de login
         public Dictionary<string,string> VerifyAuth(string email, string password)
         {
             
@@ -453,7 +472,9 @@ namespace BancoDeDados.Services.DataBase
             }
             
         }
-
+        #endregion
+        
+        #region Função utilizada para registrar um usuário
         public bool Register(Users user)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -484,7 +505,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para verificar se um email já existe
         public bool VerifyExistEmail(string email)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -513,7 +536,9 @@ namespace BancoDeDados.Services.DataBase
 
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para o envio de amizades
         public bool SendFriend(string myID, string userID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -539,7 +564,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para cancelar o envio de uma amizade
         public bool CancelFriendRequest(string myID, string userID)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -566,7 +593,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
+        #endregion
 
+        #region Função utilizada para aceitar a solicitação de amizade
         public bool AcceptFriendRequest(string myID, string userID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -593,7 +622,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-
+        #endregion
+        
+        #region Função Utilizada para desfazer uma Amizade
         public bool UndoFriend(string myID, string userID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -620,7 +651,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
+        #endregion
 
+        #region Função utilizada para bloquear um usuário
         public bool BlockUser(string myID, string userID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -653,7 +686,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-        
+        #endregion
+
+        #region Função utilizada para pegar os usuário que um determinado usuário bloqueou
         public List<Relation> GetBlockUsers(string myID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -691,7 +726,9 @@ namespace BancoDeDados.Services.DataBase
                 return null;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para realizar desbloqueio de usuário
         public bool UnLockUser(string myID, string userID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -718,7 +755,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para pegar os amigos de um usuário
         public List<Friends> GetFriends(string userID)
         {
             List<Friends> friends = new List<Friends>();
@@ -758,7 +797,9 @@ namespace BancoDeDados.Services.DataBase
                 return null;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para pegar os posts de um mural
         public List<Posts> GetPostsMural(string myID, string userID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -817,7 +858,9 @@ namespace BancoDeDados.Services.DataBase
             }
             
         }
-        
+        #endregion
+
+        #region Função utilizada para fazer alterações no perfil
         public bool ChangePerfil(string userID, IFormFile image, string visibility, string city, string pass)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -869,7 +912,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
+        #endregion
 
+        #region Função utilizada para deletar uma resposta
         public bool DeleteAnswer(string myID, string answerID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -911,7 +956,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
+        #endregion
 
+        #region Função utilizada para deletar um Comentário
         public bool DeleteComment(string myID, string commentID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -952,7 +999,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
+        #endregion
 
+        #region Função utilizada para deletar um Post
         public bool DeletePost(string myID, string postID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -990,7 +1039,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-    
+        #endregion
+
+        #region Função utilizada na Criação de um Grupo
         public bool CreateGroup(string myID, Groups groups)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -1041,7 +1092,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-    
+        #endregion
+        
+        #region Função para pegar os grupos e Listar
         public List<Groups> GetGroups(string myID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -1086,7 +1139,9 @@ namespace BancoDeDados.Services.DataBase
                 return null;
             }
         }
-
+        #endregion
+        
+        #region Função para se juntar a um grupo
         public bool JoinGroup(string myID, string groupID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -1128,7 +1183,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }   
         }
-
+        #endregion
+        
+        #region Função usada para remover usuario da tabela : Remover do Grupo, Excluir, recusar solicitação ...
         public bool RemoveStatusFromGroup(string myID, string groupID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -1154,7 +1211,9 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para gerenciamento do grupo, retorno de usuários, posts etc...
         public ManageGroup ManageGroup(string myID, string groupID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -1209,7 +1268,9 @@ namespace BancoDeDados.Services.DataBase
                 return users;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para alterar o Status do usuário na tabela
         public bool ManageUserGroup(string userID, string groupID, int status)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -1236,7 +1297,9 @@ namespace BancoDeDados.Services.DataBase
             return false;
             }
         }
-
+        #endregion
+        
+        #region Função utilizada para fazer alterações na configuração de um grupo
         public bool ChangeGroup(string myID, Groups group)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -1295,5 +1358,6 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
+        #endregion
     }
 }
