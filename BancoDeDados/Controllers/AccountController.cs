@@ -271,6 +271,14 @@ namespace BancoDeDados.Controllers
             return View("creategroups");
         }
 
+        [HttpGet]
+        public IActionResult DeleteGroup(string grupoID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.DeleteGroup(myID, grupoID);
+            return RedirectToAction("Group");
+        }
+
         [HttpPost]
         public IActionResult CreateGroup(Groups groups)
         {
@@ -279,7 +287,7 @@ namespace BancoDeDados.Controllers
                 string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
                 dataBase.CreateGroup(myID, groups);
             }
-            return View("group");
+            return RedirectToAction("Group");
         }
 
         [HttpGet]
@@ -387,6 +395,14 @@ namespace BancoDeDados.Controllers
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
             dataBase.ChangeGroup(myID, group);
             return RedirectToAction("ChangeGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ChangeGroup", groupID = group.groupID}));
+        }
+
+        [HttpGet]
+        public IActionResult GetUserGroups(string userID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            List<Groups> groups = dataBase.GetUserGroups(myID, userID);
+            return View("usergroup", groups);
         }
     }
 }

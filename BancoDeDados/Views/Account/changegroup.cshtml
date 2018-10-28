@@ -7,6 +7,7 @@
     <body>
         <a asp-controller="Account" asp-action="ManageGroup" asp-route-groupID="@Model">Voltar para o Gerenciador</a><br>
         <a asp-controller="Account" asp-action="Index">Voltar para o incio</a><br>
+        <a asp-controller="Account" asp-action="DeleteGroup" asp-route-grupoID="@Model">Deletar Grupo</a>
         <form enctype="multipart/form-data" asp-action="ChangeGroup" method="POST">
             <input name="Nome" placeholder="Nome"><br>
             <input name="Descricao" placeholder="Descrição"><br>

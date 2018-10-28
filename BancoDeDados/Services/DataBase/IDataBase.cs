@@ -38,5 +38,7 @@ namespace BancoDeDados.Services.DataBase
         ManageGroup ManageGroup(string myID, string groupID);
         bool ManageUserGroup(string userID, string groupID, int status);
         bool ChangeGroup(string myID, Groups group);
+        bool DeleteGroup(string userID, string groupID);
+        List<Groups> GetUserGroups(string myID, string userID);
    }
 }

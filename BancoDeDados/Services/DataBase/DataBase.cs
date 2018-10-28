@@ -1185,7 +1185,7 @@ namespace BancoDeDados.Services.DataBase
         }
         #endregion
         
-        #region Função usada para remover usuario da tabela : Remover do Grupo, Excluir, recusar solicitação ...
+        #region Função utilizada para remover usuario da tabela : Remover do Grupo, Excluir, recusar solicitação ...
         public bool RemoveStatusFromGroup(string myID, string groupID)
         {
             using(MySqlConnection connection = new MySqlConnection(connectionString))
@@ -1352,6 +1352,87 @@ namespace BancoDeDados.Services.DataBase
                             return false;
                         }
 
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+        #endregion
+    
+        #region Função que retorna os grupos em que um usuário está
+        public List<Groups> GetUserGroups(string myID, string userID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                List<Groups> groups = new List<Groups>();
+
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT rgu.GrupoID, g.Nome, g.Descricao, g.Foto, rgu2.Status FROM Grupo as g, RelacionamentoGU as rgu 
+                    JOIN RelacionamentoGU as rgu2 ON (rgu2.UserID = @myID AND rgu.GrupoID = rgu2.GrupoID) WHERE rgu.UserID = @userID AND 
+                    (rgu.Status = 3 || rgu.Status = 2) AND g.GrupoID = rgu.GrupoID";
+                    command.Parameters.AddWithValue("myID", myID);
+                    command.Parameters.AddWithValue("userID", userID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        while(reader.Read())
+                        {
+                            Groups group = new Groups();
+                            group.groupID = reader.GetString("GrupoID");
+                            group.Nome = reader.GetString("Nome");
+                            group.Descricao = reader.GetString("Descricao");
+                            group.ImagePath = reader.GetString("Foto");
+                            
+                            if(!reader.IsDBNull(4))
+                                group.Status = reader.GetString("Status");
+                            else
+                                group.Status = null;
+                            groups.Add(group);
+                        }
+                        connection.Close();
+                        return groups;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+        }
+        #endregion
+
+        #region Função Utilizada para Excluir um grupo
+        public bool DeleteGroup(string userID, string groupID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT UserID FROM RelacionamentoGU WHERE GrupoID = @grupoID AND UserID = @userID AND Status = 3 LIMIT 1";
+                    command.Parameters.AddWithValue("userID", userID);
+                    command.Parameters.AddWithValue("grupoID", groupID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Close();
+                        command.CommandText = "DELETE Grupo FROM Grupo WHERE GrupoID = @grupoID";
+                        int nRowsAffected = command.ExecuteNonQuery();
+
+                        if(nRowsAffected == 1)
+                        {
+                            connection.Close();
+                            return true;
+                        } 
                     }
                 }
                 connection.Close();

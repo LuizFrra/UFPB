@@ -50,12 +50,13 @@
                     if(Model.Status == "10")
                     {
                         <a asp-action="GetFriends" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Meus Amigos</a>
+                        <a asp-action="GetUserGroups" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Meus Grupos</a>
                     }
                     else
                     {
                         <a asp-action="GetFriends" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Amigos</a>
+                        <a asp-action="GetUserGroups" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Grupos</a>
                         <a>Amigos em Comum</a>
-
                     }
                     <form asp-action="DoPost" enctype="multipart/form-data">
                         <textarea name="post" placeholder="O Que voce está sentido hoje ?" maxlength="500"></textarea><br>
