@@ -671,13 +671,17 @@ namespace BancoDeDados.Services.DataBase
                     (Publicacao.UserID = @userID AND MuralUsers.UserID = @myID)";
                     command.Parameters.AddWithValue("userID", userID);
                     command.Parameters.AddWithValue("myID", myID);
-
                     command.ExecuteNonQuery();
 
                     command.CommandText = $@"DELETE FROM Relacionamento WHERE (UserID1 = @myID && UserID2 = @userID) || (UserID1 = @userID && UserID2 = @myID)";
                     command.ExecuteNonQuery();
+                    
                     command.CommandText = $@"INSERT INTO Relacionamento VALUES (@myID, @UserID, 4), (@userID, @myID, 6)";
                     int nRowsAffected = command.ExecuteNonQuery();
+
+                    command.CommandText = $@"DELETE r FROM Respostas as r, Comentario as c WHERE r.ComentarioID = c.ComentarioID AND 
+                                            (C.UserID = @myID || C.UserID = @userID) AND (r.UserID = @myID || r.UserID = @userID)";
+                    command.ExecuteNonQuery();
 
                     if(nRowsAffected == 2)
                     {
