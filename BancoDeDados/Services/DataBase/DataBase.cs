@@ -819,7 +819,7 @@ namespace BancoDeDados.Services.DataBase
                     AND ru2.userID2 = ru.UserID2 AND ru2.Status = 3) WHERE ru2.UserID2 = u.UserID";
                     command.Parameters.AddWithValue("userID", userID);
                     command.Parameters.AddWithValue("myID", myID);
-                    
+
                     MySqlDataReader reader = command.ExecuteReader();
 
                     if(reader.HasRows)
@@ -850,6 +850,51 @@ namespace BancoDeDados.Services.DataBase
 
         #endregion
         
+        #region Função para pegar as solicitações de amizades
+
+        public List<Friends> GetFriendsRequests(string myID)
+        {
+            List<Friends> friends = new List<Friends>();
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(ConnectionState.Open == connection.State)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT u.UserID, u.Nome, u.ImagePath, u.City FROM Users as u, Relacionamento as r WHERE 
+                                            r.UserID1 = @myID AND r.Status = 2 AND u.UserID = r.UserID2";
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        while(reader.Read())
+                        {
+                            Friends data = new Friends();
+                            data.UserID = reader.GetString("UserID");
+                            data.UserName = reader.GetString("Nome");
+                            data.ImagePath = reader.GetString("ImagePath");
+                            
+                            if(reader.IsDBNull(3))
+                                data.City = "A Definir";
+                            else
+                                data.City = reader.GetString("City");
+                            
+                            friends.Add(data);
+                        }
+                        connection.Close();
+                        return friends;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+        }
+
+        #endregion
+
         #region Função utilizada para pegar os posts de um mural
         public List<Posts> GetPostsMural(string myID, string userID)
         {

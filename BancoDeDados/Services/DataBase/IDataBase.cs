@@ -30,6 +30,7 @@ namespace BancoDeDados.Services.DataBase
         List<Posts> GetPostsMural(string myID, string userID);
         List<Friends> GetFriends(string userID);
         List<Friends> GetMutualFriends(string myID, string userID);
+        List<Friends> GetFriendsRequests(string myID);
         bool ChangePerfil(string userID, IFormFile image, string visibility, string city, string pass);
         bool DeleteAnswer(string myID, string answerID);
         bool DeleteComment(string myID, string commentID);

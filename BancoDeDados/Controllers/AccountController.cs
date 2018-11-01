@@ -169,6 +169,14 @@ namespace BancoDeDados.Controllers
         }
 
         [HttpGet]
+        public IActionResult ExpliciteRefuseFR(string userID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.UndoFriend(myID, userID);
+            return RedirectToAction("GetFriendsRequests");
+        }
+
+        [HttpGet]
         public IActionResult UndoFriend(string userID)
         {
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
@@ -200,6 +208,18 @@ namespace BancoDeDados.Controllers
             friends = dataBase.GetMutualFriends(myID, userID);
             
             return View("mutualfriends", friends);  
+        }
+
+        [HttpGet]
+        public IActionResult GetFriendsRequests()
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            List<Friends> friends = new List<Friends>();
+
+            friends = dataBase.GetFriendsRequests(myID);
+            
+            return View("friendsrequests", friends); 
+            
         }
 
         [HttpGet]

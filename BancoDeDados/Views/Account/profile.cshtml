@@ -29,6 +29,7 @@
             else if(Model.Status == "2")
             {
                 <a asp-controller="Account" asp-action="AcceptFriendRequest" asp-route-userID="@Model.MuralUserID">Aceitar Pedido de Amizade</a>
+                <a asp-controller="Account" asp-action="UndoFriend" asp-route-userID="@Model.MuralUserID">Recusar Amizade</a>
                 <a asp-action="BlockUser" asp-controller="Account" asp-route-userID="@Model.MuralUserID">Bloquear Usuário</a><br><br>
             }
             else if(Model.Status == "3")

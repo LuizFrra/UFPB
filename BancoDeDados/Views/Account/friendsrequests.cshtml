@@ -1,0 +1,32 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<BancoDeDados.Models.Friends>;
+
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+        <a href="javascript: history.go(-1)">Voltar Para O perfil</a><br>
+        @if(Model == null)
+        {
+            <p>Sem amigos</p>
+        }
+        else
+        {
+            <h1>Amigos : </h1><br>
+            foreach(var item in Model)
+            {
+                <div>
+                    <img src="@Url.Content(item.ImagePath)" style="width:30px; height:30px;">
+                    <p><a asp-controller="Account" asp-action="Profile" asp-route-id="@item.UserID">@item.UserName</a></p>
+                    <p>@item.City</p>
+                </div>
+                <a asp-controller="Account" asp-action="AcceptFriendRequest" asp-route-userID="@item.UserID">Aceitar Pedido de Amizade</a>
+                <a asp-controller="Account" asp-action="ExpliciteRefuseFR" asp-route-userID="@item.UserID">Recusar Amizade</a><br>
+            }
+        }
+    </body>
+</html>
