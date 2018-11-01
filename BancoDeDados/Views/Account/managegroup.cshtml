@@ -11,7 +11,8 @@
 
         <a asp-action="Group" asp-controller="Account">Voltar para Páginica Anterior</a>
         <a asp-action="Index" asp-controller="Account">Voltar para o Inicio</a><br>
-        <a asp-action="ChangeGroup" asp-controller="Account" asp-route-groupID="@Model.groupID">Configurar Grupo</a>
+        <a asp-action="ChangeGroup" asp-controller="Account" asp-route-groupID="@Model.groupID">Configurar Grupo</a><br><br>
+        <a asp-action="LetBeAdmin" asp-controller="Account" asp-route-groupID="@Model.groupID">Renunciar a Administração</a>
         @if(Model.Users != null)
         {
             <h1>Usuarios : </h1><br>
@@ -42,7 +43,7 @@
                     <a asp-controller="Account" asp-action="UnblockUserGroup" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Desbloquear</a>
                 }
 
-
+                <br>
             }
         }
         else

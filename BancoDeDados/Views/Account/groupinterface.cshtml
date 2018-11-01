@@ -1,0 +1,56 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model BancoDeDados.Models.GroupView
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+        <a asp-action="Group" asp-controller="Account">Voltar para Páginica Anterior</a>
+        <a asp-action="Index" asp-controller="Account">Voltar para o Inicio</a><br>
+        <img src="@Url.Content(@Model.GroupImage)" style="width:80px; height:80px;">
+        <h1>@Model.GroupName</h1>
+        <form asp-action="DoPostGroup" enctype="multipart/form-data">
+                <textarea name="post" placeholder="Compartilhe algo" maxlength="500"></textarea><br>
+                <input type="file" name="image">
+                <input type="hidden" value="@Model.groupID" name="groupID">
+                <input type="submit" value="postar"><br>
+        </form>
+
+        @if(Model.posts != null)
+        {
+            foreach(var item in Model.posts)
+            {
+                if(item.Status != "4" && item.Status != "6")
+                {
+                    <h1>
+                        <a asp-action="Profile" asp-route-id="@item.UserID">
+                            @item.UserName <img src="@Url.Content(@item.UserImage)" style="width:30px; height:30px;">
+                        </a>
+                    </h1>
+                    if(!string.IsNullOrEmpty(@item.Texto))
+                    {
+                        @item.Texto
+                    }
+
+                    if(!string.IsNullOrEmpty(@item.ImagePath))
+                    {
+                        <img src='@Url.Content(@item.ImagePath)' width="128px" height="128px">
+                    }
+
+                    if(Model.myID == item.UserID || Model.staff == "3")
+                    {
+                        <a asp-action="DeletePostGroup" asp-controller="Account" asp-route-groupID="@Model.groupID" asp-route-postID="@item.PublicacaoID">Apagar</a>
+                    }
+                    <a type="hidden" asp-action="ViewComments" asp-controller="Account" asp-route-postID="@item.PublicacaoID">Comentarios</a>    
+                }
+            }
+        }
+        else
+        {
+            <h2>Sem Conteúdo</h2>
+        }
+    </body>
+</html>

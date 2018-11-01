@@ -1,3 +1,4 @@
+#region Using
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ using BancoDeDados.Models;
 using System;
 using System.Linq;
 using System.IO;
+#endregion
 
 namespace BancoDeDados.Services.DataBase
 {
@@ -456,6 +458,7 @@ namespace BancoDeDados.Services.DataBase
                     if(user.HasRows)
                     {   
                         user.Read();
+                        
                         Dictionary<string,string> data = new Dictionary<string,string>();
                         data.Add("UserID", user.GetString(0));
                         data.Add("Nome", user.GetString(1));
@@ -1185,6 +1188,44 @@ namespace BancoDeDados.Services.DataBase
         }
         #endregion
         
+        #region Função Utilizada para abandonar status de admin
+
+        public bool LetBeAdmin(string myID, string groupID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT count(UserID) as NAdmins FROM RelacionamentoGU WHERE GrupoID = @groupID AND Status = 3";
+                    command.Parameters.AddWithValue("groupID", groupID);
+
+                    int result = Convert.ToInt32(command.ExecuteScalar());
+
+                    if(result > 1)
+                    {
+                        command.CommandText = "UPDATE RelacionamentoGU SET Status = 2 WHERE GrupoID = @groupID AND UserID = @myID";
+                        command.Parameters.AddWithValue("myID", myID);
+
+                        int nRowsAffected = command.ExecuteNonQuery();
+                        
+                        if(nRowsAffected == 1)
+                        {
+                            connection.Close();
+                            return true;
+                        }
+                    }
+                    
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
+        #endregion
+
         #region Função utilizada para remover usuario da tabela : Remover do Grupo, Excluir, recusar solicitação ...
         public bool RemoveStatusFromGroup(string myID, string groupID)
         {
@@ -1439,6 +1480,165 @@ namespace BancoDeDados.Services.DataBase
                 return false;
             }
         }
+        #endregion
+
+        #region Função Utilizada para fazer postagem no grupo
+
+        public bool DoPostGroup(string myID, string groupID, string post, IFormFile image)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = "INSERT INTO Publicacao (UserID, Imagem, Texto) VALUES (@myID, @Imagem, @Texto); SELECT LAST_INSERT_ID()";
+                    
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    if(!string.IsNullOrEmpty(post))
+                        command.Parameters.AddWithValue("Texto", post);
+                    
+                    if(image != null)
+                    {
+                        
+                        string fileName = DateTime.Now.ToString("yyyymmddMMsss") + "_" + myID + Path.GetExtension(image.FileName);
+                        FileStream stream = new FileStream("wwwroot/images/" + fileName, FileMode.Create);
+                        image.CopyTo(stream);
+                        command.Parameters.AddWithValue("Imagem", "~/images/" + fileName);
+                    }
+                    
+                    int result = Convert.ToInt32(command.ExecuteScalar());
+                    
+                    if(result > 0)
+                    {
+                        command.CommandText = $@"INSERT INTO MuralGrupo(GrupoID, PublicacaoID) VALUES(@groupID, @postID);";
+                        command.Parameters.AddWithValue("postID", result);
+                        command.Parameters.AddWithValue("groupID", groupID);
+                        int nRowsAffected = command.ExecuteNonQuery();
+
+                        if(nRowsAffected == 1)
+                        {
+                            connection.Close();
+                            return true;
+                        }
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+        #endregion
+    
+        #region Função Utilizada para pegar os conteúdos do grupo
+        
+        public GroupView GetGroupContent(string myID, string groupID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                GroupView content = new GroupView();
+                content.myID = myID;
+                content.groupID = groupID;
+                connection.Open();
+                
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT g.Nome, g.Foto, rgu.Status FROM Grupo as g,RelacionamentoGU as rgu 
+                                            WHERE UserID = @myID AND rgu.GrupoID = @grupoID && g.GrupoID = rgu.GrupoID LIMIT 1";
+                    command.Parameters.AddWithValue("grupoID", groupID);
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+                        content.staff = reader.GetString("Status");
+                        content.GroupName = reader.GetString("Nome");
+                        content.GroupImage = reader.GetString("Foto");
+                        reader.Close();
+
+                        command.CommandText = $@"SELECT  Users.Nome, Users.ImagePath, x.UserID, x.PublicacaoID, x.Imagem, x.Texto, 
+                        Relacionamento.Status FROM Users, MuralGrupo, Publicacao as x LEFT JOIN Relacionamento ON 
+                        (Relacionamento.UserID1 = @myID AND Relacionamento.UserID2 = x.UserID) WHERE MuralGrupo.GrupoID = @grupoID &&  
+                        MuralGrupo.PublicacaoID = x.PublicacaoID AND x.UserID = Users.UserID";
+                        reader = command.ExecuteReader();
+
+                        if(reader.HasRows)
+                        {
+                            while(reader.Read())
+                            {
+                                Posts data = new Posts();
+                                data.UserID = reader.GetString("UserID");
+                                data.UserName = reader.GetString("Nome");
+                                data.UserImage = reader.GetString("ImagePath");
+                                data.PublicacaoID = reader.GetString("PublicacaoID");
+                                
+                                if(!reader.IsDBNull(5))
+                                    data.Texto =  reader.GetString("Texto");
+                                else
+                                    data.Texto = null;
+
+                                if(!reader.IsDBNull(4))
+                                    data.ImagePath = reader.GetString("Imagem");
+                                else
+                                    data.ImagePath = null;
+
+                                if(!reader.IsDBNull(6))
+                                    data.Status = reader.GetString("Status");
+                                else
+                                    data.Status = null;
+
+                                content.posts.Add(data);
+
+                            }
+
+                            reader.Close();
+                            connection.Close();
+                            var sort = from r in content.posts orderby Guid.NewGuid() ascending select r;
+                            content.posts = sort.ToList();
+                            return content;
+                        }
+                    }
+                }
+                content.posts = null;
+                return content;
+            }
+        }
+        
+        #endregion
+
+        #region Função Utilizada para apagar um post
+        
+        public bool DeletePostGroup(string postID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"DELETE FROM Publicacao WHERE Publicacao.PublicacaoID = @postID";
+                    command.Parameters.AddWithValue("postID", postID);
+
+                    int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(nRowsAffected == 1)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
         #endregion
     }
 }

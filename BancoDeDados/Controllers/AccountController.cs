@@ -1,12 +1,13 @@
+#region Using
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Authorization;
 using BancoDeDados.Services.DataBase;
 using System.Collections.Generic;
 using BancoDeDados.Models;
 using Microsoft.AspNetCore.Http;
-using System;
 using Microsoft.AspNetCore.Routing;
+using System;
+#endregion
 
 namespace BancoDeDados.Controllers
 {
@@ -302,6 +303,17 @@ namespace BancoDeDados.Controllers
         }
 
         [HttpGet]
+        public IActionResult LetBeAdmin(string groupID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            
+            if(dataBase.LetBeAdmin(myID, groupID))
+                return RedirectToAction("Group");
+            
+            return RedirectToAction("ManageGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ManageGroup",groupID = groupID}));
+        }
+        
+        [HttpGet]
         public IActionResult CancelJoinGroup(string groupID)
         {
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
@@ -404,5 +416,38 @@ namespace BancoDeDados.Controllers
             List<Groups> groups = dataBase.GetUserGroups(myID, userID);
             return View("usergroup", groups);
         }
+
+        [HttpGet]
+        public IActionResult GroupInterface(string groupID)
+        {
+            if(!string.IsNullOrEmpty(groupID))
+            {
+                string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+                GroupView content = dataBase.GetGroupContent(myID, groupID);
+                return View("groupinterface", content);
+            }
+
+            return RedirectToAction("Group");
+        }
+
+        [HttpPost]
+        public IActionResult DoPostGroup(string groupID, string post, IFormFile image)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            
+            if(!string.IsNullOrEmpty(groupID) && (!string.IsNullOrEmpty(post) || image != null))
+                dataBase.DoPostGroup(myID, groupID, post, image);
+
+            return RedirectToAction("GroupInterface", new RouteValueDictionary(new {Controller = "Account", Action = "GroupInterface", groupID = groupID}));
+        }
+
+        [HttpGet]
+        public IActionResult DeletePostGroup(string groupID, string postID)
+        {
+            dataBase.DeletePostGroup(postID);
+            
+            return RedirectToAction("GroupInterface", new RouteValueDictionary(new {Controller = "Account", Action = "GroupInterface", groupID = groupID}));
+        }
+
     }
 }

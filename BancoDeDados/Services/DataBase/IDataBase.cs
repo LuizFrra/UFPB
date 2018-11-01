@@ -1,6 +1,8 @@
+#region Using
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using BancoDeDados.Models;
+#endregion
 
 namespace BancoDeDados.Services.DataBase
 {
@@ -34,11 +36,15 @@ namespace BancoDeDados.Services.DataBase
         bool CreateGroup(string myID, Groups groups);
         List<Groups> GetGroups(string myID);
         bool JoinGroup(string myID, string groupID);
+        bool LetBeAdmin(string myID, string groupID);
         bool RemoveStatusFromGroup(string myID, string groupID);
         ManageGroup ManageGroup(string myID, string groupID);
         bool ManageUserGroup(string userID, string groupID, int status);
         bool ChangeGroup(string myID, Groups group);
         bool DeleteGroup(string userID, string groupID);
         List<Groups> GetUserGroups(string myID, string userID);
+        bool DoPostGroup(string myID, string groupID, string post, IFormFile image);
+        GroupView GetGroupContent(string myID, string groupID);
+        bool DeletePostGroup(string postID);
    }
 }

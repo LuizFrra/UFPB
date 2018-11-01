@@ -31,10 +31,12 @@
                     if(item.Status == "2")
                     {
                         <a asp-controller="Account" asp-action="OutGroup" asp-route-groupID="@item.groupID">Sair do Grupo</a>
+                        <a asp-controller="Account" asp-action="GroupInterface" asp-route-groupID="@item.groupID">Interagir</a>
                     }
                     if(item.Status == "3")
                     {
                         <a asp-controller="Account" asp-action="ManageGroup" asp-route-groupID="@item.groupID">Gerenciar Grupo</a>
+                        <a asp-controller="Account" asp-action="GroupInterface" asp-route-groupID="@item.groupID">Interagir</a>
                     }
                     <br>
                 }
