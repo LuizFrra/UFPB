@@ -29,12 +29,14 @@ namespace BancoDeDados.Services.DataBase
         bool UnLockUser(string myID, string userID);
         List<Posts> GetPostsMural(string myID, string userID);
         List<Friends> GetFriends(string userID);
+        List<Friends> GetMutualFriends(string myID, string userID);
         bool ChangePerfil(string userID, IFormFile image, string visibility, string city, string pass);
         bool DeleteAnswer(string myID, string answerID);
         bool DeleteComment(string myID, string commentID);
         bool DeletePost(string myID, string postID);
         bool CreateGroup(string myID, Groups groups);
         List<Groups> GetGroups(string myID);
+        List<Groups> GetGroupsByName(string myID, string name);
         bool JoinGroup(string myID, string groupID);
         bool LetBeAdmin(string myID, string groupID);
         bool RemoveStatusFromGroup(string myID, string groupID);
@@ -46,5 +48,6 @@ namespace BancoDeDados.Services.DataBase
         bool DoPostGroup(string myID, string groupID, string post, IFormFile image);
         GroupView GetGroupContent(string myID, string groupID);
         bool DeletePostGroup(string postID);
+
    }
 }

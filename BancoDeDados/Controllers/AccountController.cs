@@ -191,6 +191,18 @@ namespace BancoDeDados.Controllers
         }
     
         [HttpGet]
+        public IActionResult GetMutualFriends(string userID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+
+            List<Friends> friends = new List<Friends>();
+
+            friends = dataBase.GetMutualFriends(myID, userID);
+            
+            return View("mutualfriends", friends);  
+        }
+
+        [HttpGet]
         public IActionResult BlockUser(string userID)
         {
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
@@ -387,6 +399,15 @@ namespace BancoDeDados.Controllers
         }
 
         [HttpGet]
+        public IActionResult UndoAdmin(string userID, string groupID)
+        {
+            if(!string.IsNullOrEmpty(userID) && !string.IsNullOrEmpty(groupID))
+                dataBase.ManageUserGroup(userID, groupID, 2);
+
+            return RedirectToAction("ManageGroup", new RouteValueDictionary(new{Controller = "Account", Action = "ManageGroup", groupID = groupID}));
+        }
+
+        [HttpGet]
         public IActionResult UnblockUserGroup(string userID, string groupID)
         {         
             if(!string.IsNullOrEmpty(groupID) && !string.IsNullOrEmpty(userID))
@@ -449,5 +470,12 @@ namespace BancoDeDados.Controllers
             return RedirectToAction("GroupInterface", new RouteValueDictionary(new {Controller = "Account", Action = "GroupInterface", groupID = groupID}));
         }
 
+        [HttpPost]
+        public IActionResult SearchGroupByName(string name)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            List<Groups> groups = dataBase.GetGroupsByName(myID, name);
+            return View("groups", groups);
+        }
     }
 }

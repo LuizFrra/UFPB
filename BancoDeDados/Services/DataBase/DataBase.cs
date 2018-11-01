@@ -802,6 +802,54 @@ namespace BancoDeDados.Services.DataBase
         }
         #endregion
         
+        #region Função utilizada para pegar os amigos em comum
+
+        public List<Friends> GetMutualFriends(string myID, string userID)
+        {
+            List<Friends> friends = new List<Friends>();
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT u.UserID, u.Nome, u.ImagePath, u.City FROM Users as u LEFT JOIN Relacionamento as ru 
+                    ON (ru.UserID1 = @userID AND ru.Status = 3) LEFT JOIN Relacionamento as ru2 ON (ru2.userID1 = @myID 
+                    AND ru2.userID2 = ru.UserID2 AND ru2.Status = 3) WHERE ru2.UserID2 = u.UserID";
+                    command.Parameters.AddWithValue("userID", userID);
+                    command.Parameters.AddWithValue("myID", myID);
+                    
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        while(reader.Read())
+                        {
+                            Friends data = new Friends();
+                            data.UserID = reader.GetString("UserID");
+                            data.UserName = reader.GetString("Nome");
+                            data.ImagePath = reader.GetString("ImagePath");
+                            
+                            if(reader.IsDBNull(3))
+                                data.City = "A Definir";
+                            else
+                                data.City = reader.GetString("City");
+                            
+                            friends.Add(data);
+                        }
+                        connection.Close();
+                        return friends;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+        }
+        
+
+        #endregion
+        
         #region Função utilizada para pegar os posts de um mural
         public List<Posts> GetPostsMural(string myID, string userID)
         {
@@ -1144,6 +1192,54 @@ namespace BancoDeDados.Services.DataBase
         }
         #endregion
         
+        #region Função para buscar os grupos por nome %
+        public List<Groups> GetGroupsByName(string myID, string name)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(ConnectionState.Open == connection.State)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@" SELECT g.GrupoID, g.Nome, g.Descricao, g.Foto, relg.Status as RelGrupo FROM Grupo as g LEFT JOIN 
+                    RelacionamentoGU as relg ON (relg.UserID = @myID && relg.GrupoID = g.GrupoID) WHERE Nome LIKE @name";
+                    command.Parameters.AddWithValue("myID", myID);
+                    command.Parameters.AddWithValue("name", name + "%");
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        List<Groups> groups = new List<Groups>();
+                        while(reader.Read())
+                        {
+                            Groups group =  new Groups();
+
+                            if(reader.IsDBNull(4) || (reader.GetString("RelGrupo") != "4" && reader.GetString("RelGrupo") != "6"))
+                            {
+                                group.groupID = reader.GetString("GrupoID");
+                                group.Nome = reader.GetString("Nome");
+                                group.Descricao = reader.GetString("Descricao");
+                                group.ImagePath = reader.GetString("Foto");
+                                
+                                if(reader.IsDBNull(4))
+                                    group.Status = "0";
+                                else
+                                    group.Status = reader.GetString("RelGrupo");
+                            }
+                            groups.Add(group);  
+                        }
+                        connection.Close();
+                        return groups;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+        }
+        #endregion
+
         #region Função para se juntar a um grupo
         public bool JoinGroup(string myID, string groupID)
         {
@@ -1325,8 +1421,15 @@ namespace BancoDeDados.Services.DataBase
                     command.Parameters.AddWithValue("UserID", userID);
                     command.Parameters.AddWithValue("groupID", groupID);
                     command.Parameters.AddWithValue("status", status);
-
+                    
                     int nRowsAffected = command.ExecuteNonQuery();
+
+                    if(status == 4)
+                    {
+                        command.CommandText = $@"DELETE p FROM MuralGrupo as g, Publicacao as p WHERE g.GrupoID = @groupID AND
+                                                g.PublicacaoID = p.PublicacaoID AND p.UserID = @UserID";
+                        command.ExecuteNonQuery();
+                    }
 
                     if(nRowsAffected == 1)
                     {
@@ -1612,7 +1715,7 @@ namespace BancoDeDados.Services.DataBase
         
         #endregion
 
-        #region Função Utilizada para apagar um post
+        #region Função Utilizada para apagar um post no grupo
         
         public bool DeletePostGroup(string postID)
         {

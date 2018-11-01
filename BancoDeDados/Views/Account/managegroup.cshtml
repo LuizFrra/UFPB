@@ -36,7 +36,7 @@
                 }
                 if(item.Status == "3")
                 {
-                    <p>Este Usuário é um ADM</p>
+                    <a asp-controller="Account" asp-action="UndoAdmin" asp-route-userID="@item.UserID" asp-route-groupID="@Model.groupID">Desfazer ADM</a>
                 }
                 if(item.Status == "4")
                 {

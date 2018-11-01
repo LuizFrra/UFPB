@@ -11,6 +11,10 @@
         <a asp-action="CreateGroup" asp-controller="Account">Criar um Grupo</a><br><br>
 
         <h1>GRUPOS : </h1><br>
+        <form asp-action="SearchGroupByName" asp-controller="Account">
+            <input required name="name" placeholder="Nome do Grupo">
+            <input type="submit" value="Buscar">
+        </form>
 
         @if(Model != null)
         {
