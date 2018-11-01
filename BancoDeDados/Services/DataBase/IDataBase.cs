@@ -17,8 +17,10 @@ namespace BancoDeDados.Services.DataBase
         bool DoPost(string myID,string userID, string post, IFormFile image);
         List<Posts> GetPostsFriends(string myID);
         CommentsView GetComments(string myID, string postID);
+        CommentsView GetCommentsGroups(string myID, string postID);
         bool DoComment(string userID, string postID, string text);
         RespostasView GetAnswer(string myID, string commentID);
+        RespostasView GetAnswerGroups(string myID,string commentID);
         bool DoAnswer(string userID, string commentID, string texto);
         bool SendFriend(string myID, string userID);
         bool CancelFriendRequest(string myID, string userID);
@@ -49,6 +51,10 @@ namespace BancoDeDados.Services.DataBase
         bool DoPostGroup(string myID, string groupID, string post, IFormFile image);
         GroupView GetGroupContent(string myID, string groupID);
         bool DeletePostGroup(string postID);
+        List<Groups> GetMutualGroups(string myID, string userID);
+        RespostasView GetAnswerGrupo(string myID,string commentID);
+        bool DeleteAnswerGroup(string myID, string answerID);
+        bool DeleteCommentGroup(string postID, string commentID);
 
    }
 }

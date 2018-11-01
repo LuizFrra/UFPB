@@ -123,6 +123,25 @@ namespace BancoDeDados.Controllers
             return View("comentarios", comments);
         }
 
+        [HttpGet]
+        public IActionResult ViewCommentsGroups(string postID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            CommentsView comments =  new CommentsView();
+            comments = dataBase.GetCommentsGroups(myID, postID);
+            return View("comentariosgrupos", comments);
+        }
+
+        [HttpGet]
+        public IActionResult ViewAnswersGroups(string commentID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            RespostasView respostas = new RespostasView();
+            respostas = dataBase.GetAnswerGroups(myID, commentID);
+            
+            return View("answersgrupo", respostas);
+        }
+
         [HttpPost]
         public IActionResult DoAnswer(string texto, string commentID)
         {
@@ -142,6 +161,16 @@ namespace BancoDeDados.Controllers
             respostas = dataBase.GetAnswer(myID, commentID);
             
             return View("answers", respostas);
+        }
+
+        [HttpGet]
+        public IActionResult ViewAnswersGroup(string commentID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            RespostasView respostas = new RespostasView();
+            respostas = dataBase.GetAnswerGrupo(myID, commentID);
+            
+            return View("answersgrupo", respostas);
         }
     
         [HttpGet]
@@ -489,6 +518,43 @@ namespace BancoDeDados.Controllers
             
             return RedirectToAction("GroupInterface", new RouteValueDictionary(new {Controller = "Account", Action = "GroupInterface", groupID = groupID}));
         }
+        
+        [HttpPost]
+        public IActionResult DoCommentGroup(string texto, string publicacaoID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.DoComment(myID, publicacaoID, texto);
+
+            return RedirectToAction("ViewCommentsGroups", new RouteValueDictionary(new {Controller ="Account", Action="ViewCommentsGroups", postID = publicacaoID}));
+        }
+
+        [HttpGet]
+        public IActionResult DeleteCommentGroup(string postID, string commentID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.DeleteCommentGroup(postID, commentID);
+
+            return RedirectToAction("ViewCommentsGroups", new RouteValueDictionary(new {Controller ="Account", Action="ViewCommentsGroups", postID = postID}));
+        }
+        
+        [HttpPost]
+        public IActionResult DoAnswerGroup(string texto, string commentID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.DoAnswer(myID, commentID, texto);
+
+            return RedirectToAction("ViewAnswersGroup", new RouteValueDictionary(new {Controller ="Account", Action="ViewAnswersGroup", commentID = commentID}));
+        }
+
+        [HttpGet]
+        public IActionResult DeleteAnswerGroup(string commentID, string answersID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            dataBase.DeleteAnswerGroup(myID, answersID);
+
+            return RedirectToAction("ViewAnswersGroup", new RouteValueDictionary(new {Controller ="Account", Action="ViewAnswersGroup", commentID = commentID}));
+        }
+        
 
         [HttpPost]
         public IActionResult SearchGroupByName(string name)
@@ -496,6 +562,14 @@ namespace BancoDeDados.Controllers
             string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
             List<Groups> groups = dataBase.GetGroupsByName(myID, name);
             return View("groups", groups);
+        }
+
+        [HttpGet]
+        public IActionResult GetMutualGroups(string userID)
+        {
+            string myID = HttpContext.User.FindFirst("UserID").Value.ToString();
+            List<Groups> groups = dataBase.GetMutualGroups(myID, userID);
+            return View("mutualgroups", groups);
         }
     }
 }

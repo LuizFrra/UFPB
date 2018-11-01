@@ -680,7 +680,7 @@ namespace BancoDeDados.Services.DataBase
                     int nRowsAffected = command.ExecuteNonQuery();
 
                     command.CommandText = $@"DELETE r FROM Respostas as r, Comentario as c WHERE r.ComentarioID = c.ComentarioID AND 
-                                            (C.UserID = @myID || C.UserID = @userID) AND (r.UserID = @myID || r.UserID = @userID)";
+                                            (c.UserID = @myID || c.UserID = @userID) AND (r.UserID = @myID || r.UserID = @userID)";
                     command.ExecuteNonQuery();
 
                     if(nRowsAffected == 2)
@@ -1792,5 +1792,328 @@ namespace BancoDeDados.Services.DataBase
         }
 
         #endregion
+
+        #region Função Utilizada para pegar grupos em comum
+
+        public List<Groups> GetMutualGroups(string myID, string userID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(ConnectionState.Open == connection.State)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT g.GrupoID, g.Nome, g.Descricao, g.Foto, rgu2.Status as RelGrupo FROM Grupo as g 
+                    LEFT JOIN RelacionamentoGU as rgu ON (rgu.UserID = @userID AND (rgu.Status = 2 || rgu.Status = 3)) 
+                    LEFT JOIN RelacionamentoGU as rgu2 ON (rgu2.UserID = @myID AND (rgu2.Status = 3 || rgu2.Status = 2) AND rgu.GrupoID = rgu2.GrupoID) 
+                    WHERE g.GrupoID = rgu2.GrupoID;
+";                  command.Parameters.AddWithValue("userID", userID);
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        List<Groups> groups = new List<Groups>();
+                        while(reader.Read())
+                        {
+                            Groups group =  new Groups();
+
+                            if(reader.IsDBNull(4) || (reader.GetString("RelGrupo") != "4" && reader.GetString("RelGrupo") != "6"))
+                            {
+                                group.groupID = reader.GetString("GrupoID");
+                                group.Nome = reader.GetString("Nome");
+                                group.Descricao = reader.GetString("Descricao");
+                                group.ImagePath = reader.GetString("Foto");
+                                
+                                if(reader.IsDBNull(4))
+                                    group.Status = "0";
+                                else
+                                    group.Status = reader.GetString("RelGrupo");
+                            }
+                            groups.Add(group);  
+                        }
+                        connection.Close();
+                        return groups;
+                    }
+                }
+                connection.Close();
+                return null;
+            }
+        }
+
+        #endregion
+    
+        #region Função Para Pegar Comentarios de Posts em grupos
+
+        public CommentsView GetCommentsGroups(string myID, string postID)
+        {
+            CommentsView comments = new CommentsView();
+            comments.PublicacaoID = postID;
+
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT x.ComentarioID, x.UserID, Users.Nome, Users.ImagePath, x.Texto, Publicacao.UserID as PUserID, 
+                    MuralGrupo.GrupoID as MuserID, Relacionamento.Status FROM Users, Publicacao, MuralGrupo, Comentario as x LEFT JOIN 
+                    Relacionamento ON (Relacionamento.UserID1 = @myID && Relacionamento.UserID2 = x.UserID) WHERE 
+                    x.PublicacaoID = @postID && MuralGrupo.PublicacaoID = @postID && Users.UserID = x.UserID && Publicacao.PublicacaoID = @postID;";
+                    
+                    command.Parameters.AddWithValue("postID", postID);
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+                        comments.myID = myID;
+                        comments.MUserID = reader.GetString("MUserID");
+                        comments.AuthorIDPublicacao = reader.GetString("PUserID");
+                        
+                        do
+                        {
+                            Comentarios comentarios = new Comentarios();
+                            comentarios.ComentarioID = reader.GetString("ComentarioID");
+                            comentarios.UserID = reader.GetString("UserID");
+                            comentarios.UserName = reader.GetString("Nome");
+                            comentarios.UserImage = reader.GetString("ImagePath");
+                            comentarios.Texto = reader.GetString("Texto");
+                            
+                            if(reader.IsDBNull(7))
+                                comentarios.Status = null;
+                            else
+                                comentarios.Status = reader.GetString("Status");
+
+                            comments.comentarios.Add(comentarios);
+                        }while(reader.Read());
+                        
+                        connection.Close();
+                        return comments;
+                    }
+
+                }
+                comments.comentarios = null;
+                connection.Close();
+                return comments;
+            }
+        }
+
+        #endregion
+
+        #region Função utilizada para pegar as respostas em grupos
+        public RespostasView GetAnswerGroups(string myID,string commentID)
+        {
+            RespostasView answers = new RespostasView();
+            answers.comentarioID = commentID;
+            answers.myID = myID;
+
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT x.RespostaID, x.UserID, Users.Nome, Users.ImagePath, x.Texto, MuralGrupo.GrupoID as MUserID, 
+                    Publicacao.UserID as PUserID, Comentario.UserID as CUserID, Relacionamento.Status FROM MuralGrupo, Users, Publicacao, Comentario, 
+                    Respostas as x LEFT JOIN Relacionamento ON (Relacionamento.UserID1 = @myID && Relacionamento.UserID2 = x.UserID)
+                    WHERE Comentario.PublicacaoID = Publicacao.PublicacaoID && Comentario.ComentarioID = @commentID && 
+                    x.ComentarioID = Comentario.ComentarioID && Users.UserID = x.UserID && MuralGrupo.PublicacaoID = Publicacao.PublicacaoID;";
+                    
+                    command.Parameters.AddWithValue("commentID", commentID);
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+                        answers.MuralUserIDPost = reader.GetString("MUserID");
+                        answers.AuthorIDPost = reader.GetString("PUserID");
+                        answers.AuthorIDCommnet = reader.GetString("CUserID");
+                        
+                        do
+                        {
+                            Respostas respostas = new Respostas();
+                            
+                            respostas.UserID = reader.GetString("UserID");
+                            respostas.UserName = reader.GetString("Nome");
+                            respostas.UserImage = reader.GetString("ImagePath");
+                            respostas.Texto = reader.GetString("Texto");
+                            respostas.RespostaID = reader.GetString("RespostaID");
+
+                            if(reader.IsDBNull(8))
+                                respostas.Status = null;
+                            else
+                                respostas.Status = reader.GetString("Status");
+
+                            answers.respostas.Add(respostas);
+                        }while(reader.Read());
+                        
+                        connection.Close();
+                        return answers;
+                    }
+                }
+                answers.respostas = null;
+                connection.Close();
+                return answers;
+            }
+        }
+        #endregion
+
+        #region Função Utilizada para pegar Comentarios em grupos
+
+        public RespostasView GetAnswerGrupo(string myID,string commentID)
+        {
+            RespostasView answers = new RespostasView();
+            answers.comentarioID = commentID;
+            answers.myID = myID;
+
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT x.RespostaID, x.UserID, Users.Nome, Users.ImagePath, x.Texto, MuralGrupo.GrupoID as MUserID, 
+                    Publicacao.UserID as PUserID, Comentario.UserID as CUserID, Relacionamento.Status FROM MuralGrupo, Users, Publicacao, Comentario, 
+                    Respostas as x LEFT JOIN Relacionamento ON (Relacionamento.UserID1 = @myID && Relacionamento.UserID2 = x.UserID)
+                    WHERE Comentario.PublicacaoID = Publicacao.PublicacaoID && Comentario.ComentarioID = @commentID && 
+                    x.ComentarioID = Comentario.ComentarioID && Users.UserID = x.UserID && MuralGrupo.PublicacaoID = Publicacao.PublicacaoID;";
+                    
+                    command.Parameters.AddWithValue("commentID", commentID);
+                    command.Parameters.AddWithValue("myID", myID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+                        answers.MuralUserIDPost = reader.GetString("MUserID");
+                        answers.AuthorIDPost = reader.GetString("PUserID");
+                        answers.AuthorIDCommnet = reader.GetString("CUserID");
+                        
+                        do
+                        {
+                            Respostas respostas = new Respostas();
+                            
+                            respostas.UserID = reader.GetString("UserID");
+                            respostas.UserName = reader.GetString("Nome");
+                            respostas.UserImage = reader.GetString("ImagePath");
+                            respostas.Texto = reader.GetString("Texto");
+                            respostas.RespostaID = reader.GetString("RespostaID");
+
+                            if(reader.IsDBNull(8))
+                                respostas.Status = null;
+                            else
+                                respostas.Status = reader.GetString("Status");
+
+                            answers.respostas.Add(respostas);
+                        }while(reader.Read());
+                        
+                        connection.Close();
+                        return answers;
+                    }
+                }
+                answers.respostas = null;
+                connection.Close();
+                return answers;
+            }
+        }
+
+        #endregion
+
+        #region Função Utilizada para apagar Comentario grupos
+        public bool DeleteCommentGroup(string postID, string commentID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Publicacao.UserID as PUserID, Comentario.UserID as CUserID ,MuralGrupo.GrupoID as MUSerID 
+                    FROM Publicacao, Comentario,  MuralGrupo WHERE Comentario.ComentarioID = @commentID && Publicacao.PublicacaoID = Comentario.PublicacaoID 
+                    && Comentario.PublicacaoID = MuralGrupo.PublicacaoID LIMIT 1";
+                    command.Parameters.AddWithValue("commentID", commentID);
+
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+                        
+                            command.CommandText = $@"DELETE FROM Comentario WHERE Comentario.ComentarioID = @commentID";
+                            reader.Close();
+
+                            int nRowsAffected = command.ExecuteNonQuery();
+
+                            if(nRowsAffected == 1)
+                            {
+                                connection.Close();
+                                return true;
+                            }
+                        
+
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region Função Utilizada para apagar respostas em grupos
+        public bool DeleteAnswerGroup(string myID, string answerID)
+        {
+            using(MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                if(connection.State == ConnectionState.Open)
+                {
+                    MySqlCommand command = new MySqlCommand();
+                    command.Connection = connection;
+                    command.CommandText = $@"SELECT Respostas.UserID, MuralGrupo.GrupoID as MUser, Comentario.UserID CUser, 
+                    Publicacao.UserID as PUser from Respostas, MuralGrupo, Comentario, Publicacao WHERE Respostas.RespostaID = @answerID &&
+                    Respostas.ComentarioID = Comentario.ComentarioID AND Comentario.PublicacaoID = Publicacao.PublicacaoID AND 
+                    Publicacao.PublicacaoID = MuralGrupo.PublicacaoID;";
+                    command.Parameters.AddWithValue("answerID", answerID);
+                    
+                    MySqlDataReader reader = command.ExecuteReader();
+
+                    if(reader.HasRows)
+                    {
+                        reader.Read();
+
+                        if(myID == reader.GetString("UserID") || myID == reader.GetString("MUser") || myID == reader.GetString("CUser")
+                        || myID == reader.GetString("PUser"))
+                        {
+                            command.CommandText = $@"DELETE FROM Respostas WHERE RespostaID = @answerID";
+                            reader.Close();
+                            int nRowsAffected = command.ExecuteNonQuery();
+
+                            if(nRowsAffected == 1)
+                            {
+                                connection.Close();
+                                return true;
+                            }
+                        }
+                    }
+
+                }
+                connection.Close();
+                return false;
+            }
+        }
     }
+    #endregion
 }

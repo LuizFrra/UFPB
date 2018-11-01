@@ -1,0 +1,49 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model BancoDeDados.Models.RespostasView;
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+        <p><a asp-controller="Account" asp-action="Index">Voltar para o Incio</a></p>
+        <a href="javascript: history.go(-1)">Voltar Para os Comentarios</a><br>
+        
+        @if(Model.respostas == null)
+        {
+            <p>seja o primeiro a responder este comentario</p>
+        }
+        else
+        {
+            foreach(var item in Model.respostas)
+            {
+                if(item.Status != "4" && item.Status != "6")
+                {
+                    <div>
+                        <a asp-action="Profile" asp-controller="Account" asp-route-id="@item.UserID">
+                            <img src="@Url.Content(item.UserImage)" style="width:30px; height:30px;">
+                            <p>
+                                @item.UserName
+                            </p>
+                        </a>
+                        <p>
+                            @item.Texto
+                            @if(Model.myID == item.UserID || Model.myID == Model.MuralUserIDPost || Model.myID == Model.AuthorIDPost || Model.myID == Model.AuthorIDCommnet)
+                            {   
+                                <a asp-action="DeleteAnswerGroup" asp-controller="Account" asp-route-commentID="@Model.comentarioID" asp-route-answersID="@item.RespostaID">Apagar</a>
+                            }
+                        </p>
+                    </div>
+                }
+            }
+        }
+        
+        <form asp-action="DoAnswerGroup" asp-controller="Account">
+            <input type="text" required name="texto" placeholder="Digite aqui sua resposta">
+            <input type="hidden" required name="commentID" value="@Model.comentarioID">
+            <input type="submit" value="Responder">
+        </form>
+    </body>
+</html>

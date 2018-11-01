@@ -1,0 +1,47 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model BancoDeDados.Models.CommentsView;
+
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+        <p><a asp-controller="Account" asp-action="Index">Voltar para o Incio</a></p><br>
+        <a href="javascript: history.go(-1)">Voltar Anterior</a>
+        <div>
+            @if(Model.comentarios == null)
+            {
+                <p>seja o primeiro a comentar</p>
+            }
+            else
+            {
+                foreach(var item in Model.comentarios)
+                {
+                    if(@item.Status != "4" && @item.Status != "6")
+                    {
+                        <div>
+                            <a asp-action="Profile" asp-controller="Account" asp-route-id="@item.UserID">
+                                <img src="@Url.Content(item.UserImage)"style="width:30px; height:30px;">
+                                @item.UserName
+                            </a>
+                            <p>@item.Texto</p>
+                            @if(Model.myID == Model.MUserID || Model.myID == Model.AuthorIDPublicacao || Model.myID == item.UserID)
+                            {
+                                <a asp-action="DeleteCommentGroup" asp-controller="Account" asp-route-postID="@Model.PublicacaoID" asp-route-commentID="@item.ComentarioID">Apagar</a>
+                            }
+                            <a asp-controller="Account" asp-action="ViewAnswersGroup" asp-route-commentID="@item.ComentarioID">Responder</a>
+                        </div>
+                    }
+                }
+            }
+        </div>
+        <form asp-action="DoCommentGroup" asp-controller="Account">
+            <input type="text" maxlength="500" placeholder="Comente Aqui" required name="texto">
+            <input type="hidden" required name="publicacaoID" value="@Model.PublicacaoID">
+            <input type="submit">
+        </form>
+    </body>
+</html>

@@ -44,7 +44,7 @@
                     {
                         <a asp-action="DeletePostGroup" asp-controller="Account" asp-route-groupID="@Model.groupID" asp-route-postID="@item.PublicacaoID">Apagar</a>
                     }
-                    <a type="hidden" asp-action="ViewComments" asp-controller="Account" asp-route-postID="@item.PublicacaoID">Comentarios</a>    
+                    <a type="hidden" asp-action="ViewCommentsGroups" asp-controller="Account" asp-route-postID="@item.PublicacaoID">Comentarios</a>    
                 }
             }
         }
