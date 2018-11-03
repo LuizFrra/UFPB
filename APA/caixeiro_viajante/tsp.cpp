@@ -15,13 +15,17 @@ TSP::TSP(const char *argv)
     ReadFile();
     std::cout << "Matriz montanda : \n";
     //PrintMatrix();
-    
+    std::cout << "\033[1;31mVIZINHO MAIS PRÓXIMO\033[0m\n";
     std::cout << "Começando Execução do Algoritimo do Vizinho Mais Próximo ... \n";
     edges solution = NearestNeightbour();
     std::cout << "Solução encontrada : ";
     for(size_t i = 0; i <= nCitys; i++)
         std::cout << solution.vertices[i].destine << " ";
-    std::cout << "\nCalculando Custo ... \n" << solution.cost << "\n"; 
+    std::cout << "\nCalculando Custo ... \n" << GetCost(solution.vertices) << "\n";
+    // for(size_t i = 0; i <= nCitys; i++)
+    //     std::cout << solution.vertices[i].weight;
+    std::cout << "\033[1;31mSOLUÇÃO SWAP\033[0m\n";
+    swap();
     
 }
 
@@ -83,8 +87,8 @@ void TSP::PrintMatrix()
     {
         for(size_t j = 0; j < nCitys; j++)
         {
-                std::cout << "Distancia do vertice " << i << " Para o " << matrix[i].vertices[j].destine << " Tem custo " << matrix[i].vertices[j].weight << "\n";
-         }
+                std::cout << matrix[i].vertices[j].weight << " ";
+        }
         std::cout << "\n";
     }
 
@@ -109,10 +113,11 @@ edges TSP::NearestNeightbour()
     solutionInclude[currentVertix] = true;    
     //Passo 3: Encontrar o vértice mais próximo do vértice atual
     //Passo 3.1 : Ordenar os Vértices
-    for(size_t i = 0; i < nCitys; i++)
-        qsort(matrix[i].vertices, nCitys, sizeof(vertex), compare);
+    // for(size_t i = 0; i < nCitys; i++)
+    //     qsort(matrix[i].vertices, nCitys, sizeof(vertex), compare);
 
     //Passo 3.2 : Realizar a busca local
+    std::cout << "Realizando busca do melhor custo local ... \n";
     for(size_t i = 0; i < nCitys - 1; i++)
     {
         int minValue = INT32_MAX;
@@ -125,16 +130,11 @@ edges TSP::NearestNeightbour()
                 minValue = matrix[currentVertix].vertices[j].weight;
             }
         }
-        //std::cout << minVertex << "\n";
         solutionInclude[minVertex] = true;
         currentVertix = minVertex;
         solution[0].vertices[i + 1].destine = minVertex;
-        solution[0].vertices[i + 1].weight = minValue;
-        solution[0].cost += minValue;
+        //solution[0].vertices[i + 1].weight = minValue;
     }
-    for(size_t i = 0; i < nCitys; i++)
-        if(matrix[solution[0].vertices[nCitys - 1].destine].vertices[i].destine == solution[0].vertices[nCitys].destine)
-            solution[0].cost += matrix[solution[0].vertices[nCitys - 1].destine].vertices[i].weight;
     
     return solution[0];
 }
@@ -164,4 +164,48 @@ int compare (const void * a, const void * b)
     vertex *orderB = (vertex *) b;
 
     return (orderA->weight - orderB->weight);
+}
+
+int TSP::swap()
+{
+    int currentj = 0, currenti = 0;
+    vertex *tempSolution = new vertex[nCitys + 1];
+    for(size_t i = 0; i <= nCitys; i++)
+        tempSolution[i] = solution[0].vertices[i];
+    int currentCost = GetCost(tempSolution), newCost = INT32_MAX;
+    std::cout << "Custo Inicial : " << currentCost << "\n"; 
+    for(size_t i = 1; i < nCitys; i++)
+    {
+        for(size_t j = 2; j < nCitys; j++)
+        {
+            vertex hold = tempSolution[i];
+            tempSolution[i] = tempSolution[j];
+            tempSolution[j] = hold;
+            newCost = GetCost(tempSolution);
+            
+            if(currentCost > newCost)
+            {
+                currentCost = newCost;
+                swapj = j;
+                swapi = i;
+            }
+
+            hold = tempSolution[j];
+            tempSolution[j] = tempSolution[i];
+            tempSolution[i] = hold;
+        }
+    }
+    std::cout << currentCost << "\n";
+
+}
+
+int TSP::GetCost(vertex *vertices)
+{
+    int cost = 0;
+    for(size_t i = 0; i < nCitys; i++)
+    {
+        cost+= matrix[vertices[i].destine].vertices[vertices[i + 1].destine].weight;
+    }
+
+    return cost;
 }

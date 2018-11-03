@@ -9,6 +9,7 @@
 #include <unistd.h> 
 #include <cstdlib>
 
+
 struct vertex
 {
     int destine;
@@ -31,6 +32,7 @@ class TSP{
     int nCitys;
     std::fstream tspInstance;
     edges *solution;
+    int swapi, swapj;
 
     public:
 
@@ -43,6 +45,8 @@ class TSP{
     edges NearestNeightbour();
     unsigned long GetRandomNumber(int min, int max);
     unsigned long seed(unsigned long a, unsigned long b, unsigned long c);
+    int swap();
+    int GetCost(vertex *vertices);
 
 };
 
