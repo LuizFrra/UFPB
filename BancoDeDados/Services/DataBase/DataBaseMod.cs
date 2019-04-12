@@ -13,14 +13,14 @@ using System.Linq;
 using System.IO;
 #endregion
 
-namespace BancoDeDados.Services.DataBaseMod
+namespace BancoDeDados.Services.DataBase
 {
-    public class DataBase : IDataBase
+    public class DataBaseMod : IDataBase
     {
 
         private readonly string connectionString;
 
-        public DataBase(IConfiguration configuration)
+        public DataBaseMod(IConfiguration configuration)
         {
             connectionString = configuration.GetConnectionString("DefaultConnection");
         }
