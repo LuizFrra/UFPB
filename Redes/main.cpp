@@ -9,27 +9,31 @@ int main(int argc, char const *argv[])
     //                         {-1, -1, -1, -1},
     //                         {-1, -1, -1, -1}};
 
-    // char jogada[2];
+    char jogada[3];
     // int validPlay = 1;
 
     client_server_udp *me = new client_server_udp("192.168.0.44", 50000);
-    *me->fazerJogada();
-    // while(validPlay)
-    // {
-    //     char *menssage = me->fazerJogada((char*)jogada, &validPlay);
-    //     std::cout << menssage << std::endl;
+    *me->startGame();
+
+    while(true)
+    {
+        // std::cin.clear();
+        // fflush(stdin);
+        // std::cin >> jogada;
         
-    //     jogoDaVelha[int(menssage[0]) - 48][int(menssage[1]) - 48] = 0;
-    //     jogoDaVelha[int(menssage[2]) - 48][int(menssage[3]) - 48] = 1;             
+        // while(!me->fazerJogada(jogada))
+        // {
+        //     std::cout << "Jogada Inválida, jogue novamente !" << std::endl;
+        //     std::cin.clear();
+        //     fflush(stdin);
+        //     std::cin >> jogada;
+        // }
+        me->fazerJogada();
+        me->imprimeMatriz();
         
-    //     for(int i = 1; i < 4; i++)
-    //     {
-    //         for(int j = 1; j < 4; j++)
-    //         {
-    //             std::cout << " | " << jogoDaVelha[i][j];
-    //         }
-    //         std::cout << std::endl;
-    //     }
-    // }
+        //std::cout << "Aguardando Jogada do Adversário !" << std::endl;
+
+    }
+
     return 0;
 }

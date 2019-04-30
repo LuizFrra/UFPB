@@ -81,13 +81,13 @@ namespace CLIENT_SERVER_UDP
         return buffer;
     }
 
-    char* client_server_udp::fazerJogada(/*char *jogada, int *validPlay*/)
+    char* client_server_udp::startGame(/*char *jogada, int *validPlay*/)
     {
         if(isServ)
         {
             sendMenssage("91");
             receiveMenssage();
-            imprimeMatriz()
+            imprimeMatriz();
         }
         else
         {
@@ -102,9 +102,9 @@ namespace CLIENT_SERVER_UDP
         
         if(code[1] == '1')
         {
-            std::cout << "Preparando Jogo.\n";
-            memset(&jogoDaVelha, -1, sizeof(jogoDaVelha));
-            std::cout << "Jogo Preparado.\n";
+            std::cout << "Preparando a Matriz.\n";
+            memset(jogoDaVelha, -1, sizeof(jogoDaVelha) * 4 * 4);
+            std::cout << "Matriz Preparada.\n";
         }
         return 0;
     }
@@ -120,5 +120,84 @@ namespace CLIENT_SERVER_UDP
             std::cout << std::endl;
         }
         return 0;
+    }
+
+    char* client_server_udp::matrizToChar()
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < 3; j++)
+            {
+                if(jogoDaVelha[i + 1][j + 1] == -1)
+                    matriz[i * 3 + j] = '2';
+                else
+                    matriz[i * 3 + j] = (char)jogoDaVelha[i + 1][j + 1];
+            }
+        }
+        return matriz;        
+    }
+
+    bool client_server_udp::validPLay(char *jogada)
+    {
+        if(!isdigit(jogada[0]) || !isdigit(jogada[1]) && !(jogada[0] - 48 <= 3 && jogada[1] - 48 <= 3))
+            return false;
+
+        if(jogoDaVelha[jogada[0] - 48][jogada[1] - 48] == -1)
+            return true;
+
+        return false;
+    }
+
+    int client_server_udp::fazerJogada()
+    {
+        if(isServ)
+        {
+            char jogada[3];
+            std::cin.clear();
+            fflush(stdin);
+            std::cout << "Faça sua Jogada" << std::endl;
+            std::cin >> jogada;
+            while(validPLay(jogada))
+            {
+                std::cout << "Jogada Inválida, jogue novamente !" << std::endl;
+                std::cin.clear();
+                fflush(stdin);
+                std::cin >> jogada;
+            }
+            sendMenssage(jogada);
+            changeMatriz(1, jogada);
+            std::cout << "Aguardando a jogada do adversário." << std::endl;
+            receiveMenssage();
+            validPLay(buffer);
+            changeMatriz(0, jogada);
+        }
+        else
+        {
+
+            std::cout << "Aguardando a jogada do adversário." << std::endl;
+            receiveMenssage();
+            validPLay(buffer);
+            changeMatriz(1, buffer);
+            char jogada[3];
+            std::cin.clear();
+            fflush(stdin);
+            std::cout << "Faça sua Jogada" << std::endl;
+            std::cin >> jogada;
+            while(validPLay(jogada))
+            {
+                std::cout << "Jogada Inválida, jogue novamente !" << std::endl;
+                std::cin.clear();
+                fflush(stdin);
+                std::cin >> jogada;
+            }
+            sendMenssage(jogada);
+            changeMatriz(0, jogada);
+        }
+        return 0;
+    }
+
+    void client_server_udp::changeMatriz(int value, char* jogada)
+    {
+        jogoDaVelha[jogada[0] - 48][jogada[1] - 48] = value;
     }
 }
