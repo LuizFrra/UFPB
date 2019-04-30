@@ -16,7 +16,7 @@ namespace CLIENT_SERVER_UDP{
         /* data */
     public:
         client_server_udp(/* args */);
-        client_server_udp(int port);
+        client_server_udp(const char *ip, const int port);
         char* fazerJogada(char *jogada, int *validPlay);
         int myStatus;
         //bool connectTo(const std::string addrress, int port);
