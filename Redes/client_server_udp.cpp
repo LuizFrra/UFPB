@@ -32,11 +32,11 @@ namespace CLIENT_SERVER_UDP
         addrDest.sin_port = htons(port);
         addrDest.sin_addr.s_addr = inet_addr(ip); 
 
-        std::cout << "Enviado Hello !\n"; 
+        std::cout << "Buscando Jogadores.!\n"; 
         sendto(sockfd, (char*)menssage, strlen(menssage)+1, MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
-        std::cout << "Hello Enviado.\n";
+        //std::cout << "Hello Enviado.\n";
 
-        std::cout << "Aguardando O Eco do Hello.\n";
+        std::cout << "Aguardando...\n";
         tv.tv_sec = 1;
         tv.tv_usec = 0;        
         setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
@@ -47,17 +47,18 @@ namespace CLIENT_SERVER_UDP
         
         if(n > 0)
         {
+            std::cout << "Jogador Encontrando.\n";
             isServ = false;
-            std::cout << "Eu devo ser Cliente.\n";
+            //std::cout << "Eu devo ser Cliente.\n";
         }
         else
         {
             isServ = true;
-            std::cout << "Eu devo ser Servidor.\n";
+            //std::cout << "Eu devo ser Servidor.\n";
             tv.tv_sec = 0;
             tv.tv_usec = 0;
             setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
-            std::cout << "Aguardando Jogador.\n";
+            //std::cout << "Aguardando Jogador.\n";
             n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
             std::cout << "Jogador Encontrando.\n";
             sendto(sockfd, (char*)menssage, strlen(menssage)+1, MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
