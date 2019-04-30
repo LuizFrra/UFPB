@@ -87,11 +87,13 @@ namespace CLIENT_SERVER_UDP
         {
             sendMenssage("91");
             receiveMenssage();
+            imprimeMatriz()
         }
         else
         {
             receiveMenssage();
             sendMenssage("91");
+            imprimeMatriz();
         }
     }
 
@@ -104,5 +106,17 @@ namespace CLIENT_SERVER_UDP
             memset(&jogoDaVelha, -1, sizeof(jogoDaVelha));
         }
         return 0;
+    }
+
+    int client_server_udp::imprimeMatriz()
+    {
+        for(int i = 1; i < 4; i++)
+        {
+            for(int j = 1; j < 4; j++)
+            {
+                std::cout << jogoDaVelha[i][j] << " | ";
+            }
+            std::cout << std::endl;
+        }
     }
 }

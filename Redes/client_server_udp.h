@@ -24,6 +24,7 @@ namespace CLIENT_SERVER_UDP{
         char* fazerJogada(/*char *jogada, int *validPlay*/);
         char* sendMenssage(char *menssage);
         char* receiveMenssage();
+        int imprimeMatriz();
         //bool connectTo(const std::string addrress, int port);
         //int beServer();
         //int beClient(const std::string menssage);
