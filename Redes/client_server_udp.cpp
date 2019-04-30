@@ -32,7 +32,7 @@ namespace CLIENT_SERVER_UDP
         addrDest.sin_port = htons(port);
         addrDest.sin_addr.s_addr = inet_addr(ip); 
 
-        std::cout << "Buscando Jogadores.!\n"; 
+        std::cout << "Buscando Jogadores.\n"; 
         sendto(sockfd, (char*)menssage, strlen(menssage)+1, MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
         //std::cout << "Hello Enviado.\n";
 
@@ -49,12 +49,10 @@ namespace CLIENT_SERVER_UDP
         {
             std::cout << "Jogador Encontrando.\n";
             isServ = false;
-            //std::cout << "Eu devo ser Cliente.\n";
         }
         else
         {
             isServ = true;
-            //std::cout << "Eu devo ser Servidor.\n";
             tv.tv_sec = 0;
             tv.tv_usec = 0;
             setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
@@ -63,96 +61,48 @@ namespace CLIENT_SERVER_UDP
             std::cout << "Jogador Encontrando.\n";
             sendto(sockfd, (char*)menssage, strlen(menssage)+1, MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
 
-        }
-        
-        // if(bindResult < 0)
-        // {
-        //     myStatus = 0;
-        //     std::cout << "Eu sou cliente.\n";
-        //     // Entao eu devo começar sendo cliente
-            
-        //     addrMe.sin_port = htons(50001);
-        //     bindResult = bind(sockfd, (struct sockaddr*)&addrMe, sizeof(addrMe));
-        //     if(bindResult < 0)
-        //         std::cout << "Error Bind.\n";
-        //     std::cout << "Aguardando Conexão com o Servidor...\n";
-        //     addrDest.sin_family = AF_INET;
-        //     addrDest.sin_port = htons(port);
-        //     addrDest.sin_addr.s_addr = INADDR_ANY;
-
-        //     socklen_t len;
-        //     int n = sendto(sockfd, (char*)menssage, strlen(menssage) + 1, MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));            
-        //     n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
-        //     if(n > 0)
-        //         std::cout << buffer << std::endl;
-        //     if(*buffer == *menssage)            
-        //         std::cout << "Conexão realizada com sucesso.\n";
-        // }
-        // else
-        // {
-        //     myStatus = 1;
-        //     std::cout << "Eu sou Servidor.\n";
-        //     // Entao eu devo começar sendo servidor
-
-        //     int bindResult = bind(sockfd, (struct sockaddr*)&addrMe, sizeof(addrMe));
-        //     std::cout << "Aguardando Conexão com o Cliente...\n";
-        //     socklen_t len;
-        //     int n = 0;    
-        //     n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
-        //     if(n > 0)
-        //         std::cout << buffer << std::endl;
-        //     if(*buffer == *menssage)            
-        //         std::cout << "Conexão realizada com sucesso.\n";
-            
-        //     addrDest.sin_family = AF_INET;
-        //     addrDest.sin_port = htons(50001);
-        //     addrDest.sin_addr.s_addr = INADDR_ANY;
-        //     sendto(sockfd, (char*)menssage, strlen(menssage), MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));            
-        // }
+        }          
     } 
 
-    char* client_server_udp::fazerJogada(char *jogada, int *validPlay)
+    char* client_server_udp::sendMenssage(char *menssage)
     {
-        // if(myStatus == 1)
-        // {
-        //     std::cout << "Fazendo Jogada" << std::endl;
-        //     std::cin >> jogada;
-        //     sendto(sockfd, (char*)jogada, strlen(jogada), MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
-        //     socklen_t len;
-        //     int n = 0;   
-        //     std::cout << "Aguarde a jogada do adversário." << std::endl; 
-        //     n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
-        //     if(buffer[2] == jogada[0] && buffer[3] == jogada[1])
-        //     {
-        //         std::cout << "Jogada Válida." << std::endl;
-        //         *validPlay = 1;
-        //         if(n > 0)
-        //             return buffer;
-        //     }
-        //     else
-        //     {
-        //         *validPlay = 0;
-        //         return buffer;
-        //     }
-            
-        // }
-        // else
-        // {
-        //     socklen_t len;
-        //     int n = 0;
-        //     std::cout << "Aguarde a jogada do adversário." << std::endl;    
-        //     n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
-            
-        //     std::cout << "Fazendo Jogada" << std::endl;
-        //     std::cin >> jogada;
-        //     while(jogada[0] == buffer[0] && jogada[1] == buffer[1])
-        //     {
-        //         std::cout << "Jogada Não Permitida." << std::endl;
-        //         std::cin >> jogada;
-        //     }
-        //     sendto(sockfd, (char*)strcat(jogada, buffer), strlen(jogada) + strlen(buffer), MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
-        //     if(n > 0)
-        //         return jogada;        
-        // }
+        sendto(sockfd, (char*)menssage, strlen(menssage)+1, MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
+    }
+
+    char* client_server_udp::receiveMenssage()
+    {
+        socklen_t len;
+        int n = 0;
+        recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
+
+        if(buffer[0] == '9')
+            gameFuncionality(buffer);
+
+        return buffer;
+    }
+
+    char* client_server_udp::fazerJogada(/*char *jogada, int *validPlay*/)
+    {
+        if(isServ)
+        {
+            sendMenssage("91");
+            receiveMenssage();
+        }
+        else
+        {
+            receiveMenssage();
+            sendMenssage("91");
+        }
+    }
+
+    int client_server_udp::gameFuncionality(char *code)
+    {
+        
+        if(code[1] == '1')
+        {
+            std::cout << "Preparando Jogo.\n";
+            memset(&jogoDaVelha, -1, sizeof(jogoDaVelha));
+        }
+        return 0;
     }
 }
