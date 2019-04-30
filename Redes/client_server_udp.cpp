@@ -104,6 +104,7 @@ namespace CLIENT_SERVER_UDP
         {
             std::cout << "Preparando Jogo.\n";
             memset(&jogoDaVelha, -1, sizeof(jogoDaVelha));
+            std::cout << "Jogo Preparado.\n";
         }
         return 0;
     }
@@ -118,5 +119,6 @@ namespace CLIENT_SERVER_UDP
             }
             std::cout << std::endl;
         }
+        return 0;
     }
 }
