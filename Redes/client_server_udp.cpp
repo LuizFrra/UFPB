@@ -14,8 +14,6 @@ namespace CLIENT_SERVER_UDP
 
     client_server_udp::client_server_udp(const char *ip, const int port)
     {
-        timeval tv;
-
         sockfd = socket(AF_INET, SOCK_DGRAM, 0);
         char *menssage = "Hi"; 
 
@@ -49,18 +47,20 @@ namespace CLIENT_SERVER_UDP
         
         if(n > 0)
         {
+            isServ = false;
             std::cout << "Eu devo ser Cliente.\n";
         }
         else
         {
-                std::cout << "Eu devo ser Servidor.\n";
-                tv.tv_sec = 0;
-                tv.tv_usec = 0;
-                setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
-                std::cout << "Aguardando Jogador.\n";
-                n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
-                std::cout << "Jogador Encontrando.\n";
-                sendto(sockfd, (char*)menssage, strlen(menssage)+1, MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
+            isServ = true;
+            std::cout << "Eu devo ser Servidor.\n";
+            tv.tv_sec = 0;
+            tv.tv_usec = 0;
+            setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+            std::cout << "Aguardando Jogador.\n";
+            n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
+            std::cout << "Jogador Encontrando.\n";
+            sendto(sockfd, (char*)menssage, strlen(menssage)+1, MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
 
         }
         
@@ -112,46 +112,46 @@ namespace CLIENT_SERVER_UDP
 
     char* client_server_udp::fazerJogada(char *jogada, int *validPlay)
     {
-        if(myStatus == 1)
-        {
-            std::cout << "Fazendo Jogada" << std::endl;
-            std::cin >> jogada;
-            sendto(sockfd, (char*)jogada, strlen(jogada), MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
-            socklen_t len;
-            int n = 0;   
-            std::cout << "Aguarde a jogada do adversário." << std::endl; 
-            n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
-            if(buffer[2] == jogada[0] && buffer[3] == jogada[1])
-            {
-                std::cout << "Jogada Válida." << std::endl;
-                *validPlay = 1;
-                if(n > 0)
-                    return buffer;
-            }
-            else
-            {
-                *validPlay = 0;
-                return buffer;
-            }
+        // if(myStatus == 1)
+        // {
+        //     std::cout << "Fazendo Jogada" << std::endl;
+        //     std::cin >> jogada;
+        //     sendto(sockfd, (char*)jogada, strlen(jogada), MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
+        //     socklen_t len;
+        //     int n = 0;   
+        //     std::cout << "Aguarde a jogada do adversário." << std::endl; 
+        //     n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
+        //     if(buffer[2] == jogada[0] && buffer[3] == jogada[1])
+        //     {
+        //         std::cout << "Jogada Válida." << std::endl;
+        //         *validPlay = 1;
+        //         if(n > 0)
+        //             return buffer;
+        //     }
+        //     else
+        //     {
+        //         *validPlay = 0;
+        //         return buffer;
+        //     }
             
-        }
-        else
-        {
-            socklen_t len;
-            int n = 0;
-            std::cout << "Aguarde a jogada do adversário." << std::endl;    
-            n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
+        // }
+        // else
+        // {
+        //     socklen_t len;
+        //     int n = 0;
+        //     std::cout << "Aguarde a jogada do adversário." << std::endl;    
+        //     n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
             
-            std::cout << "Fazendo Jogada" << std::endl;
-            std::cin >> jogada;
-            while(jogada[0] == buffer[0] && jogada[1] == buffer[1])
-            {
-                std::cout << "Jogada Não Permitida." << std::endl;
-                std::cin >> jogada;
-            }
-            sendto(sockfd, (char*)strcat(jogada, buffer), strlen(jogada) + strlen(buffer), MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
-            if(n > 0)
-                return jogada;        
-        }
+        //     std::cout << "Fazendo Jogada" << std::endl;
+        //     std::cin >> jogada;
+        //     while(jogada[0] == buffer[0] && jogada[1] == buffer[1])
+        //     {
+        //         std::cout << "Jogada Não Permitida." << std::endl;
+        //         std::cin >> jogada;
+        //     }
+        //     sendto(sockfd, (char*)strcat(jogada, buffer), strlen(jogada) + strlen(buffer), MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
+        //     if(n > 0)
+        //         return jogada;        
+        // }
     }
 }
