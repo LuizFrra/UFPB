@@ -49,6 +49,7 @@ namespace CLIENT_SERVER_UDP
         {
             tv.tv_sec = 0;
             tv.tv_usec = 0;
+            setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
             std::cout << "Jogador Encontrando.\n";
             isServ = false;
         }
@@ -159,7 +160,7 @@ namespace CLIENT_SERVER_UDP
             fflush(stdin);
             std::cout << "Faça sua Jogada" << std::endl;
             std::cin >> jogada;
-            while(validPLay(jogada))
+            while(!validPLay(jogada))
             {
                 std::cout << "Jogada Inválida, jogue novamente !" << std::endl;
                 std::cin.clear();
@@ -170,7 +171,7 @@ namespace CLIENT_SERVER_UDP
             changeMatriz(1, jogada);
             std::cout << "Aguardando a jogada do adversário." << std::endl;
             receiveMenssage();
-            validPLay(buffer);
+            //validPLay(buffer);
             changeMatriz(0, jogada);
         }
         else
@@ -178,14 +179,14 @@ namespace CLIENT_SERVER_UDP
 
             std::cout << "Aguardando a jogada do adversário." << std::endl;
             receiveMenssage();
-            validPLay(buffer);
+            //validPLay(buffer);
             changeMatriz(1, buffer);
             char jogada[3];
             std::cin.clear();
             fflush(stdin);
             std::cout << "Faça sua Jogada" << std::endl;
             std::cin >> jogada;
-            while(validPLay(jogada))
+            while(!validPLay(jogada))
             {
                 std::cout << "Jogada Inválida, jogue novamente !" << std::endl;
                 std::cin.clear();
