@@ -133,8 +133,12 @@ namespace CLIENT_SERVER_UDP
             {
                 if(jogoDaVelha[i + 1][j + 1] == -1)
                     matriz[i * 3 + j] = '2';
-                else
-                    matriz[i * 3 + j] = (char)jogoDaVelha[i + 1][j + 1];
+                
+                else if(jogoDaVelha[i + 1][j + 1] == 1)
+                    matriz[i * 3 + j] = '1';
+                
+                else if(jogoDaVelha[i + 1][j + 1] == 0)
+                    matriz[i * 3 + j] = '0';
             }
         }
         return matriz;        
@@ -155,6 +159,7 @@ namespace CLIENT_SERVER_UDP
     {
         if(isServ)
         {
+            //validateRound();
             char jogada[3];
             std::cin.clear();
             fflush(stdin);
@@ -169,18 +174,20 @@ namespace CLIENT_SERVER_UDP
             }
             sendMenssage(jogada);
             changeMatriz(1, jogada);
+            imprimeMatriz();
             std::cout << "Aguardando a jogada do adversário." << std::endl;
             receiveMenssage();
-            //validPLay(buffer);
             changeMatriz(0, buffer);
+            imprimeMatriz();
+            validateRound();
         }
         else
         {
 
             std::cout << "Aguardando a jogada do adversário." << std::endl;
             receiveMenssage();
-            //validPLay(buffer);
             changeMatriz(1, buffer);
+            imprimeMatriz();
             char jogada[3];
             std::cin.clear();
             fflush(stdin);
@@ -195,6 +202,8 @@ namespace CLIENT_SERVER_UDP
             }
             sendMenssage(jogada);
             changeMatriz(0, jogada);
+            imprimeMatriz();
+            validateRound();
         }
         return 0;
     }
@@ -202,5 +211,24 @@ namespace CLIENT_SERVER_UDP
     void client_server_udp::changeMatriz(int value, char* jogada)
     {
         jogoDaVelha[jogada[0] - 48][jogada[1] - 48] = value;
+    }
+
+    bool client_server_udp::validateRound()
+    {
+        if(isServ)
+        {
+            sendMenssage(matrizToChar());
+            receiveMenssage();
+            if(strcmp(buffer, matriz) == 0)
+                std::cout << "OK\n"; 
+        }
+        else
+        {
+            receiveMenssage();
+            sendMenssage(matrizToChar());
+            if(strcmp(buffer, matriz) == 0)
+                std::cout << "OK\n"; 
+        }
+        
     }
 }

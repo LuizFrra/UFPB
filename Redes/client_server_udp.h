@@ -31,6 +31,7 @@ namespace CLIENT_SERVER_UDP{
         bool positionPlayed(int row, int column);
         int fazerJogada();
         void changeMatriz(int value, char* jogada);
+        bool validateRound();
         //bool connectTo(const std::string addrress, int port);
         //int beServer();
         //int beClient(const std::string menssage);
