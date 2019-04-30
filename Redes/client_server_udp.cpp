@@ -47,6 +47,8 @@ namespace CLIENT_SERVER_UDP
         
         if(n > 0)
         {
+            tv.tv_sec = 0;
+            tv.tv_usec = 0;
             std::cout << "Jogador Encontrando.\n";
             isServ = false;
         }
