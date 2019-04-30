@@ -172,7 +172,7 @@ namespace CLIENT_SERVER_UDP
             std::cout << "Aguardando a jogada do adversário." << std::endl;
             receiveMenssage();
             //validPLay(buffer);
-            changeMatriz(0, jogada);
+            changeMatriz(0, buffer);
         }
         else
         {
