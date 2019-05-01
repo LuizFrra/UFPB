@@ -124,6 +124,7 @@ namespace CLIENT_SERVER_UDP
     {
         for(int i = 1; i < 4; i++)
         {
+            std::cout << "|";
             for(int j = 1; j < 4; j++)
             {
                 std::cout << jogoDaVelha[i][j] << " | ";
@@ -261,7 +262,7 @@ namespace CLIENT_SERVER_UDP
             if((w == 1 && isServ) || (w == 0 && !isServ))
                 std::cout << "Parabéns você ganhou !" << std::endl;
             else
-                std::cout << "O Adversário ganhou seu merda !" << std::endl;
+                std::cout << "O Adversário ganhou !" << std::endl;
             
             isServ = !isServ;
             return true;
