@@ -18,7 +18,10 @@ int main(int argc, char const *argv[])
     while(true)
     {
         if(me->fazerJogada() == 1)
+        {
+            std::cout << "\n\n\n\n\n\n\n" << std::endl;
             *me->startGame();
+        }
     }
 
     return 0;
