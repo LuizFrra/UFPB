@@ -255,7 +255,6 @@ namespace CLIENT_SERVER_UDP
 
     bool client_server_udp::checkWinner()
     {
-        std::cout << "Entrou" << std::endl;
         int w = checkWinnerTable();
         if( w != 2)
         {
@@ -265,7 +264,6 @@ namespace CLIENT_SERVER_UDP
                 std::cout << "O Adversário ganhou seu merda !" << std::endl;
             
             isServ = !isServ;
-            memset(jogoDaVelha, -1, sizeof(jogoDaVelha) * 4 * 4);
             return true;
         }
         return false;
@@ -277,7 +275,6 @@ namespace CLIENT_SERVER_UDP
 
     int client_server_udp::checkWinnerTable()
     {
-        std::cout << "Entrou" << std::endl;
         
         if((jogoDaVelha[1][1] == 1) && (jogoDaVelha[1][2] == 1) && (jogoDaVelha[1][3] == 1))
         {return 1;}
@@ -328,8 +325,6 @@ namespace CLIENT_SERVER_UDP
 
         if((jogoDaVelha[1][3] == 0) && (jogoDaVelha[2][2] == 0) && (jogoDaVelha[3][1] == 0))
         {return 0;}
-        
-        std::cout << "Saiu" << std::endl;
         
         //ninguem ganhou
         return 2;

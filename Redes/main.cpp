@@ -17,7 +17,8 @@ int main(int argc, char const *argv[])
 
     while(true)
     {
-        me->fazerJogada();
+        if(me->fazerJogada() == 1)
+            *me->startGame();
     }
 
     return 0;
