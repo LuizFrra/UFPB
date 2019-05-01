@@ -17,22 +17,7 @@ int main(int argc, char const *argv[])
 
     while(true)
     {
-        // std::cin.clear();
-        // fflush(stdin);
-        // std::cin >> jogada;
-        
-        // while(!me->fazerJogada(jogada))
-        // {
-        //     std::cout << "Jogada Inválida, jogue novamente !" << std::endl;
-        //     std::cin.clear();
-        //     fflush(stdin);
-        //     std::cin >> jogada;
-        // }
         me->fazerJogada();
-        //me->imprimeMatriz();
-        
-        //std::cout << "Aguardando Jogada do Adversário !" << std::endl;
-
     }
 
     return 0;

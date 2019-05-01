@@ -109,6 +109,14 @@ namespace CLIENT_SERVER_UDP
             memset(jogoDaVelha, -1, sizeof(jogoDaVelha) * 4 * 4);
             std::cout << "Matriz Preparada.\n";
         }
+
+        if(code[1] == '2')
+        {
+            std::cout << "As Matrizes não batem, o jogo precisa ser reinciado." << std::endl;
+            memset(jogoDaVelha, -1, sizeof(jogoDaVelha) * 4 * 4);
+            isServ = !isServ;
+        }
+
         return 0;
     }
 
@@ -175,10 +183,14 @@ namespace CLIENT_SERVER_UDP
             sendMenssage(jogada);
             changeMatriz(1, jogada);
             imprimeMatriz();
+            if(checkWinner())
+                return 1;
             std::cout << "Aguardando a jogada do adversário." << std::endl;
             receiveMenssage();
             changeMatriz(0, buffer);
             imprimeMatriz();
+            if(checkWinner())
+                return 1;
             validateRound();
         }
         else
@@ -188,6 +200,8 @@ namespace CLIENT_SERVER_UDP
             receiveMenssage();
             changeMatriz(1, buffer);
             imprimeMatriz();
+            if(checkWinner())
+                return 1;
             char jogada[3];
             std::cin.clear();
             fflush(stdin);
@@ -203,6 +217,8 @@ namespace CLIENT_SERVER_UDP
             sendMenssage(jogada);
             changeMatriz(0, jogada);
             imprimeMatriz();
+            if(checkWinner())
+                return 1;
             validateRound();
         }
         return 0;
@@ -220,15 +236,98 @@ namespace CLIENT_SERVER_UDP
             sendMenssage(matrizToChar());
             receiveMenssage();
             if(strcmp(buffer, matriz) == 0)
-                std::cout << "OK\n"; 
+                return true;
+            sendMenssage("92");
+            receiveMenssage();
         }
         else
         {
             receiveMenssage();
             sendMenssage(matrizToChar());
             if(strcmp(buffer, matriz) == 0)
-                std::cout << "OK\n"; 
+                return true;
+            receiveMenssage();
+            sendMenssage("92");
         }
         
+    }
+
+
+
+    bool client_server_udp::checkWinner()
+    {
+        int w = checkWinner();
+        if( w != 2)
+        {
+            if((w == 1 && isServ) || (w == 0 && !isServ))
+                std::cout << "Parabéns você ganhou !" << std::endl;
+            else
+                std::cout << "O Adversário ganhou seu merda !" << std::endl;
+            
+            isServ = !isServ;
+            memset(jogoDaVelha, -1, sizeof(jogoDaVelha) * 4 * 4);
+            return true;
+        }
+        return false;
+    }
+
+
+
+
+
+    int client_server_udp::checkWinnerTable()
+    {
+        if((jogoDaVelha[1][1] == 1) && (jogoDaVelha[1][2] == 1) && (jogoDaVelha[1][3] == 1))
+            return 1;
+
+        if((jogoDaVelha[2][1] == 1) && (jogoDaVelha[2][2] == 1) && (jogoDaVelha[2][3] == 1))
+            return 1;
+
+        if((jogoDaVelha[3][1] == 1) && (jogoDaVelha[3][2] == 1) && (jogoDaVelha[3][3] == 1))
+            return 1;
+
+        if((jogoDaVelha[1][1] == 1) && (jogoDaVelha[2][1] == 1) && (jogoDaVelha[3][1] == 1))
+            return 1;
+
+        if((jogoDaVelha[1][2] == 1) && (jogoDaVelha[2][2] == 1) && (jogoDaVelha[3][2] == 1))
+            return 1;
+
+        if((jogoDaVelha[1][3] == 1) && (jogoDaVelha[2][3] == 1) && (jogoDaVelha[3][3] == 1))
+            return 1;
+
+        if((jogoDaVelha[1][1] == 1) && (jogoDaVelha[2][2] == 1) && (jogoDaVelha[3][3] == 1))
+            return 1;
+
+        if((jogoDaVelha[1][3] == 1) && (jogoDaVelha[2][2] == 1) && (jogoDaVelha[3][1] == 1))
+            return 1;
+
+        //Condições para jogador 2 ganhar
+
+        if((jogoDaVelha[1][1] == 0) && (jogoDaVelha[1][2] == 0) && (jogoDaVelha[1][3] == 0))
+            return 0;
+
+        if((jogoDaVelha[2][1] == 0) && (jogoDaVelha[2][2] == 0) && (jogoDaVelha[2][3] == 0))
+            return 0;
+
+        if((jogoDaVelha[3][1] == 0) && (jogoDaVelha[3][2] == 0) && (jogoDaVelha[3][3] == 0))
+            return 0;
+
+        if((jogoDaVelha[1][1] == 0) && (jogoDaVelha[2][1] == 0) && (jogoDaVelha[3][1] == 0))
+            return 0;
+
+        if((jogoDaVelha[1][2] == 0) && (jogoDaVelha[2][2] == 0) && (jogoDaVelha[3][2] == 0))
+            return 0;
+
+        if((jogoDaVelha[1][3] == 0) && (jogoDaVelha[2][3] == 0) && (jogoDaVelha[3][3] == 0))
+            return 0;
+
+        if((jogoDaVelha[1][1] == 0) && (jogoDaVelha[2][2] == 0) && (jogoDaVelha[3][3] == 0))
+            return 0;
+
+        if((jogoDaVelha[1][3] == 0) && (jogoDaVelha[2][2] == 0) && (jogoDaVelha[3][1] == 0))
+            return 0;
+        
+        //ninguem ganhou
+        return 2;
     }
 }
