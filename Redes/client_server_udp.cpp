@@ -167,7 +167,6 @@ namespace CLIENT_SERVER_UDP
     {
         if(isServ)
         {
-            //validateRound();
             char jogada[3];
             std::cin.clear();
             fflush(stdin);
@@ -256,7 +255,8 @@ namespace CLIENT_SERVER_UDP
 
     bool client_server_udp::checkWinner()
     {
-        int w = checkWinner();
+        std::cout << "Entrou" << std::endl;
+        int w = checkWinnerTable();
         if( w != 2)
         {
             if((w == 1 && isServ) || (w == 0 && !isServ))
@@ -277,55 +277,59 @@ namespace CLIENT_SERVER_UDP
 
     int client_server_udp::checkWinnerTable()
     {
+        std::cout << "Entrou" << std::endl;
+        
         if((jogoDaVelha[1][1] == 1) && (jogoDaVelha[1][2] == 1) && (jogoDaVelha[1][3] == 1))
-            return 1;
+        {return 1;}
 
         if((jogoDaVelha[2][1] == 1) && (jogoDaVelha[2][2] == 1) && (jogoDaVelha[2][3] == 1))
-            return 1;
+        {return 1;}
 
         if((jogoDaVelha[3][1] == 1) && (jogoDaVelha[3][2] == 1) && (jogoDaVelha[3][3] == 1))
-            return 1;
+        {return 1;}
 
         if((jogoDaVelha[1][1] == 1) && (jogoDaVelha[2][1] == 1) && (jogoDaVelha[3][1] == 1))
-            return 1;
+        {return 1;}
 
         if((jogoDaVelha[1][2] == 1) && (jogoDaVelha[2][2] == 1) && (jogoDaVelha[3][2] == 1))
-            return 1;
+        {return 1;}
 
         if((jogoDaVelha[1][3] == 1) && (jogoDaVelha[2][3] == 1) && (jogoDaVelha[3][3] == 1))
-            return 1;
+        {return 1;}
 
         if((jogoDaVelha[1][1] == 1) && (jogoDaVelha[2][2] == 1) && (jogoDaVelha[3][3] == 1))
-            return 1;
+        {return 1;}
 
         if((jogoDaVelha[1][3] == 1) && (jogoDaVelha[2][2] == 1) && (jogoDaVelha[3][1] == 1))
-            return 1;
+        {return 1;}
 
         //Condições para jogador 2 ganhar
 
         if((jogoDaVelha[1][1] == 0) && (jogoDaVelha[1][2] == 0) && (jogoDaVelha[1][3] == 0))
-            return 0;
+        {return 0;}
 
         if((jogoDaVelha[2][1] == 0) && (jogoDaVelha[2][2] == 0) && (jogoDaVelha[2][3] == 0))
-            return 0;
+        {return 0;}
 
         if((jogoDaVelha[3][1] == 0) && (jogoDaVelha[3][2] == 0) && (jogoDaVelha[3][3] == 0))
-            return 0;
+        {return 0;}
 
         if((jogoDaVelha[1][1] == 0) && (jogoDaVelha[2][1] == 0) && (jogoDaVelha[3][1] == 0))
-            return 0;
+        {return 0;}
 
         if((jogoDaVelha[1][2] == 0) && (jogoDaVelha[2][2] == 0) && (jogoDaVelha[3][2] == 0))
-            return 0;
+        {return 0;}
 
         if((jogoDaVelha[1][3] == 0) && (jogoDaVelha[2][3] == 0) && (jogoDaVelha[3][3] == 0))
-            return 0;
+        {return 0;}
 
         if((jogoDaVelha[1][1] == 0) && (jogoDaVelha[2][2] == 0) && (jogoDaVelha[3][3] == 0))
-            return 0;
+        {return 0;}
 
         if((jogoDaVelha[1][3] == 0) && (jogoDaVelha[2][2] == 0) && (jogoDaVelha[3][1] == 0))
-            return 0;
+        {return 0;}
+        
+        std::cout << "Saiu" << std::endl;
         
         //ninguem ganhou
         return 2;
