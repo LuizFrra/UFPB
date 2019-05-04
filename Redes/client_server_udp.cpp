@@ -4,6 +4,7 @@
 #include <string.h>
 #include <string>
 #include <arpa/inet.h>
+#include <chrono>
 
 namespace CLIENT_SERVER_UDP
 {
@@ -67,7 +68,7 @@ namespace CLIENT_SERVER_UDP
         }          
     } 
 
-    char* client_server_udp::sendMenssage(char *menssage)
+    void client_server_udp::sendMenssage(char *menssage)
     {
         sendto(sockfd, (char*)menssage, strlen(menssage)+1, MSG_CONFIRM, (struct sockaddr*)&addrDest, sizeof(addrDest));
     }
@@ -76,15 +77,24 @@ namespace CLIENT_SERVER_UDP
     {
         socklen_t len;
         int n = 0;
-        recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
+        tv.tv_sec = 30;
+        tv.tv_usec = 1;
+        setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+        n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
 
         if(buffer[0] == '9')
             gameFuncionality(buffer);
 
+        if(n == 0)
+        {
+            std::cout << "O jogador Demorou muito para responder ou foi desconectado, Você ganhou.\n";
+            exit(1); 
+        }
+
         return buffer;
     }
 
-    char* client_server_udp::startGame(/*char *jogada, int *validPlay*/)
+    void client_server_udp::startGame(/*char *jogada, int *validPlay*/)
     {
         if(isServ)
         {
@@ -171,7 +181,8 @@ namespace CLIENT_SERVER_UDP
             char jogada[3];
             std::cin.clear();
             fflush(stdin);
-            std::cout << "Faça sua Jogada" << std::endl;
+            std::cout << "Faça sua Jogada, você tem 30s." << std::endl;
+            auto start = std::chrono::high_resolution_clock::now();
             std::cin >> jogada;
             while(!validPLay(jogada))
             {
@@ -181,6 +192,14 @@ namespace CLIENT_SERVER_UDP
                 std::cin >> jogada;
             }
             sendMenssage(jogada);
+            auto finish = std::chrono::high_resolution_clock::now();
+            int elapsed = std::chrono::duration_cast<std::chrono::seconds>(finish-start).count();
+            if(elapsed >= 30)
+            {
+                std::cout << "Você demorou muito para jogar e portanto foi desconectado. você perdeu.\n";
+                exit(1);
+            }
+
             changeMatriz(1, jogada);
             imprimeMatriz();
             if(checkWinner())
@@ -205,7 +224,9 @@ namespace CLIENT_SERVER_UDP
             char jogada[3];
             std::cin.clear();
             fflush(stdin);
-            std::cout << "Faça sua Jogada" << std::endl;
+            std::cout << "Faça sua Jogada, você tem 30s." << std::endl;
+            
+            auto start = std::chrono::high_resolution_clock::now();
             std::cin >> jogada;
             while(!validPLay(jogada))
             {
@@ -215,6 +236,14 @@ namespace CLIENT_SERVER_UDP
                 std::cin >> jogada;
             }
             sendMenssage(jogada);
+            auto finish = std::chrono::high_resolution_clock::now();
+            int elapsed = std::chrono::duration_cast<std::chrono::seconds>(finish-start).count();
+            if(elapsed >= 30)
+            {
+                std::cout << "Você demorou muito para jogar e portanto foi desconectado. você perdeu.\n";
+                exit(1);
+            }
+
             changeMatriz(0, jogada);
             imprimeMatriz();
             if(checkWinner())
@@ -249,7 +278,7 @@ namespace CLIENT_SERVER_UDP
             receiveMenssage();
             sendMenssage("92");
         }
-        
+        return true;
     }
 
 

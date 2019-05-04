@@ -22,8 +22,8 @@ namespace CLIENT_SERVER_UDP{
         client_server_udp(/* args */);
         client_server_udp(const char *ip, const int port);
         int gameFuncionality(char *code);
-        char* startGame(/*char *jogada, int *validPlay*/);
-        char* sendMenssage(char *menssage);
+        void startGame(/*char *jogada, int *validPlay*/);
+        void sendMenssage(char *menssage);
         char* receiveMenssage();
         int imprimeMatriz();
         char* matrizToChar();

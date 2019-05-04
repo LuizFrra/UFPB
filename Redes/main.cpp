@@ -13,14 +13,14 @@ int main(int argc, char const *argv[])
     // int validPlay = 1;
 
     client_server_udp *me = new client_server_udp("192.168.0.44", 21112);
-    *me->startGame();
+    me->startGame();
 
     while(true)
     {
         if(me->fazerJogada() == 1)
         {
             std::cout << "\n\n\n\n\n\n\n" << std::endl;
-            *me->startGame();
+            me->startGame();
         }
     }
 
