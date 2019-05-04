@@ -51,7 +51,7 @@ namespace CLIENT_SERVER_UDP
         n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
         
         if(n > 0)
-        {
+        {   
             tv.tv_sec = 0;
             tv.tv_usec = 0;
             setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
@@ -84,13 +84,16 @@ namespace CLIENT_SERVER_UDP
         tv.tv_sec = 30;
         tv.tv_usec = 1;
         setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+        auto start = std::chrono::high_resolution_clock::now();
         n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
         //std::cout << n << buffer << std::endl;
         
-        if(n < 0)
+        auto finish = std::chrono::high_resolution_clock::now();
+        int elapsed = std::chrono::duration_cast<std::chrono::seconds>(finish-start).count();
+        if(elapsed >= 30)
         {
-            std::cout << "O jogador Demorou muito para responder ou foi desconectado, Você ganhou.\n";
-            exit(1); 
+            std::cout << "O Adversário demorou muito para jogar ou foi desconectado, você ganhou.\n";
+            exit(1);
         }
 
         if(buffer[0] == '9')
