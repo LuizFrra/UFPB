@@ -85,15 +85,16 @@ namespace CLIENT_SERVER_UDP
         tv.tv_usec = 1;
         setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
         n = recvfrom(sockfd, &buffer, 512, MSG_WAITALL, (struct sockaddr*)&addrDest, &len);
-        std::cout << n << buffer << std::endl;
-        if(buffer[0] == '9')
-            gameFuncionality(buffer);
-
-        if(n == 0)
+        //std::cout << n << buffer << std::endl;
+        
+        if(n < 0)
         {
             std::cout << "O jogador Demorou muito para responder ou foi desconectado, Você ganhou.\n";
             exit(1); 
         }
+
+        if(buffer[0] == '9')
+            gameFuncionality(buffer);
 
         return buffer;
     }
