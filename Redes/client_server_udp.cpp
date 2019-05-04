@@ -6,6 +6,9 @@
 #include <arpa/inet.h>
 #include <chrono>
 #include <stdio.h>
+#include <stdlib.h>
+
+using namespace std;
 
 namespace CLIENT_SERVER_UDP
 {
