@@ -173,7 +173,7 @@ namespace CLIENT_SERVER_UDP
 
     bool client_server_udp::validPLay(char *jogada)
     {
-        if(!isdigit(jogada[0]) || !isdigit(jogada[1]) && !(jogada[0] - 48 < 1 || jogada[1] - 48 < 1) && !(jogada[0] - 48 > 3 || jogada[1] - 48 > 3))
+        if(!isdigit(jogada[0]) || !isdigit(jogada[1]) || (jogada[0] - 48 < 1 || jogada[1] - 48 < 1) || (jogada[0] - 48 > 3 || jogada[1] - 48 > 3))
             return false;
 
         if(jogoDaVelha[jogada[0] - 48][jogada[1] - 48] == -1)
