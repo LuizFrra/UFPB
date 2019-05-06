@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
     char jogada[3];
     // int validPlay = 1;
 
-    client_server_udp *me = new client_server_udp("192.168.0.50", 21112);
+    client_server_udp *me = new client_server_udp("192.168.15.220", 21112);
     me->startGame();
 
     while(true)
