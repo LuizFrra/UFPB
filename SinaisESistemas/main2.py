@@ -20,10 +20,16 @@ def getRealImaginary(imagem):
         return -1
     
     rows, cols = I.shape
+    # Aqui voce corta a imagem, os 2 é onde vc quer q comece a cortar e onde quer q termine
+    # Só mudar o 2 pelo o que tem no pdf
+    crop_img = I[2:rows - 2, 2:cols - 2] # linhas / colunas
+    I = crop_img
     m = cv.getOptimalDFTSize( rows )
     n = cv.getOptimalDFTSize( cols )
     padded = cv.copyMakeBorder(I, 0, m - rows, 0, n - cols, cv.BORDER_CONSTANT, value=[0, 0, 0])
-    #padded = cv.copyMakeBorder(I, 0, 2, 0, 2, cv.BORDER_CONSTANT, value=[0, 0, 0])
+    #padded = cv.copyMakeBorder(I, 0, 92, 0, 112, cv.BORDER_CONSTANT, value=[0, 0, 0])
+    #cv.imshow("image", I)
+    #cv.waitKey(0)
     planes = [np.float32(padded), np.zeros(padded.shape, np.float32)]
     complexI = cv.merge(planes)         # Add to the expanded another plane with zeros
     
@@ -49,8 +55,8 @@ def calculate():
                     break
                 secondImg = getRealImaginary(imagem = "orl_faces/s" + str(i) + "/" + str(j) + ".pgm")
                 #mse = MeanSquaredError(mainReal, NormalizaMatriz(secondImg[0]))
-                mse =  MeanSquaredError(mainReal, NormalizaMatriz(secondImg[1]))
-                #mse =  MeanSquaredError(mainImaginary, NormalizaMatriz(secondImg[1]))
+                #mse =  MeanSquaredError(mainReal, NormalizaMatriz(secondImg[1]))
+                mse =  MeanSquaredError(mainImaginary, NormalizaMatriz(secondImg[1]))
                 #mse =  MeanSquaredError(mainImaginary, NormalizaMatriz(secondImg[0]))
                 #mse =  MeanSquaredError(np.add(mainReal, mainImaginary), np.add(secondImg[0], secondImg[1]))
                 listaTwo.append(mse)
