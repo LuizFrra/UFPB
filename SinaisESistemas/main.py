@@ -73,6 +73,61 @@ def calculate():
         if(x == menorLinha):
             acerto = ((acerto + 1)/40) * 100
     print(acerto)
+
+def ModoLuiz(randomNumber):
+    #randomNumber = random.randint(1, 10)
+    lista = list()
+    for x in range(1, 41):
+        #print("orl_faces/s" + str(x) + "/" + str(randomNumber) + ".pgm")
+        mainImage = getRealImaginary(imagem = "orl_faces/s" + str(x) + "/" + str(randomNumber) + ".pgm")
+        mainReal = NormalizaMatriz(mainImage[0])
+        mainImaginary = NormalizaMatriz(mainImage[1])
+        menorMseCount = 0
+        menorMse = 2
+        contador = 1
+        for i in range(1, 11):
+            #print("orl_faces/s" + str(x) + "/" + str(i) + ".pgm")
+            if(i != randomNumber):
+                secondImg = getRealImaginary(imagem = "orl_faces/s" + str(x) + "/" + str(i) + ".pgm")
+                #mse = MeanSquaredError(mainReal, NormalizaMatriz(secondImg[0]))
+                #mse =  MeanSquaredError(mainReal, NormalizaMatriz(secondImg[1]))
+                mse =  MeanSquaredError(mainImaginary, NormalizaMatriz(secondImg[1]))
+                #mse =  MeanSquaredError(mainImaginary, NormalizaMatriz(secondImg[0]))
+                #mse =  MeanSquaredError(np.add(mainReal, mainImaginary), np.add(secondImg[0], secondImg[1]))
+                if(mse < menorMse):
+                    menorMse = mse
+                    menorMseCount = contador
+                contador = contador + 1
+        lista.append(menorMseCount)
+    
+    return lista
+
+def compara(lista, randomNumber):
+    acerto = 0
+    for x in range(1, 41):
+        mainImage = getRealImaginary(imagem = "orl_faces/s" + str(x) + "/" + str(randomNumber) + ".pgm")
+        mainReal = NormalizaMatriz(mainImage[0])
+        mainImaginary = NormalizaMatriz(mainImage[1])
+        mseMenor = 2
+        contador = 1
+        mseMenorCount = 0
+        for j in range(1, 41):
+            #print("orl_faces/s" + str(j) + "/" + str(lista[j]) + ".pgm")
+            secondImg = getRealImaginary(imagem = "orl_faces/s" + str(j) + "/" + str(lista[j - 1]) + ".pgm")
+            #mse = MeanSquaredError(mainReal, NormalizaMatriz(secondImg[0]))
+            #mse =  MeanSquaredError(mainReal, NormalizaMatriz(secondImg[1]))
+            mse =  MeanSquaredError(mainImaginary, NormalizaMatriz(secondImg[1]))
+            #mse =  MeanSquaredError(mainImaginary, NormalizaMatriz(secondImg[0]))
+            #mse =  MeanSquaredError(np.add(mainReal, mainImaginary), np.add(secondImg[0], secondImg[1]))
+            if(mse < mseMenor):
+                mseMenor = mse
+                mseMenorCount = contador
+            contador = contador + 1
+        if(x == mseMenorCount):
+            print("A imgem " + str(x) + "bateu com o " + str(mseMenorCount))
+            acerto = (acerto + 1)
+    
+    return (acerto/40)*100
 def main(argv):
     
     #ImageOne = getRealImaginary(imagem = "orl_faces/s1/1.pgm")
@@ -89,7 +144,11 @@ def main(argv):
     #print(MeanSquaredError(ImaginaryPlaneOne, RealPlaneTwo))
     #print(MeanSquaredError(RealPlaneOne, ImaginaryPlaneTwo))
     #print(MeanSquaredError(np.add(RealPlaneOne, ImaginaryPlaneOne), np.add(RealPlaneTwo, ImaginaryPlaneTwo)))
-    calculate()
+    #calculate()
+    randomNumber = random.randint(1 , 10)
+    lista = ModoLuiz(randomNumber)
+    print(lista)
+    print(compara(lista, randomNumber))
     #print("Real\n")
     #print(NormalizaMatriz(planes[0]))
 
