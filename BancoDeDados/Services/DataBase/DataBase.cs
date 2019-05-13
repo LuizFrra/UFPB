@@ -275,8 +275,8 @@ namespace BancoDeDados.Services.DataBase
                     
                     command.Parameters.AddWithValue("myID", myID);
 
-                    if(!string.IsNullOrEmpty(post))
-                        command.Parameters.AddWithValue("Texto", post);
+                    //if(!string.IsNullOrEmpty(post))
+                    command.Parameters.AddWithValue("Texto", post);
                     
                     if(image != null)
                     {
