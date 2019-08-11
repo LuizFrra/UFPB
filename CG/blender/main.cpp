@@ -1,12 +1,4 @@
-#define GL_GLEXT_PROTOTYPES
-#include <iostream>
 #include <GL/glut.h>
-#include <vector>
-#include </usr/include/glm/vec3.hpp>
-#include </usr/include/glm/vec2.hpp>
-#include <string.h>
-#include <GL/glext.h>
-#include <GL/glx.h>
 
 double angTerra = 0;
 
