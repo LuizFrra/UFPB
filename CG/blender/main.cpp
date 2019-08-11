@@ -40,7 +40,7 @@ void DisplayF()
     gluLookAt(20, 30, 20, 0, 0, 0, 0, 0, 1);
 
 
-    glColor3d(1, 1, 0);
+    glColor3f(1, 0.25, 0);
     glTranslated(0, 0, 5);
     glutWireSphere(10, 500, 500);
 
@@ -51,9 +51,10 @@ void DisplayF()
 
     glColor3d(1, 1, 1);
     glTranslated(-15, 0, 5);
-    glutWireSphere(3, 500, 500);
+    glutWireSphere(2, 500, 500);
 
-    angTerra += 2.0;
+    angTerra += 0.75;
+    
     glFlush();
 }
 
