@@ -8,8 +8,6 @@
 #include <GL/glext.h>
 #include <GL/glx.h>
 
-float R_SOL = 0.0;
-
 double angTerra = 0;
 
 void DisplayF();
