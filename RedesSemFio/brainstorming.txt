@@ -1,0 +1,13 @@
+serão necessárias 3 camadas :
+
+- Camda Física
+    -  Transmissão de Bits através de um canal : modulação e codificação
+    -   O Hospedeiro estaria conectado ao PA através de um cabo ???
+
+
+- Camada de Enlace
+    - Sincronização, Controle de Acesso ao meio e controle de Erro
+    - Utilizar Uma matriz Tridimensional para Sincronização
+
+- Camada de Rede
+    - Roteamento de pacotes da fonte ao destino passando por diversas redes físicas
