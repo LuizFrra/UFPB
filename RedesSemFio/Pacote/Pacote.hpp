@@ -54,6 +54,8 @@ public:
     Pacote(uint8 Origem[4], uint8 Destino[4], uint16 Identificador, bool Flags,uint16 OffSet, uint8 TTL, std::string Dados);
     ~Pacote();
     bool ChecarCheckSum();
+    uint8 *GetDestino();
+    uint8 *GetOrigem();
 };
 
 #endif
