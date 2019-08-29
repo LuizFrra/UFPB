@@ -21,7 +21,7 @@
     - Movimentar os bits
 
 
-Minha idéia :
+Minha ideia :
 
 - Sempre que um dispositivo quiser enviar uma mensagem, o mesmo irá criar um objeto do tipo pacote,
 um para a camada de aplicação e outro para a camada de transporte, que irá respectivamente adicionar seus campos
@@ -35,7 +35,7 @@ sua fez fará um push no roteador destino
 * Dispositivo   
     - Aplicacao
     - Transporte
-    - &Roteador
+    - &Roteador - Rede
 * Roteador
     - Camada de rede
     - Static::Enlance
