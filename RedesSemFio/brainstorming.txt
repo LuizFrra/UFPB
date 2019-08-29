@@ -1,23 +1,23 @@
-- Camada de Aplicação
+- Camada de Aplicação -  Sera iniciada pelo dispositivo
     - Onde reside aplicações da rede e protocolos, como http, smtp, ftp, ssh entre vários outros
     - Tradução de nomes simples para endereço de rede 32 bits, exemplo: www.google.com.br para 172.7.1.2
     - Troca informação entre aplicações
     - Aqui é adicionado no pacote os campos de portas e endereços ip
 
-- Camada de Transporte
+- Camada de Transporte - Será iniciada pelo Dispositivo
     - Transporta a mensagem da camada da aplicação entre os computadores, usando protocolos como tcp ou udp
     - Entrega o pacote a devida aplicação
 
-- Camada de rede
+- Camada de rede - Será iniciada pelo Roteador
     - Responsável pela movimentação de uma máquina para outra
     - A camada de transporte passa um pacote e um endereço destino a camada de rede
     - A camada de rede provê o serviço de entrega do pacote a camada de transporte na maquina destinaria
     - Protocolo Ip e Protocolo de Roteamento
 
-- Camada de Enlace
+- Camada de Enlace  - Classe com membros estáticos
     - Controle de Acesso ao meio, movimentar repassar o pacote de um nó para outros
 
-- Camada fisica
+- Camada fisica - Classe com membros estáticos
     - Movimentar os bits
 
 
@@ -31,3 +31,13 @@ o próximo destino ao pacote
 - Em seguida a camada estática da camada de enlance irá iterar sobre os roteadores e verificar quem quer enviar
 caso um roteador deseje enviar, o canal é reservado para aquela rodada e o pacote é repassado para a camada fisica, que por
 sua fez fará um push no roteador destino
+
+* Dispositivo   
+    - Aplicacao
+    - Transporte
+    - &Roteador
+* Roteador
+    - Camada de rede
+    - Static::Enlance
+* Enlance
+    - Static::Fisica
