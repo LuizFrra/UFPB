@@ -1,13 +1,33 @@
-serão necessárias 3 camadas :
+- Camada de Aplicação
+    - Onde reside aplicações da rede e protocolos, como http, smtp, ftp, ssh entre vários outros
+    - Tradução de nomes simples para endereço de rede 32 bits, exemplo: www.google.com.br para 172.7.1.2
+    - Troca informação entre aplicações
+    - Aqui é adicionado no pacote os campos de portas e endereços ip
 
-- Camda Física
-    -  Transmissão de Bits através de um canal : modulação e codificação
-    -   O Hospedeiro estaria conectado ao PA através de um cabo ???
+- Camada de Transporte
+    - Transporta a mensagem da camada da aplicação entre os computadores, usando protocolos como tcp ou udp
+    - Entrega o pacote a devida aplicação
 
+- Camada de rede
+    - Responsável pela movimentação de uma máquina para outra
+    - A camada de transporte passa um pacote e um endereço destino a camada de rede
+    - A camada de rede provê o serviço de entrega do pacote a camada de transporte na maquina destinaria
+    - Protocolo Ip e Protocolo de Roteamento
 
 - Camada de Enlace
-    - Sincronização, Controle de Acesso ao meio e controle de Erro
-    - Utilizar Uma matriz Tridimensional para Sincronização
+    - Controle de Acesso ao meio, movimentar repassar o pacote de um nó para outros
 
-- Camada de Rede
-    - Roteamento de pacotes da fonte ao destino passando por diversas redes físicas
+- Camada fisica
+    - Movimentar os bits
+
+
+Minha idéia :
+
+- Sempre que um dispositivo quiser enviar uma mensagem, o mesmo irá criar um objeto do tipo pacote,
+um para a camada de aplicação e outro para a camada de transporte, que irá respectivamente adicionar seus campos
+no pacote
+- Em seguida o pacote será repassado para o roteador, que irá fazer o roteamento e adicionar e adicionar
+o próximo destino ao pacote
+- Em seguida a camada estática da camada de enlance irá iterar sobre os roteadores e verificar quem quer enviar
+caso um roteador deseje enviar, o canal é reservado para aquela rodada e o pacote é repassado para a camada fisica, que por
+sua fez fará um push no roteador destino
