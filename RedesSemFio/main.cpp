@@ -1,9 +1,9 @@
 #include <iostream>
-#include "CamadaFisica/CamadaFisica.hpp"
+#include "Coordenador/Coordenador.hpp"
 
 int main(int argc, char const *argv[])
 {
-    CamadaFisica *camadaFisica = new CamadaFisica(100, 100);
+    Coordenador *coordenador = new Coordenador();
     //camadaFisica->ImprimirEnderecosMac();
     return 0;
 }

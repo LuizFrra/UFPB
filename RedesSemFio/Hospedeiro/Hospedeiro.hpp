@@ -1,6 +1,9 @@
 #ifndef HOSPEDEIRO_H_
 #define HOSPEDEIRO_H_
 #include <stdint.h>
+#include "../Roteador/Roteador.hpp"
+#include "../CamadaAplicacao/CamadaAplicacao.hpp"
+#include "../CamadaTransporte/CamadaTransporte.hpp"
 
 typedef uint8_t uint8;
 typedef uint16_t uint16;
@@ -15,7 +18,18 @@ private:
     uint8 Ip[4];
 
     // Endereco da placa de rede do hospedeiro
-    uint8 EnderecoMac[6][2];
+    uint8 EnderecoMac[6];
+
+    // Roteador o qual o dispositivo está conectado
+    Roteador *Roteador;
+
+    // Camada de Aplicação
+    CamadaAplicacao *CamadaAplicacao;
+
+    // Camada de Transporte
+    CamadaTransporte *CamadaTransporte;
+
+    
 
 public:
     Hospedeiro(uint8 IP, uint8 EnderecoMac[6][2]);
