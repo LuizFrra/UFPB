@@ -5,15 +5,6 @@
 
 Coordenador::Coordenador()
 {
-    // Roteador *roteador = new Roteador(CriarEnderecoMac(), CriarEnderecoIp(), 10, 1000, 10, 10);
-    // Roteadores.push_back(roteador);
-    // roteador = new Roteador(CriarEnderecoMac(), CriarEnderecoIp(), 10, 1000, 12, 12);
-    // roteador->AdicionarVizinho(Roteadores.front());
-    // roteador->ImprimirMacVizinhos();
-    // Roteadores.front()->ImprimirMacVizinhos();
-    // std::cout << "Ip\n";
-    // roteador->ImprimirIpVizinhos();
-    // Roteadores.front()->ImprimirIpVizinhos();
     EnderecosMacUtilizados.push_back(CriarEnderecoMac());
     EnderecosMacUtilizados.push_back(CriarEnderecoMac());
     EnderecosMacUtilizados.push_back(CriarEnderecoMac());

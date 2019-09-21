@@ -1,12 +1,14 @@
-#Primeiro MakeFile
-
 all:redes
+all: clean
 
-redes: main.o Coordenador.o 
-	g++ -o redes main.o Coordenador.o
+redes: main.o Coordenador.o
+	g++ main.o Coordenador.o -o redes
 
-main.o: main.cpp ./Coordenador/Coordenador.hpp
-	g++ -o main.o main.cpp
+main.o: main.cpp # Primeiro define o retorno e o segundo os argumentos
+	g++ -c main.cpp
 
-Coordenador.o: Coordenador/Coordenador.cpp Coordenador/Coordenador.hpp
-	g++ -o Coordenador/Coordenador.cpp Coordenador/Coordenador.hpp
+Coordenador.o: Coordenador/Coordenador.cpp # Argumentos para ser utilizado do g++
+	g++ -c Coordenador/Coordenador.cpp
+
+clean:
+	rm -f *.o
