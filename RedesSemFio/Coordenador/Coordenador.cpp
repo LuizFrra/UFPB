@@ -1,6 +1,6 @@
 #include "Coordenador.hpp"
 #include <iostream>
-
+#include <iomanip>
 
 
 Coordenador::Coordenador()
@@ -14,7 +14,11 @@ Coordenador::Coordenador()
     // std::cout << "Ip\n";
     // roteador->ImprimirIpVizinhos();
     // Roteadores.front()->ImprimirIpVizinhos();
-
+    EnderecosMacUtilizados.push_back(CriarEnderecoMac());
+    EnderecosMacUtilizados.push_back(CriarEnderecoMac());
+    EnderecosMacUtilizados.push_back(CriarEnderecoMac());
+    EnderecosMacUtilizados.push_back(CriarEnderecoMac());
+    ImprimirEnderecosMac();
 
 };
 
@@ -28,46 +32,34 @@ Coordenador::Coordenador()
 /********************************************************************************************************************/
 /********************************************************************************************************************/
 
-uint8* Coordenador::CriarEnderecoMac()
+void Coordenador::ImprimirEnderecosMac()
 {
-    while(true)
+    for(std::vector<std::vector<int>>::iterator it1 = EnderecosMacUtilizados.begin(); it1 != EnderecosMacUtilizados.end(); ++it1)
     {
-        uint8 *EnderecoMac = new uint8[6];
-        
+        for(std::vector<int>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2)
+        {
+            std::cout << std::hex << std::setw(4) << std::uppercase << (*it2);
+        }
+        std::cout << "\n";
+    }
+}
+
+std::vector<int> Coordenador::CriarEnderecoMac()
+{
+    std::vector<std::vector<int>>::iterator it;
+
+    while (true)
+    {
+        std::vector<int> EnderecoMac;
         for(int i = 0; i < 6; i++)
         {
-            EnderecoMac[i] = (uint8)RandomNumber(0, 255);
-            //std::cout << std::hex << EnderecoMac[i] * 1;
+            EnderecoMac.push_back(RandomNumber(0, 255));
         }
-        //std::cout << "\n";
-        
-        std::list<uint8*>::iterator it;
-        
+
         it = std::find(EnderecosMacUtilizados.begin(), EnderecosMacUtilizados.end(), EnderecoMac);
 
         if(it == EnderecosMacUtilizados.end())
             return EnderecoMac;
-    }
-
-};
-
-uint8* Coordenador::CriarEnderecoIp()
-{
-    while(true)
-    {
-        uint8 *EnderecoIp = new uint8[4];
-
-        for (int i = 0; i < 4; i++)
-        {
-            EnderecoIp[i] = (uint8)RandomNumber(0, 255);
-            //std::cout << std::hex << EnderecoIp[i] * 1;
-        }
-        //std::cout << "\n";
-
-        std::list<uint8*>::iterator it = std::find(EnderecosIpUtilizados.begin(), EnderecosIpUtilizados.end(), EnderecoIp);
-
-        if(it == EnderecosIpUtilizados.end())
-            return EnderecoIp;
     }
 };
 

@@ -2,11 +2,19 @@
 #define PACOTE_H_
 #include <stdint.h>
 #include <string>
+#include <vector>
 
 typedef uint8_t uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
 typedef uint64_t uint64;
+
+enum TipoPacote
+{
+    Mensagem,
+    RouteRequest,
+    RouteReply
+};
 
 class Pacote
 {
@@ -41,21 +49,30 @@ private:
     uint64 Checksum;
 
     // Ip de Origem
-    uint8 Origem[4];
+    std::vector<int> Origem;
 
     // Iṕ de Destino
-    uint8 Destino[4];
+    std::vector<int> Destino;
+
+    // Foward, Se o Valor estiver em 0.0.0.0 Significa que é BROADCAST
+    std::vector<int> Next;
 
     // Dados
     std::string Dados;
 
+    // Variavel que define o tipo do pacote: dados, route request, route reply ...
+    TipoPacote tipoPacote;
+
+    // Lista de Hospedeiro pelo qual o pacote passou
+    std::vector<std::vector<int>> HospedeirosPeloQualPassou;
+
 public:
-    Pacote(uint8 Origem[4], uint8 Destino[4], uint8 TTL, std::string Dados);
-    Pacote(uint8 Origem[4], uint8 Destino[4], uint16 Identificador, bool Flags,uint16 OffSet, uint8 TTL, std::string Dados);
+    Pacote();
     ~Pacote();
     bool ChecarCheckSum();
-    uint8 *GetDestino();
-    uint8 *GetOrigem();
+    std::vector<int> GetDestino();
+    std::vector<int> GetOrigem();
+    std::vector<int> GetNext();
 };
 
 #endif

@@ -1,43 +1,13 @@
-- Camada de Aplicação -  Sera iniciada pelo dispositivo
-    - Onde reside aplicações da rede e protocolos, como http, smtp, ftp, ssh entre vários outros
-    - Tradução de nomes simples para endereço de rede 32 bits, exemplo: www.google.com.br para 172.7.1.2
-    - Troca informação entre aplicações
-    - Aqui é adicionado no pacote os campos de portas e endereços ip
+A Deseja Enviar Para F
 
-- Camada de Transporte - Será iniciada pelo Dispositivo
-    - Transporta a mensagem da camada da aplicação entre os computadores, usando protocolos como tcp ou udp
-    - Entrega o pacote a devida aplicação
+A cria um pacote do tipo dados
 
-- Camada de rede - Será iniciada pelo Roteador
-    - Responsável pela movimentação de uma máquina para outra
-    - A camada de transporte passa um pacote e um endereço destino a camada de rede
-    - A camada de rede provê o serviço de entrega do pacote a camada de transporte na maquina destinaria
-    - Protocolo Ip e Protocolo de Roteamento
+A Verifica se Existe uma Rota para F
 
-- Camada de Enlace  - Classe com membros estáticos
-    - Controle de Acesso ao meio, movimentar repassar o pacote de um nó para outros
-
-- Camada fisica - Classe com membros estáticos
-    - Movimentar os bits
-
-
-Minha ideia :
-
-- Sempre que um dispositivo quiser enviar uma mensagem, o mesmo irá criar um objeto do tipo pacote,
-um para a camada de aplicação e outro para a camada de transporte, que irá respectivamente adicionar seus campos
-no pacote
-- Em seguida o pacote será repassado para o roteador, que irá fazer o roteamento e adicionar e adicionar
-o próximo destino ao pacote
-- Em seguida a camada estática da camada de enlance irá iterar sobre os roteadores e verificar quem quer enviar
-caso um roteador deseje enviar, o canal é reservado para aquela rodada e o pacote é repassado para a camada fisica, que por
-sua fez fará um push no roteador destino
-
-* Dispositivo   
-    - Aplicacao
-    - Transporte
-    - &Roteador - Rede
-* Roteador
-    - Camada de rede
-    - Static::Enlance
-* Enlance
-    - Static::Fisica
+Caso Não exista Rota para F, A coloca pacote de dados em uma lista
+    - A Cria um pacote do tipo RouteRequest
+    - A Chama a Camada de Enlance
+    - Camada de Enlance Itera sob os hospedeiro escutando o tom de ocupado
+        - Se não houve tom de ocupado
+        - Manda o Pacote Para a camada Fisica, Passando como argumento o Hospedeiro e o Pacote  
+            - Camdada Fisica da um Push nos pacote do Hospedeiro Destino
