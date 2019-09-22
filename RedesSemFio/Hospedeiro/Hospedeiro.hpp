@@ -4,9 +4,12 @@
 #include <list>
 #include "../Pacote/Pacote.hpp"
 
-#include "../CamadaEnlace/CamadaEnlace.hpp"
-#include "../CamadaFisica/CamadaFisica.hpp"
-#include "../CamadaRede/CamadaRede.hpp"
+// #include "../CamadaEnlace/CamadaEnlace.hpp"
+// #include "../CamadaFisica/CamadaFisica.hpp"
+// #include "../CamadaRede/CamadaRede.hpp"
+class CamadaRede;
+class CamadaEnlace;
+class CamadaFisica;
 
 class Hospedeiro
 {

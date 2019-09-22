@@ -1,5 +1,7 @@
 #include "Hospedeiro.hpp"
-
+#include "../CamadaEnlace/CamadaEnlace.cpp"
+#include "../CamadaFisica/CamadaFisica.cpp"
+#include "../CamadaRede/CamadaRede.cpp"
 
 Hospedeiro::Hospedeiro(std::vector<int> *EnderecoMac, uint CoordenadaX, uint CoordenadaY)
 {
@@ -37,6 +39,8 @@ bool Hospedeiro::DefinirTomDeOcupado(bool valor)
         TomDeOcupado = false;
     else if(!TomDeOcupado && valor) // Se tom de Ocupado for false e valor true, entao deve colocar true
         TomDeOcupado = true;
+
+    return TomDeOcupado;
 }
 
 Hospedeiro::~Hospedeiro()
