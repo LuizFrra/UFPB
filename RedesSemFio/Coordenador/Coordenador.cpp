@@ -3,16 +3,31 @@
 #include <iomanip>
 
 
-Coordenador::Coordenador()
+Coordenador::Coordenador(int CoordenadaXMaxima, int CoordenadaYMaxima)
 {
-    EnderecosMacUtilizados.push_back(CriarEnderecoMac());
-    EnderecosMacUtilizados.push_back(CriarEnderecoMac());
-    EnderecosMacUtilizados.push_back(CriarEnderecoMac());
-    EnderecosMacUtilizados.push_back(CriarEnderecoMac());
-    ImprimirEnderecosMac();
+    std::vector<int> BroadCast(6);
+    EnderecosMacUtilizados.push_back(BroadCast);
+    this->CoordenadaXMaxima = CoordenadaXMaxima;
+    this->CoordenadaYMaxima = CoordenadaYMaxima;
+    CriarMapa();
 
-};
+    // ImprimirEnderecosMac();    
+}
 
+Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas)
+{
+    if(!ValidaCoordenadas(Coordenadas))
+        Coordenadas = GerarCoordenadaMapa();
+    
+    // std::cout << Coordenadas.first << " " << Coordenadas.second << "\n";
+
+    auto EnderecoMac = CriarEnderecoMac();
+    Hospedeiro *hospedeiro = new Hospedeiro(&EnderecoMac, Coordenadas.first, Coordenadas.second);
+    Mapa[Coordenadas.first][Coordenadas.second] = true;
+    Hospedeiros.push_back(hospedeiro);
+
+    return *hospedeiro;
+}
 
 
 /********************************************************************************************************************/
@@ -23,10 +38,56 @@ Coordenador::Coordenador()
 /********************************************************************************************************************/
 /********************************************************************************************************************/
 
+bool Coordenador::ValidaCoordenadas(std::pair<uint, uint> Coordenadas)
+{
+    if(Coordenadas.first < (CoordenadaXMaxima - 1) && Coordenadas.second < (CoordenadaYMaxima - 1))
+    {
+        if(Mapa[Coordenadas.first][Coordenadas.second])
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+
+    return true;
+}
+
+std::pair<int, int> Coordenador::GerarCoordenadaMapa()
+{
+    std::pair<int, int> Coordenadas;
+
+    Coordenadas.first = RandomNumber(0, CoordenadaXMaxima - 1);
+    Coordenadas.second = RandomNumber(0, CoordenadaYMaxima - 1);
+
+    while (Mapa[Coordenadas.first][Coordenadas.second])
+    {
+        Coordenadas.first = RandomNumber(0, CoordenadaXMaxima - 1);
+        Coordenadas.second = RandomNumber(0, CoordenadaYMaxima - 1);
+    }
+
+    return Coordenadas;
+}
+
+void Coordenador::CriarMapa()
+{
+    Mapa = new bool*[CoordenadaXMaxima];
+
+    for(int i = 0; i < CoordenadaYMaxima; i++)
+        Mapa[i] = new bool[CoordenadaYMaxima];
+
+    for(int i = 0; i < CoordenadaXMaxima; i++)
+        for(int j = 0; j < CoordenadaYMaxima; j++)
+            Mapa[i][j] = false;    
+}
+
 void Coordenador::ImprimirEnderecosMac()
 {
     for(std::vector<std::vector<int>>::iterator it1 = EnderecosMacUtilizados.begin(); it1 != EnderecosMacUtilizados.end(); ++it1)
     {
+        std::cout << "1. ";
         for(std::vector<int>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2)
         {
             std::cout << std::hex << std::setw(4) << std::uppercase << (*it2);

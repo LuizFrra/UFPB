@@ -1,17 +1,22 @@
-#ifndef CAMADA_DE_REDE
-#define CAMADA_DE_REDE
+#pragma once
 
-#include "../CamadaEnlance/CamadaEnlace.hpp"
+#ifndef _CAMADA_DE_REDE_H_
+#define _CAMADA_DE_REDE_H_
+
+#include "../CamadaEnlace/CamadaEnlace.hpp"
+
+class CamadaEnlance;
 
 class CamadaRede
 {
+    
 private:
-    CamadaEnlace *camadaEnlance;
+    CamadaEnlace *camadaEnlace;
     /* data */
 public:
     CamadaRede(/* args */);
+    void DefinirCamadaDeBaixo(CamadaEnlace *camadaEnlace);
     ~CamadaRede();
-    void DefinirCamadaDeBaixo(CamadaEnlace &camadaEnlace);
 };
 
 #endif

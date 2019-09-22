@@ -4,19 +4,36 @@
 #include <list>
 #include "../Pacote/Pacote.hpp"
 
+#include "../CamadaEnlace/CamadaEnlace.hpp"
+#include "../CamadaFisica/CamadaFisica.hpp"
+#include "../CamadaRede/CamadaRede.hpp"
+
 class Hospedeiro
 {
 
 private:
 
     // Endereco da placa de rede *Numero Unico*
-    uint8 EnderecoMac[6];
+    std::vector<int> *EnderecoMac;
+
+    // Variavel que armazenada a Coordenada X do Hospedeiro
+    uint CoordenadaX;
+
+    // Variavel que armazenada a Coordenada Y do Hospedeiro
+    uint CoordenadaY;
+
+    // Variavel que define o Alcance do Hospedeiro
+    uint Alcance;
+
+//    CamadaRede *camadaRede;
+
+//    CamadaEnlace *camadaEnlace;
+
+//    CamadaFisica *camadaFisica;
     
 
 public:
-    Hospedeiro(uint8 IpNaRede, uint8 *EnderecoMac);
-    void CriarPacote(uint8 Destino[4], uint64 numeroPacotes, std::list<std::string> dados);
-    void CriarPacote(uint8 Destino[4], uint64 numeroPacotes);
+    Hospedeiro(std::vector<int> *EnderecoMac, uint CoordenadaX, uint CoordenadaY);
     ~Hospedeiro();
 };
 
