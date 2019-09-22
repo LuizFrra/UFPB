@@ -25,16 +25,30 @@ private:
     // Variavel que define o Alcance do Hospedeiro
     uint Alcance;
 
-//    CamadaRede *camadaRede;
+    // Camada de Rede Do Hospedeiro
+    CamadaRede *camadaRede;
 
-//    CamadaEnlace *camadaEnlace;
+    // Camada de Enlance Do Hospedeiro
+    CamadaEnlace *camadaEnlace;
 
-//    CamadaFisica *camadaFisica;
+    // Camada Fisica do Hospedeiro
+    CamadaFisica *camadaFisica;
     
+    // Contém todas as mensagem que o Hospedeiro deseja enviar, primeira chave da pair contém a mensagem e a segunda destino
+    std::vector<std::pair<std::string, std::vector<int>>> MensagensParaEnviar;
+
+    bool TomDeOcupado;
 
 public:
     Hospedeiro(std::vector<int> *EnderecoMac, uint CoordenadaX, uint CoordenadaY);
+    void EnviarMensagem(std::string mensagem, std::vector<int> Destino);
+    CamadaFisica* PegarCamadaFisica();
+    
+    bool PegarTomDeOcupado();
+    bool DefinirTomDeOcupado(bool valor);
+    
     ~Hospedeiro();
+
 };
 
 #endif
