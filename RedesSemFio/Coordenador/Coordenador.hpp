@@ -8,9 +8,9 @@
 class Coordenador
 {
 private:
-    std::vector<std::vector<int>> EnderecosMacUtilizados;
+    std::list<std::vector<int>> EnderecosMacUtilizados;
 
-    std::vector<Hospedeiro*> Hospedeiros;
+    std::list<Hospedeiro*> Hospedeiros;
 
     ulong RandomNumber(int max, int min);
 
@@ -39,7 +39,9 @@ private:
 public:
     void ImprimirEnderecosMac();
     Coordenador(int CoordenadaXMaxima, int CoordenadaYMaxima);
-    ~Coordenador();
     Hospedeiro AdicionarHospedeiro(std::pair<uint,uint> Coordenadas);
+    void MostrarHospedeiros();
+    void MostrarHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedeiro*>::iterator hospedeiro);
+    ~Coordenador();
 };
 #endif

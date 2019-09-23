@@ -6,20 +6,23 @@
 #include <unistd.h>
 #include <algorithm>
 
-#include "../CamadaEnlace/CamadaEnlace.hpp"
+#include "../Pacote/Pacote.hpp"
 
-class CamadaEnlance;
+class CamadaEnlace;
+class Hospedeiro;
 
 class CamadaFisica
 {
 
 private:
+    Hospedeiro *hospedeiro;
+
     /* data */
     CamadaEnlace *camadaEnlace;
     // Utilizado para indicar a localização de Cada Roteador
 
 public:
-    CamadaFisica();
+    CamadaFisica(Hospedeiro *hospedeiro);
     void DefinirCamadaDeCima(CamadaEnlace *camadaEnlace);
     ~CamadaFisica();
 };

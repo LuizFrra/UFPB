@@ -10,7 +10,6 @@ Coordenador::Coordenador(int CoordenadaXMaxima, int CoordenadaYMaxima)
     this->CoordenadaXMaxima = CoordenadaXMaxima;
     this->CoordenadaYMaxima = CoordenadaYMaxima;
     CriarMapa();
-
     // ImprimirEnderecosMac();    
 }
 
@@ -22,10 +21,13 @@ Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas)
     // std::cout << Coordenadas.first << " " << Coordenadas.second << "\n";
 
     auto EnderecoMac = CriarEnderecoMac();
-    Hospedeiro *hospedeiro = new Hospedeiro(&EnderecoMac, Coordenadas.first, Coordenadas.second);
+    int Alcance = RandomNumber(1, CoordenadaYMaxima);
+    Hospedeiro *hospedeiro = new Hospedeiro(EnderecoMac, Coordenadas.first, Coordenadas.second, Alcance);
+    
+    EnderecosMacUtilizados.push_back(EnderecoMac);
     Mapa[Coordenadas.first][Coordenadas.second] = true;
     Hospedeiros.push_back(hospedeiro);
-
+    
     return *hospedeiro;
 }
 
@@ -37,6 +39,46 @@ Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas)
 /********************************************************************************************************************/
 /********************************************************************************************************************/
 /********************************************************************************************************************/
+
+void Coordenador::MostrarHospedeiros()
+{   int contadorHospedeiros = 0;
+
+    for(std::list<Hospedeiro*>::iterator it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
+    {
+        std::cout << std::dec << ++contadorHospedeiros << ". ";
+        std::vector<int> vetorMac = (*it)->PegarEnderecoMac();
+        for(auto it2 = vetorMac.begin(); it2 != vetorMac.end(); ++it2)
+        {
+            std::cout << std::hex << std::setw(4) << std::uppercase <<  *it2;
+        }
+        MostrarHospedeirosAlcancaveisPorHospedeiro(it);
+        //return;
+        std::cout << "\n";
+    }
+}
+
+void Coordenador::MostrarHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedeiro*>::iterator hospedeiro)
+{
+    int contadorHospedeirosAlcancaveis = 0;
+    for(auto it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
+    {
+        ++contadorHospedeirosAlcancaveis;
+        if((*it)->PegarEnderecoMac() != (*hospedeiro)->PegarEnderecoMac())
+        {  
+            if((*hospedeiro)->IsRecheable((*it)->PegarCoordenadas()))
+            {
+                std::cout << "\n" << "    ";
+                auto vetorMac = (*it)->PegarEnderecoMac();
+                std::cout << std::dec << contadorHospedeirosAlcancaveis << ". ";
+                for(auto it2 = vetorMac.begin(); it2 != vetorMac.end(); ++it2)
+                {
+                    std::cout << std::hex << std::setw(4) << std::uppercase <<  *it2;
+                }
+                std::cout << "\n";
+            }
+        }
+   }
+}
 
 bool Coordenador::ValidaCoordenadas(std::pair<uint, uint> Coordenadas)
 {
@@ -85,7 +127,7 @@ void Coordenador::CriarMapa()
 
 void Coordenador::ImprimirEnderecosMac()
 {
-    for(std::vector<std::vector<int>>::iterator it1 = EnderecosMacUtilizados.begin(); it1 != EnderecosMacUtilizados.end(); ++it1)
+    for(std::list<std::vector<int>>::iterator it1 = EnderecosMacUtilizados.begin(); it1 != EnderecosMacUtilizados.end(); ++it1)
     {
         std::cout << "1. ";
         for(std::vector<int>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2)
@@ -98,7 +140,7 @@ void Coordenador::ImprimirEnderecosMac()
 
 std::vector<int> Coordenador::CriarEnderecoMac()
 {
-    std::vector<std::vector<int>>::iterator it;
+    std::list<std::vector<int>>::iterator it;
 
     while (true)
     {

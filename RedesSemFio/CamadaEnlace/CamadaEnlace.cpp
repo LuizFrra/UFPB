@@ -2,9 +2,9 @@
 #include "../CamadaRede/CamadaRede.hpp"
 #include "../CamadaFisica/CamadaFisica.hpp"
 
-CamadaEnlace::CamadaEnlace(/* args */)
+CamadaEnlace::CamadaEnlace(Hospedeiro *hospedeiro)
 {
-
+    this->hospedeiro = hospedeiro;
 }
     
 void CamadaEnlace::DefinirCamadaDeCima(CamadaRede *camadaRede)

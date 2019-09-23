@@ -4,9 +4,6 @@
 #include <list>
 #include "../Pacote/Pacote.hpp"
 
-// #include "../CamadaEnlace/CamadaEnlace.hpp"
-// #include "../CamadaFisica/CamadaFisica.hpp"
-// #include "../CamadaRede/CamadaRede.hpp"
 class CamadaRede;
 class CamadaEnlace;
 class CamadaFisica;
@@ -17,7 +14,7 @@ class Hospedeiro
 private:
 
     // Endereco da placa de rede *Numero Unico*
-    std::vector<int> *EnderecoMac;
+    std::vector<int> EnderecoMac;
 
     // Variavel que armazenada a Coordenada X do Hospedeiro
     uint CoordenadaX;
@@ -40,15 +37,13 @@ private:
     // Contém todas as mensagem que o Hospedeiro deseja enviar, primeira chave da pair contém a mensagem e a segunda destino
     std::vector<std::pair<std::string, std::vector<int>>> MensagensParaEnviar;
 
-    bool TomDeOcupado;
-
 public:
-    Hospedeiro(std::vector<int> *EnderecoMac, uint CoordenadaX, uint CoordenadaY);
+    Hospedeiro(std::vector<int> EnderecoMac, uint CoordenadaX, uint CoordenadaY, uint Alcance);
     void EnviarMensagem(std::string mensagem, std::vector<int> Destino);
+    std::vector<int> PegarEnderecoMac();
+    bool IsRecheable(std::pair<uint, uint> Coordenadas);
+    std::pair<uint, uint> PegarCoordenadas();
     CamadaFisica* PegarCamadaFisica();
-    
-    bool PegarTomDeOcupado();
-    bool DefinirTomDeOcupado(bool valor);
     
     ~Hospedeiro();
 
