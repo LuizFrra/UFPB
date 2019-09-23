@@ -26,7 +26,7 @@ public:
     void DefinirCamadaDeCima(CamadaRede *camadaRede);
     void DefinirCamadaDeBaixo(CamadaFisica *camadaFisica);
     void AdicionarPacoteParaEnvio(Pacote pacote);
-    void EnviarPacotes();
+    void EnviarPacotesParaCamadaFisica();
     ~CamadaEnlace();
 };
 

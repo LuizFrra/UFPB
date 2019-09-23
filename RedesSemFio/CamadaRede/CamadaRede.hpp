@@ -36,6 +36,7 @@ private:
 public:
     CamadaRede(Hospedeiro *hospedeiro);
     void DefinirCamadaDeBaixo(CamadaEnlace *camadaEnlace);
+    void ImprimirMac(std::vector<int> vetorMac);
     void EnviarMensagem(Pacote pacote);
     ~CamadaRede();
 };

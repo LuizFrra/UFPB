@@ -17,12 +17,13 @@ void CamadaEnlace::AdicionarPacoteParaEnvio(Pacote pacote)
     // Para a camada Fisica
 }
 
-void CamadaEnlace::EnviarPacotes()
+void CamadaEnlace::EnviarPacotesParaCamadaFisica()
 {
     if(PacotesParaEnvios.size() > 0)
     {
         auto pacote = PacotesParaEnvios.front();
-
+        camadaFisica->RepassarPacoteParaHospedeiro(pacote);
+        PacotesParaEnvios.pop_front();
     }
 }
 

@@ -36,10 +36,10 @@ private:
     // Funcao Para validar Coordenadas
     bool ValidaCoordenadas(std::pair<uint, uint> Coordenadas);
     
-    void EnviarPacote();
     /* data */
 public:
     void ImprimirEnderecosMac();
+    Coordenador();
     Coordenador(int CoordenadaXMaxima, int CoordenadaYMaxima);
     Hospedeiro AdicionarHospedeiro(std::pair<uint,uint> Coordenadas, int Alcance);
     void ImprimirHospedeiros(bool MostratAlcancaveis);
@@ -47,7 +47,8 @@ public:
     void ImprimirMatrizDeAdjacencia();
     void EnviarMensagem(uint Origem, uint Destino);
     void ImprimirMac(std::vector<int> vetorMac);
-
+    std::list<Hospedeiro*> *ObterHospedeiros();
+    void EnviarPacote();
     // Variavel Que armazena os hospedeiros que desejam realizar alguma atividade, como enviar pacotes
     std::list<Hospedeiro*> HospedeirosQueDesejamRealizarAlgo;
     

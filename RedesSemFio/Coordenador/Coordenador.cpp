@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iomanip>
 
+Coordenador::Coordenador(){}
 
 Coordenador::Coordenador(int CoordenadaXMaxima, int CoordenadaYMaxima)
 {
@@ -66,9 +67,17 @@ void Coordenador::EnviarMensagem(uint Origem, uint Destino)
 
 void Coordenador::EnviarPacote()
 {
-    auto tarefa = HospedeirosQueDesejamRealizarAlgo.front();
-    tarefa->EnviarPacotes();
-    HospedeirosQueDesejamRealizarAlgo.pop_front();
+    if(HospedeirosQueDesejamRealizarAlgo.size() > 0)
+    {
+        auto tarefa = HospedeirosQueDesejamRealizarAlgo.front();
+        tarefa->EnviarPacoteParaVizinho();
+        HospedeirosQueDesejamRealizarAlgo.pop_front();
+    }
+}
+
+std::list<Hospedeiro*> *Coordenador::ObterHospedeiros()
+{   
+    return &Hospedeiros;
 }
 
 /********************************************************************************************************************/

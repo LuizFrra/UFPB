@@ -8,14 +8,19 @@ int main(int argc, char const *argv[])
     //std::pair<int,int> Coordenadas = std::make_pair(1, 1);
     coordenador->AdicionarHospedeiro(std::make_pair(1, 2), 2);
     coordenador->AdicionarHospedeiro(std::make_pair(2, 4), 2);
-    coordenador->AdicionarHospedeiro(std::make_pair(1, 4), 4);
+    coordenador->AdicionarHospedeiro(std::make_pair(1, 4), 2);
     coordenador->AdicionarHospedeiro(std::make_pair(3, 3), 2);
     coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 1);
     //coordenador->AdicionarHospedeiro(Coordenadas, 1);
     
     coordenador->ImprimirHospedeiros(false);
     coordenador->ImprimirMatrizDeAdjacencia();
-    coordenador->EnviarMensagem(1, 5);
+    coordenador->EnviarMensagem(2, 1);
+    coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
+    //coordenador->EnviarPacote();
+    //coordenador->EnviarPacote();
+    //coordenador->EnviarPacote();
     //camadaFisica->ImprimirEnderecosMac();
     return 0;
 }

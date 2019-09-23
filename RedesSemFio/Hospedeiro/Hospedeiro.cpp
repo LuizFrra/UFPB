@@ -30,6 +30,7 @@ Hospedeiro::Hospedeiro(std::vector<int> EnderecoMac, uint CoordenadaX, uint Coor
 
 void Hospedeiro::EnviarMensagem(std::string mensagem, std::vector<int> Destino)
 {
+    //ImprimirMac(Destino);
     if(mensagem.size() > 0 && Destino.size() == 6)
     {
         Pacote pacote = Pacote(this->EnderecoMac, Destino, mensagem, TipoPacote::DATA);
@@ -37,14 +38,28 @@ void Hospedeiro::EnviarMensagem(std::string mensagem, std::vector<int> Destino)
     }
 }
 
-void Hospedeiro::EnviarPacotes()
+void Hospedeiro::ImprimirMac(std::vector<int> vetorMac)
 {
-    camadaEnlace->EnviarPacotes();
+    for(auto it2 = vetorMac.begin(); it2 != vetorMac.end(); ++it2)
+    {
+        std::cout << std::hex << std::setw(4) << std::uppercase <<  *it2;
+    }
+}
+
+void Hospedeiro::EnviarPacoteParaVizinho()
+{
+    camadaEnlace->EnviarPacotesParaCamadaFisica();
 }
 
 void Hospedeiro::EntrarNaFilaCoordenador()
 {
     coordenador->HospedeirosQueDesejamRealizarAlgo.push_back(this);
+}
+
+
+std::list<Hospedeiro*> Hospedeiro::ObterHospedeiros()
+{
+    return *coordenador->ObterHospedeiros();
 }
 
 bool Hospedeiro::IsRecheable(std::pair<uint, uint> Coordenadas)

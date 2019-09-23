@@ -14,8 +14,8 @@ Pacote::Pacote(std::vector<int> origem, std::vector<int> destino, TipoPacote tip
     if(tipoPacote == TipoPacote::RERR || tipoPacote == TipoPacote::RREQ)
     {
         this->tipoPacote = tipoPacote;
-        origem = origem;
-        destino = destino;
+        Origem = origem;
+        Destino = destino;
     }
 
 }

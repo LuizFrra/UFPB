@@ -24,6 +24,9 @@ private:
 public:
     CamadaFisica(Hospedeiro *hospedeiro);
     void DefinirCamadaDeCima(CamadaEnlace *camadaEnlace);
+    void RepassarPacoteParaHospedeiro(Pacote pacote);
+    void ReceberPacoteDeHospedeiro(Pacote pacote);
+    void ImprimirMac(std::vector<int> vetorMac);
     ~CamadaFisica();
 };
 
