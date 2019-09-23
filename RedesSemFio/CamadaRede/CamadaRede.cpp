@@ -22,10 +22,10 @@ void CamadaRede::EnviarMensagem(Pacote pacote)
     PacoteID++;
     auto EnderecoMacDestino = pacote.GetDestino();
 
-    // if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(EnderecoMacDestino))
-    // {
-    //     pacote.AdicionarNext(tabelaRoteamento->ObterNextPara(EnderecoMacDestino));
-    // }
+    if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(EnderecoMacDestino))
+    {
+        pacote.AdicionarNext(tabelaRoteamento->ObterNextPara(EnderecoMacDestino));
+    }
     
 }
 
