@@ -36,6 +36,7 @@ private:
     // Funcao Para validar Coordenadas
     bool ValidaCoordenadas(std::pair<uint, uint> Coordenadas);
     
+    void EnviarPacote();
     /* data */
 public:
     void ImprimirEnderecosMac();

@@ -3,6 +3,7 @@
 #define _CAMADA_DE_ENLACE_H_
 
 #include "../Pacote/Pacote.hpp"
+#include <list>
 
 class CamadaFisica;
 class CamadaRede;
@@ -25,6 +26,7 @@ public:
     void DefinirCamadaDeCima(CamadaRede *camadaRede);
     void DefinirCamadaDeBaixo(CamadaFisica *camadaFisica);
     void AdicionarPacoteParaEnvio(Pacote pacote);
+    void EnviarPacotes();
     ~CamadaEnlace();
 };
 

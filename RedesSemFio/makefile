@@ -3,7 +3,7 @@ all: clean
 all: exec
 
 redes: main.o Coordenador.o Hospedeiro.o CamadaRede.o CamadaFisica.o CamadaEnlance.o TabelaRoteamento.o
-	g++ main.o Hospedeiro.o Coordenador.o -o redes
+	g++ main.o Hospedeiro.o -o redes
 
 main.o: main.cpp # Primeiro define o retorno e o segundo os argumentos
 	g++ -c main.cpp

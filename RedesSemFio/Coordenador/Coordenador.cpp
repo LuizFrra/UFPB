@@ -64,6 +64,13 @@ void Coordenador::EnviarMensagem(uint Origem, uint Destino)
     (*OrigemIT)->EnviarMensagem("DATA", (*DestinoIT)->PegarEnderecoMac());
 }
 
+void Coordenador::EnviarPacote()
+{
+    auto tarefa = HospedeirosQueDesejamRealizarAlgo.front();
+    tarefa->EnviarPacotes();
+    HospedeirosQueDesejamRealizarAlgo.pop_front();
+}
+
 /********************************************************************************************************************/
 /********************************************************************************************************************/
 /********************************************************************************************************************/

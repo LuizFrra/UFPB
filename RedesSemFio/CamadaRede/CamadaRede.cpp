@@ -1,7 +1,7 @@
 #include "CamadaRede.hpp"
 #include "../CamadaEnlace/CamadaEnlace.hpp"
 #include "../Hospedeiro/Hospedeiro.hpp"
-#include "../TabelaRoteamento/TabelaRoteamento.hpp"
+//#include "../TabelaRoteamento/TabelaRoteamento.cpp"
 
 CamadaRede::CamadaRede(Hospedeiro *hospedeiro)
 {
@@ -22,10 +22,10 @@ void CamadaRede::EnviarMensagem(Pacote pacote)
     PacoteID++;
     auto EnderecoMacDestino = pacote.GetDestino();
 
-    if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(EnderecoMacDestino))
-    {
-        pacote.AdicionarNext(tabelaRoteamento->ObterNextPara(EnderecoMacDestino));
-    }
+    // if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(EnderecoMacDestino))
+    // {
+    //     pacote.AdicionarNext(tabelaRoteamento->ObterNextPara(EnderecoMacDestino));
+    // }
     
 }
 

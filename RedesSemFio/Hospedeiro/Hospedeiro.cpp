@@ -6,6 +6,9 @@
 #include "../CamadaFisica/CamadaFisica.cpp"
 #include "../CamadaRede/CamadaRede.cpp"
 #include "../Coordenador/Coordenador.cpp"
+#include "../Pacote/Pacote.cpp"
+#include "../TabelaRoteamento/TabelaRoteamento.cpp"
+//#include "../Pacote/Pacote.hpp"
 
 Hospedeiro::Hospedeiro(std::vector<int> EnderecoMac, uint CoordenadaX, uint CoordenadaY, uint Alcance, Coordenador *coordenador)
 {
@@ -32,6 +35,11 @@ void Hospedeiro::EnviarMensagem(std::string mensagem, std::vector<int> Destino)
         Pacote pacote = Pacote(this->EnderecoMac, Destino, mensagem, TipoPacote::DATA);
         camadaRede->EnviarMensagem(pacote);
     }
+}
+
+void Hospedeiro::EnviarPacotes()
+{
+    camadaEnlace->EnviarPacotes();
 }
 
 void Hospedeiro::EntrarNaFilaCoordenador()

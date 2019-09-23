@@ -9,7 +9,7 @@
 
 class CamadaEnlace;
 class Hospedeiro;
-//class TabelaRoteamento;
+class TabelaRoteamento;
 
 class CamadaRede
 {

@@ -47,6 +47,9 @@ std::vector<std::vector<int>> Pacote::PegarCaminho()
    {
        return HospedeirosPeloQualPassou;
    }
+
+   std::vector<std::vector<int>> v;
+   return v;
 }
 
 std::vector<int> Pacote::GetDestino()

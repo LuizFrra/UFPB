@@ -46,6 +46,7 @@ public:
     bool IsRecheable(std::pair<uint, uint> Coordenadas);
     std::pair<uint, uint> PegarCoordenadas();
     void EntrarNaFilaCoordenador();
+    void EnviarPacotes();
     CamadaFisica* PegarCamadaFisica();
     
     ~Hospedeiro();
