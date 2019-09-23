@@ -12,8 +12,8 @@ int main(int argc, char const *argv[])
     coordenador->AdicionarHospedeiro(Coordenadas);
     coordenador->AdicionarHospedeiro(Coordenadas);
     
-    coordenador->MostrarHospedeiros();
-    
+    coordenador->ImprimirHospedeiros(false);
+    coordenador->ImprimirMatrizDeAdjacencia();
     //camadaFisica->ImprimirEnderecosMac();
     return 0;
 }

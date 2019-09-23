@@ -40,8 +40,9 @@ public:
     void ImprimirEnderecosMac();
     Coordenador(int CoordenadaXMaxima, int CoordenadaYMaxima);
     Hospedeiro AdicionarHospedeiro(std::pair<uint,uint> Coordenadas);
-    void MostrarHospedeiros();
-    void MostrarHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedeiro*>::iterator hospedeiro);
+    void ImprimirHospedeiros(bool MostratAlcancaveis);
+    void ImprimirHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedeiro*>::iterator hospedeiro);
+    void ImprimirMatrizDeAdjacencia();
     ~Coordenador();
 };
 #endif

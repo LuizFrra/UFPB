@@ -40,7 +40,7 @@ Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas)
 /********************************************************************************************************************/
 /********************************************************************************************************************/
 
-void Coordenador::MostrarHospedeiros()
+void Coordenador::ImprimirHospedeiros(bool MostratAlcancaveis)
 {   int contadorHospedeiros = 0;
 
     for(std::list<Hospedeiro*>::iterator it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
@@ -51,13 +51,14 @@ void Coordenador::MostrarHospedeiros()
         {
             std::cout << std::hex << std::setw(4) << std::uppercase <<  *it2;
         }
-        MostrarHospedeirosAlcancaveisPorHospedeiro(it);
+        if(MostratAlcancaveis)
+            ImprimirHospedeirosAlcancaveisPorHospedeiro(it);
         //return;
         std::cout << "\n";
     }
 }
 
-void Coordenador::MostrarHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedeiro*>::iterator hospedeiro)
+void Coordenador::ImprimirHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedeiro*>::iterator hospedeiro)
 {
     int contadorHospedeirosAlcancaveis = 0;
     for(auto it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
@@ -78,6 +79,35 @@ void Coordenador::MostrarHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedeir
             }
         }
    }
+}
+
+void Coordenador::ImprimirMatrizDeAdjacencia()
+{   
+    int contadorHospedeiros = 0;
+    int contadorHospedeirosInterno = 0;
+
+    for(auto it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
+    {
+        for(auto it2 = Hospedeiros.begin(); it2 != Hospedeiros.end(); ++it2)
+        {
+            if(contadorHospedeiros == contadorHospedeirosInterno)
+            {
+                std::cout << "9  ";
+            }
+            else if((*it)->IsRecheable((*it2)->PegarCoordenadas()))
+            {
+                std::cout << "1  ";
+            }       
+            else
+            {
+                std::cout << "0  ";
+            }  
+            contadorHospedeirosInterno++;
+        }
+        contadorHospedeirosInterno = 0;
+        contadorHospedeiros++;
+        std::cout << "\n";
+    }
 }
 
 bool Coordenador::ValidaCoordenadas(std::pair<uint, uint> Coordenadas)
