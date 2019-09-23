@@ -49,12 +49,16 @@ private:
 public:
     Pacote(std::vector<int> origem, std::vector<int> destino, std::string dados, TipoPacote tipoPacote);
     Pacote(std::vector<int> origem, std::vector<int> destino, TipoPacote tipoPacote, uint Identificador);
+    //Pacote(std::vector<int> origem, std::vector<int> destino, TipoPacote tipoPacote, uint Identificador, std::vector<std::vector<int>> CaminhoCompleto);
     void AdicionarCaminho(std::vector<int> HospedeiroAtual);
     void AdicionarNext(std::vector<int> next);
     uint AdicionarUID(uint UID);
     std::vector<int> GetDestino();
     std::vector<int> GetOrigem();
     std::vector<int> GetNext();
+    uint GetIdentificador();
+    TipoPacote GetTipoPacote();
+    std::string GetDados(std::vector<int> destino);
     std::vector<std::vector<int>> PegarCaminho();
     ~Pacote();
 };

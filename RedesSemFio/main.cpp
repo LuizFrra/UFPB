@@ -15,16 +15,14 @@ int main(int argc, char const *argv[])
     
     coordenador->ImprimirHospedeiros(false);
     coordenador->ImprimirMatrizDeAdjacencia();
-    coordenador->EnviarMensagem(2, 1);
-    //coordenador->EnviarMensagem(1, 3);
+    coordenador->EnviarMensagem(1, 5);
     coordenador->EnviarPacote();
     coordenador->EnviarPacote();
     coordenador->EnviarPacote();
-    //coordenador->EnviarMensagem(4, 2);
     coordenador->EnviarPacote();
-    //coordenador->EnviarPacote();
-    //coordenador->EnviarPacote();
-    //coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
     //camadaFisica->ImprimirEnderecosMac();
     return 0;
 }

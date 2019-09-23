@@ -18,11 +18,11 @@ void CamadaFisica::RepassarPacoteParaHospedeiro(Pacote pacote)
 {
     auto hospedeiros = hospedeiro->ObterHospedeiros();
 
-    for(auto it = hospedeiros.begin(); it != hospedeiros.end(); ++it)
+    for(auto vizinho = hospedeiros.begin(); vizinho != hospedeiros.end(); ++vizinho)
     {
-        if(hospedeiro->IsRecheable((*it)->PegarCoordenadas()))
+        if(hospedeiro->IsRecheable((*vizinho)->PegarCoordenadas()))
         {
-            (*it)->PegarCamadaFisica()->ReceberPacoteDeHospedeiro(pacote);
+            (*vizinho)->PegarCamadaFisica()->ReceberPacoteDeHospedeiro(pacote);
         }
     }
 }

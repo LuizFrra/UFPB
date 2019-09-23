@@ -6,6 +6,7 @@
 #include "../Pacote/Pacote.hpp"
 #include "../TabelaRoteamento/TabelaRoteamento.hpp"
 #include <vector>
+#include <algorithm>
 
 class CamadaEnlace;
 class Hospedeiro;
