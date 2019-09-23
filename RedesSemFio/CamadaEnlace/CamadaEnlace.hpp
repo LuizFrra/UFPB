@@ -20,6 +20,8 @@ private:
     CamadaFisica *camadaFisica;
 
     std::list<Pacote> PacotesParaEnvios;
+
+    void EnviarPacoteCamadaRede(Pacote *pacote);
     /* data */
 public:
     CamadaEnlace(Hospedeiro *hospedeiro);
@@ -27,6 +29,7 @@ public:
     void DefinirCamadaDeBaixo(CamadaFisica *camadaFisica);
     void AdicionarPacoteParaEnvio(Pacote pacote);
     void EnviarPacotesParaCamadaFisica();
+    void ReceberPacoteCamadaFisica(Pacote *pacote);
     ~CamadaEnlace();
 };
 

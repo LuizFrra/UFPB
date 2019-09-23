@@ -27,6 +27,16 @@ void CamadaEnlace::EnviarPacotesParaCamadaFisica()
     }
 }
 
+void CamadaEnlace::ReceberPacoteCamadaFisica(Pacote *pacote)
+{
+    EnviarPacoteCamadaRede(pacote);
+}
+
+void CamadaEnlace::EnviarPacoteCamadaRede(Pacote *pacote)
+{
+    camadaRede->ReceberPacoteCamadaEnlance(*pacote);
+}
+
 void CamadaEnlace::DefinirCamadaDeCima(CamadaRede *camadaRede)
 {
     this->camadaRede = camadaRede;

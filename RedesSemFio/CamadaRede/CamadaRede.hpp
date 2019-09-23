@@ -31,6 +31,9 @@ private:
     
     // Fila De Pacotes De Data Aguardando Rota
     std::vector<Pacote> PacotesAguardandoRota;
+
+    // Lista de pacotes recebidos, primeiro pair é  o ID do mesmo e o segundo pair quem originiou o mesmo
+    std::vector<std::pair<uint, std::vector<int>>> PacotesRecebidos;
     
     /* data */
 public:
@@ -38,6 +41,7 @@ public:
     void DefinirCamadaDeBaixo(CamadaEnlace *camadaEnlace);
     void ImprimirMac(std::vector<int> vetorMac);
     void EnviarMensagem(Pacote pacote);
+    void ReceberPacoteCamadaEnlance(Pacote pacote);
     ~CamadaRede();
 };
 

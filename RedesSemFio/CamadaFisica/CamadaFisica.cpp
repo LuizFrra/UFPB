@@ -27,11 +27,16 @@ void CamadaFisica::RepassarPacoteParaHospedeiro(Pacote pacote)
     }
 }
 
+
+
 void CamadaFisica::ReceberPacoteDeHospedeiro(Pacote pacote)
 {
-    //ImprimirMac(pacote.GetOrigem());
-    if(pacote.GetOrigem() != hospedeiro->PegarEnderecoMac())
-        ImprimirMac(hospedeiro->PegarEnderecoMac());
+    EnviarPacoteParaCamadaEnlace(&pacote);
+}
+
+void CamadaFisica::EnviarPacoteParaCamadaEnlace(Pacote *pacote)
+{
+    camadaEnlace->ReceberPacoteCamadaFisica(pacote);
 }
 
 void CamadaFisica::ImprimirMac(std::vector<int> vetorMac)

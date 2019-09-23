@@ -9,13 +9,14 @@ Pacote::Pacote(std::vector<int> origem, std::vector<int> destino, std::string da
     Identificador = 0;
 }
 
-Pacote::Pacote(std::vector<int> origem, std::vector<int> destino, TipoPacote tipoPacote)
+Pacote::Pacote(std::vector<int> origem, std::vector<int> destino, TipoPacote tipoPacote, uint Identificador)
 {
     if(tipoPacote == TipoPacote::RERR || tipoPacote == TipoPacote::RREQ)
     {
         this->tipoPacote = tipoPacote;
         Origem = origem;
         Destino = destino;
+        this->Identificador = Identificador;
     }
 
 }

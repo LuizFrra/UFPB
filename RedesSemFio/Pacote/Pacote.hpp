@@ -48,7 +48,7 @@ private:
 
 public:
     Pacote(std::vector<int> origem, std::vector<int> destino, std::string dados, TipoPacote tipoPacote);
-    Pacote(std::vector<int> origem, std::vector<int> destino, TipoPacote tipoPacote);
+    Pacote(std::vector<int> origem, std::vector<int> destino, TipoPacote tipoPacote, uint Identificador);
     void AdicionarCaminho(std::vector<int> HospedeiroAtual);
     void AdicionarNext(std::vector<int> next);
     uint AdicionarUID(uint UID);

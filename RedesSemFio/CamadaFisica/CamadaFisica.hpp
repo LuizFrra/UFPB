@@ -19,6 +19,8 @@ private:
 
     /* data */
     CamadaEnlace *camadaEnlace;
+
+    void EnviarPacoteParaCamadaEnlace(Pacote *pacote);
     // Utilizado para indicar a localização de Cada Roteador
 
 public:

@@ -35,9 +35,21 @@ void CamadaRede::EnviarMensagem(Pacote pacote)
     {
         // Nessa condição Não há um caminho para o pacote e o memso ira ficar em espera ate que seja encontrada
         PacotesAguardandoRota.push_back(pacote);
-        Pacote pacoteRREQ = Pacote(hospedeiro->PegarEnderecoMac(), pacote.GetDestino(), TipoPacote::RREQ);
+        Pacote pacoteRREQ = Pacote(hospedeiro->PegarEnderecoMac(), pacote.GetDestino(), TipoPacote::RREQ, PacoteID);
+        PacoteID++;
         camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREQ);
     }
+}
+
+void CamadaRede::ReceberPacoteCamadaEnlance(Pacote pacote)
+{
+    if(pacote.GetOrigem() == hospedeiro->PegarEnderecoMac())
+        return;
+    std::cout << "Pacote Recebido de : ";
+    ImprimirMac(pacote.GetOrigem());
+    std::cout << " Eu sou o : ";
+    ImprimirMac(hospedeiro->PegarEnderecoMac());
+    std::cout << "\n";
 }
 
 void CamadaRede::ImprimirMac(std::vector<int> vetorMac)
