@@ -5,9 +5,12 @@
 #include "../CamadaEnlace/CamadaEnlace.cpp"
 #include "../CamadaFisica/CamadaFisica.cpp"
 #include "../CamadaRede/CamadaRede.cpp"
+#include "../Coordenador/Coordenador.cpp"
 
-Hospedeiro::Hospedeiro(std::vector<int> EnderecoMac, uint CoordenadaX, uint CoordenadaY, uint Alcance)
+Hospedeiro::Hospedeiro(std::vector<int> EnderecoMac, uint CoordenadaX, uint CoordenadaY, uint Alcance, Coordenador *coordenador)
 {
+    this->coordenador = coordenador;
+
     this->CoordenadaX = CoordenadaX;
     this->CoordenadaY = CoordenadaY;
     this->EnderecoMac = EnderecoMac;
@@ -26,11 +29,14 @@ void Hospedeiro::EnviarMensagem(std::string mensagem, std::vector<int> Destino)
 {
     if(mensagem.size() > 0 && Destino.size() == 6)
     {
-        std::pair<std::string, std::vector<int>> Mensagem;
-        Mensagem.first = mensagem;
-        Mensagem.second = Destino;
-        MensagensParaEnviar.push_back(Mensagem);
+        Pacote pacote = Pacote(this->EnderecoMac, Destino, mensagem, TipoPacote::DATA);
+        camadaRede->EnviarMensagem(pacote);
     }
+}
+
+void Hospedeiro::EntrarNaFilaCoordenador()
+{
+    coordenador->HospedeirosQueDesejamRealizarAlgo.push_back(this);
 }
 
 bool Hospedeiro::IsRecheable(std::pair<uint, uint> Coordenadas)

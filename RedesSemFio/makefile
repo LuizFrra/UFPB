@@ -2,7 +2,7 @@ all:redes
 all: clean
 all: exec
 
-redes: main.o Coordenador.o Hospedeiro.o CamadaRede.o CamadaFisica.o CamadaEnlance.o
+redes: main.o Coordenador.o Hospedeiro.o CamadaRede.o CamadaFisica.o CamadaEnlance.o TabelaRoteamento.o
 	g++ main.o Hospedeiro.o Coordenador.o -o redes
 
 main.o: main.cpp # Primeiro define o retorno e o segundo os argumentos
@@ -23,6 +23,9 @@ CamadaFisica.o: CamadaFisica/CamadaFisica.cpp
 CamadaEnlance.o: CamadaEnlace/CamadaEnlace.cpp
 	g++ -c CamadaEnlace/CamadaEnlace.cpp
 
+TabelaRoteamento.o: TabelaRoteamento/TabelaRoteamento.cpp
+	g++ -c TabelaRoteamento/TabelaRoteamento.cpp
+	
 clean:
 	rm -f *.o
 

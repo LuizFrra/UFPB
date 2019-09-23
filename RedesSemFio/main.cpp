@@ -13,8 +13,9 @@ int main(int argc, char const *argv[])
     coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 1);
     //coordenador->AdicionarHospedeiro(Coordenadas, 1);
     
-    //coordenador->ImprimirHospedeiros(false);
+    coordenador->ImprimirHospedeiros(false);
     coordenador->ImprimirMatrizDeAdjacencia();
+    coordenador->EnviarMensagem(1, 5);
     //camadaFisica->ImprimirEnderecosMac();
     return 0;
 }

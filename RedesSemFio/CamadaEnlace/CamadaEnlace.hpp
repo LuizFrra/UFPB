@@ -17,11 +17,14 @@ private:
     CamadaRede *camadaRede;
     
     CamadaFisica *camadaFisica;
+
+    std::list<Pacote> PacotesParaEnvios;
     /* data */
 public:
     CamadaEnlace(Hospedeiro *hospedeiro);
     void DefinirCamadaDeCima(CamadaRede *camadaRede);
     void DefinirCamadaDeBaixo(CamadaFisica *camadaFisica);
+    void AdicionarPacoteParaEnvio(Pacote pacote);
     ~CamadaEnlace();
 };
 

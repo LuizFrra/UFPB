@@ -7,11 +7,13 @@
 class CamadaRede;
 class CamadaEnlace;
 class CamadaFisica;
+class Coordenador;
 
 class Hospedeiro
 {
 
 private:
+    Coordenador *coordenador;
 
     // Endereco da placa de rede *Numero Unico*
     std::vector<int> EnderecoMac;
@@ -35,14 +37,15 @@ private:
     CamadaFisica *camadaFisica;
     
     // Contém todas as mensagem que o Hospedeiro deseja enviar, primeira chave da pair contém a mensagem e a segunda destino
-    std::vector<std::pair<std::string, std::vector<int>>> MensagensParaEnviar;
+    // std::vector<std::pair<std::string, std::vector<int>>> MensagensParaEnviar;
 
 public:
-    Hospedeiro(std::vector<int> EnderecoMac, uint CoordenadaX, uint CoordenadaY, uint Alcance);
+    Hospedeiro(std::vector<int> EnderecoMac, uint CoordenadaX, uint CoordenadaY, uint Alcance, Coordenador *coordenador);
     void EnviarMensagem(std::string mensagem, std::vector<int> Destino);
     std::vector<int> PegarEnderecoMac();
     bool IsRecheable(std::pair<uint, uint> Coordenadas);
     std::pair<uint, uint> PegarCoordenadas();
+    void EntrarNaFilaCoordenador();
     CamadaFisica* PegarCamadaFisica();
     
     ~Hospedeiro();

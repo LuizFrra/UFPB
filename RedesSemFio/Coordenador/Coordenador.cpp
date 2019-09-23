@@ -21,9 +21,11 @@ Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas, i
     // std::cout << Coordenadas.first << " " << Coordenadas.second << "\n";
 
     auto EnderecoMac = CriarEnderecoMac();
+
     if(Alcance <= 0)
         Alcance = RandomNumber(1, CoordenadaYMaxima - 1);
-    Hospedeiro *hospedeiro = new Hospedeiro(EnderecoMac, Coordenadas.first, Coordenadas.second, Alcance);
+
+    Hospedeiro *hospedeiro = new Hospedeiro(EnderecoMac, Coordenadas.first, Coordenadas.second, Alcance, this);
     
     EnderecosMacUtilizados.push_back(EnderecoMac);
     Mapa[Coordenadas.first][Coordenadas.second] = true;
@@ -32,6 +34,35 @@ Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas, i
     return *hospedeiro;
 }
 
+void Coordenador::EnviarMensagem(uint Origem, uint Destino)
+{
+    //std::cout << Hospedeiros.size();
+    if(Origem == Destino || Origem <= 0 || Destino <= 0 || Origem > Hospedeiros.size() || Destino > Hospedeiros.size() )
+        return;
+    
+    int contadorHospedeiros = 1;
+    std::list<Hospedeiro*>::iterator OrigemIT;
+    std::list<Hospedeiro*>::iterator DestinoIT;
+    
+    for(auto it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
+    {
+        //std::cout << contadorHospedeiros;
+        if(contadorHospedeiros == Origem)
+        {
+            OrigemIT = it;
+        }
+        else if(contadorHospedeiros == Destino)
+        {
+            DestinoIT = it;
+        }
+        contadorHospedeiros++;
+    }
+    //std::cout << "\n";
+    //ImprimirMac((*OrigemIT)->PegarEnderecoMac());
+    //std::cout << "\n";
+    //ImprimirMac((*DestinoIT)->PegarEnderecoMac());
+    (*OrigemIT)->EnviarMensagem("DATA", (*DestinoIT)->PegarEnderecoMac());
+}
 
 /********************************************************************************************************************/
 /********************************************************************************************************************/
@@ -41,6 +72,14 @@ Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas, i
 /********************************************************************************************************************/
 /********************************************************************************************************************/
 
+void Coordenador::ImprimirMac(std::vector<int> vetorMac)
+{
+    for(auto it2 = vetorMac.begin(); it2 != vetorMac.end(); ++it2)
+    {
+        std::cout << std::hex << std::setw(4) << std::uppercase <<  *it2;
+    }
+}
+
 void Coordenador::ImprimirHospedeiros(bool MostratAlcancaveis)
 {   int contadorHospedeiros = 0;
 
@@ -48,13 +87,11 @@ void Coordenador::ImprimirHospedeiros(bool MostratAlcancaveis)
     {
         std::cout << std::dec << ++contadorHospedeiros << ". ";
         std::vector<int> vetorMac = (*it)->PegarEnderecoMac();
-        for(auto it2 = vetorMac.begin(); it2 != vetorMac.end(); ++it2)
-        {
-            std::cout << std::hex << std::setw(4) << std::uppercase <<  *it2;
-        }
+        ImprimirMac(vetorMac);
+
         if(MostratAlcancaveis)
             ImprimirHospedeirosAlcancaveisPorHospedeiro(it);
-        //return;
+
         std::cout << "\n";
     }
 }
@@ -72,10 +109,7 @@ void Coordenador::ImprimirHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedei
                 std::cout << "\n" << "    ";
                 auto vetorMac = (*it)->PegarEnderecoMac();
                 std::cout << std::dec << contadorHospedeirosAlcancaveis << ". ";
-                for(auto it2 = vetorMac.begin(); it2 != vetorMac.end(); ++it2)
-                {
-                    std::cout << std::hex << std::setw(4) << std::uppercase <<  *it2;
-                }
+                ImprimirMac(vetorMac);
                 std::cout << "\n";
             }
         }
@@ -161,10 +195,11 @@ void Coordenador::ImprimirEnderecosMac()
     for(std::list<std::vector<int>>::iterator it1 = EnderecosMacUtilizados.begin(); it1 != EnderecosMacUtilizados.end(); ++it1)
     {
         std::cout << "1. ";
-        for(std::vector<int>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2)
-        {
-            std::cout << std::hex << std::setw(4) << std::uppercase << (*it2);
-        }
+        // for(std::vector<int>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2)
+        // {
+        //     std::cout << std::hex << std::setw(4) << std::uppercase << (*it2);
+        // }
+        ImprimirMac(*it1);
         std::cout << "\n";
     }
 }
