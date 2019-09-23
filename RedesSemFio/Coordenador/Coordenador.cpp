@@ -13,7 +13,7 @@ Coordenador::Coordenador(int CoordenadaXMaxima, int CoordenadaYMaxima)
     // ImprimirEnderecosMac();    
 }
 
-Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas)
+Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas, int Alcance)
 {
     if(!ValidaCoordenadas(Coordenadas))
         Coordenadas = GerarCoordenadaMapa();
@@ -21,7 +21,8 @@ Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas)
     // std::cout << Coordenadas.first << " " << Coordenadas.second << "\n";
 
     auto EnderecoMac = CriarEnderecoMac();
-    int Alcance = RandomNumber(1, CoordenadaYMaxima);
+    if(Alcance <= 0)
+        Alcance = RandomNumber(1, CoordenadaYMaxima - 1);
     Hospedeiro *hospedeiro = new Hospedeiro(EnderecoMac, Coordenadas.first, Coordenadas.second, Alcance);
     
     EnderecosMacUtilizados.push_back(EnderecoMac);
@@ -112,7 +113,7 @@ void Coordenador::ImprimirMatrizDeAdjacencia()
 
 bool Coordenador::ValidaCoordenadas(std::pair<uint, uint> Coordenadas)
 {
-    if(Coordenadas.first < (CoordenadaXMaxima - 1) && Coordenadas.second < (CoordenadaYMaxima - 1))
+    if(Coordenadas.first < (CoordenadaXMaxima) && Coordenadas.second < (CoordenadaYMaxima))
     {
         if(Mapa[Coordenadas.first][Coordenadas.second])
         {
