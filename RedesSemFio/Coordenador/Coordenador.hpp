@@ -45,10 +45,11 @@ public:
     void ImprimirHospedeiros(bool MostratAlcancaveis);
     void ImprimirHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedeiro*>::iterator hospedeiro);
     void ImprimirMatrizDeAdjacencia();
-    void EnviarMensagem(uint Origem, uint Destino);
+    void EnviarMensagem(uint Origem, uint Destino, std::string Data);
     void ImprimirMac(std::vector<int> vetorMac);
     std::list<Hospedeiro*> *ObterHospedeiros();
     void EnviarPacote();
+    bool HospedeiroAlcancaMac(Hospedeiro *hospedeiro, std::vector<int> vetorMac);
     // Variavel Que armazena os hospedeiros que desejam realizar alguma atividade, como enviar pacotes
     std::list<Hospedeiro*> HospedeirosQueDesejamRealizarAlgo;
     

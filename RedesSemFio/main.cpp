@@ -3,7 +3,8 @@
 
 int main(int argc, char const *argv[])
 {
-    Coordenador *coordenador = new Coordenador(5, 5);
+    int num = 0;
+    Coordenador *coordenador = new Coordenador(6, 6);
 
     //std::pair<int,int> Coordenadas = std::make_pair(1, 1);
     coordenador->AdicionarHospedeiro(std::make_pair(1, 2), 2);
@@ -15,7 +16,17 @@ int main(int argc, char const *argv[])
     
     coordenador->ImprimirHospedeiros(false);
     coordenador->ImprimirMatrizDeAdjacencia();
-    coordenador->EnviarMensagem(1, 5);
+    coordenador->EnviarMensagem(1, 5, "Por favor Pega Mizera Fudida");
+    coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
+    coordenador->AdicionarHospedeiro(std::make_pair(5, 3), 2);
+    coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
+    coordenador->EnviarMensagem(5, 1, "De 5 Para 1");
     coordenador->EnviarPacote();
     coordenador->EnviarPacote();
     coordenador->EnviarPacote();
@@ -23,6 +34,13 @@ int main(int argc, char const *argv[])
     coordenador->EnviarPacote();
     coordenador->EnviarPacote();
     coordenador->EnviarPacote();
+    coordenador->EnviarPacote();
+    coordenador->EnviarPacote();    
+    while (std::cin)
+    {
+        coordenador->EnviarPacote();
+    }
+    
     //camadaFisica->ImprimirEnderecosMac();
     return 0;
 }

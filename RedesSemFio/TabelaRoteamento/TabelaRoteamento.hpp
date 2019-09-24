@@ -4,15 +4,18 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
 
 class TabelaRoteamento
 {
 private:
     std::vector<int> Origem;
 
-    // Primeiro Vetor é o Destino
     
-    // O segundo é o Proximo Destino
+    std::vector<std::vector<std::vector<int>>> RotasAprendidas;
+    
+    // Primeiro Vetor é o Destino
+    // O segundo é o Proximo (next)
 
     std::vector<std::pair<std::vector<int>, std::vector<int>>> Roteamentos;
     
@@ -28,6 +31,7 @@ public:
     bool VerificarSeExisteRotaParaDestino(std::vector<int> Destino);
     void AprenderRoteamento(std::vector<std::vector<int>> Caminho);
     std::vector<int> ObterNextPara(std::vector<int> Destino);
+    void ImprimirMac(std::vector<int> vetorMac);
     ~TabelaRoteamento();
 
 };

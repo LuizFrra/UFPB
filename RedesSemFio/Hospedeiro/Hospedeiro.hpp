@@ -50,6 +50,7 @@ public:
     std::list<Hospedeiro*> ObterHospedeiros();
     CamadaFisica* PegarCamadaFisica();
     void ImprimirMac(std::vector<int> vetorMac);
+    bool AlcancoMac(std::vector<int> vetorMac);
     ~Hospedeiro();
 
 };

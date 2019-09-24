@@ -62,6 +62,11 @@ std::list<Hospedeiro*> Hospedeiro::ObterHospedeiros()
     return *coordenador->ObterHospedeiros();
 }
 
+bool Hospedeiro::AlcancoMac(std::vector<int> vetorMac)
+{
+    return coordenador->HospedeiroAlcancaMac(this, vetorMac);
+}
+
 bool Hospedeiro::IsRecheable(std::pair<uint, uint> Coordenadas)
 {
     //std::cout << this->CoordenadaX << " primeiras " << Coordenadas.first << "\n";

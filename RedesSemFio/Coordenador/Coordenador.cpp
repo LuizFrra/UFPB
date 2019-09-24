@@ -35,7 +35,7 @@ Hospedeiro Coordenador::AdicionarHospedeiro(std::pair<uint, uint> Coordenadas, i
     return *hospedeiro;
 }
 
-void Coordenador::EnviarMensagem(uint Origem, uint Destino)
+void Coordenador::EnviarMensagem(uint Origem, uint Destino, std::string Data)
 {
     //std::cout << Hospedeiros.size();
     if(Origem == Destino || Origem <= 0 || Destino <= 0 || Origem > Hospedeiros.size() || Destino > Hospedeiros.size() )
@@ -62,7 +62,7 @@ void Coordenador::EnviarMensagem(uint Origem, uint Destino)
     //ImprimirMac((*OrigemIT)->PegarEnderecoMac());
     //std::cout << "\n";
     //ImprimirMac((*DestinoIT)->PegarEnderecoMac());
-    (*OrigemIT)->EnviarMensagem("DATA", (*DestinoIT)->PegarEnderecoMac());
+    (*OrigemIT)->EnviarMensagem(Data, (*DestinoIT)->PegarEnderecoMac());
 }
 
 void Coordenador::EnviarPacote()
@@ -78,6 +78,19 @@ void Coordenador::EnviarPacote()
 std::list<Hospedeiro*> *Coordenador::ObterHospedeiros()
 {   
     return &Hospedeiros;
+}
+
+bool Coordenador::HospedeiroAlcancaMac(Hospedeiro *hospedeiro, std::vector<int> vetorMac)
+{
+    for(auto it = Hospedeiros.begin(); it != Hospedeiros.end(); it++)
+    {
+        if(vetorMac == (*it)->PegarEnderecoMac())
+        {
+            return hospedeiro->IsRecheable((*it)->PegarCoordenadas());
+        }
+    }
+
+    return false;
 }
 
 /********************************************************************************************************************/

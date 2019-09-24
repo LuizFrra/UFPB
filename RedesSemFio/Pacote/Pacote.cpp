@@ -11,7 +11,7 @@ Pacote::Pacote(std::vector<int> origem, std::vector<int> destino, std::string da
 
 Pacote::Pacote(std::vector<int> origem, std::vector<int> destino, TipoPacote tipoPacote, uint Identificador)
 {
-    if(tipoPacote == TipoPacote::RERR || tipoPacote == TipoPacote::RREQ)
+    if(tipoPacote == TipoPacote::RREP || tipoPacote == TipoPacote::RREQ)
     {
         this->tipoPacote = tipoPacote;
         Origem = origem;
@@ -23,7 +23,7 @@ Pacote::Pacote(std::vector<int> origem, std::vector<int> destino, TipoPacote tip
 
 void Pacote::AdicionarCaminho(std::vector<int> HospedeiroAtual)
 {
-    if(tipoPacote == TipoPacote::RREQ)
+    if(tipoPacote == TipoPacote::RREQ  || tipoPacote == TipoPacote::RREP)
         if(HospedeiroAtual.size() == 6)
             HospedeirosPeloQualPassou.push_back(HospedeiroAtual);
 }
@@ -75,7 +75,7 @@ TipoPacote Pacote::GetTipoPacote()
 
 std::string Pacote::GetDados(std::vector<int> destino)
 {
-    return destino == Origem ? Dados : "";
+    return destino == Destino ? Dados : "";
 }
 
 uint Pacote::GetIdentificador()
