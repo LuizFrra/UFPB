@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
     coordenador->EnviarPacote();
     coordenador->EnviarPacote();
     coordenador->EnviarPacote();
-    //coordenador->EnviarMensagem(5, 3, "De 5 Para 3");
+    // coordenador->EnviarMensagem(5, 3, "De 5 Para 3");
     // coordenador->AdicionarHospedeiro(std::make_pair(5, 3), 2);
     // coordenador->EnviarPacote();
     // coordenador->EnviarPacote();
@@ -48,6 +48,7 @@ int main(int argc, char const *argv[])
     // coordenador->EnviarPacote();
     // coordenador->EnviarPacote();
     // coordenador->EnviarPacote();
+    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
     // coordenador->EnviarPacote();
     // coordenador->EnviarPacote();
     // coordenador->EnviarPacote();

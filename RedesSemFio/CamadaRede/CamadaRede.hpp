@@ -47,7 +47,7 @@ public:
     void ReceberPacoteCamadaEnlance(Pacote pacote);
     bool AdicionarPacoteAosRecebidos(Pacote pacote);
     Pacote CriarPacoteRREPPara(Pacote pacoteRREQ);
-    Pacote CriarPacoteRREQPara(Pacote pacote);
+    void CriarPacoteRREQPara(Pacote pacote);
     bool AdicionarDestinoAoPacote(Pacote &pacote);
     void ImprimeInformacoesOrigemDestino(Pacote pacote, bool isDestino);
     ~CamadaRede();
