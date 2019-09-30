@@ -94,15 +94,15 @@ void CamadaRede::ReceberPacoteCamadaEnlance(Pacote pacote)
     // Ele não pode receber um pacote originado por ele
     if(origemPacote == hospedeiro->PegarEnderecoMac())
         return; // Se for apenas ignora o pacote
+    
+    // Ignora o pacote caso seja de RREP e DATA que tem que ter next, e o next nao for para o hospedeiro atual
+    if((tipoPacote == TipoPacote::RREP || tipoPacote == TipoPacote::DATA) && pacote.GetNext() != hospedeiro->PegarEnderecoMac())
+       return;
 
     // Adiciona o pacote a lista de recebidos, caso a funcao retorne true, foi adicionado com sucesso
     // Caso retorne false, significa que é um pacote que já passou por esse hospedeiro
     if(!AdicionarPacoteAosRecebidos(pacote))
         return; // Se é um pacote antigo, apenas ignora
-    
-    // Ignora o pacote caso seja de RREP e DATA que tem que ter next, e o next nao for para o hospedeiro atual
-    if((tipoPacote == TipoPacote::RREP || tipoPacote == TipoPacote::DATA) && pacote.GetNext() != hospedeiro->PegarEnderecoMac())
-       return;
 
     if(!DEBUG)
         ImprimeInformacoesOrigemDestino(pacote, false);
@@ -286,9 +286,9 @@ void CamadaRede::ReceberPacoteCamadaEnlance(Pacote pacote)
 void CamadaRede::VerificarNextPacotesEEnviar()
 {
     auto tamanhoListaAguardandoRotas = PacotesAguardandoRota.size();
-    for(int i = 0, contador = 0; i < tamanhoListaAguardandoRotas;)
+    for(int contador = 0; contador < tamanhoListaAguardandoRotas; contador++)
     {
-        auto pacote = PacotesAguardandoRota.at(i);
+        auto pacote = PacotesAguardandoRota.at(0);
 
         if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(pacote.GetDestino()))
         {
@@ -299,29 +299,11 @@ void CamadaRede::VerificarNextPacotesEEnviar()
         }
         else
         {
-            // Coloca na ultima posicao e remove da primeira
+            // Coloca na ultima posicao e remove da primeira, Nao altera o tamanho do vetor
             PacotesAguardandoRota.push_back(pacote);
             PacotesAguardandoRota.erase(PacotesAguardandoRota.begin());
         }
-        ++contador;
-        
-        if(contador == PacotesAguardandoRota.size())
-            break;
     }
-    // int numPacotesAguardandoRota = PacotesAguardandoRota.size();
-    // for(int i = numPacotesAguardandoRota - 1; i >= 0; i--)
-    // {
-    //     Pacote pacoteAguardandoRota = PacotesAguardandoRota.at(i);
-    //     //ImprimirMac(pacoteAguardandoRota.GetDestino());
-    //     if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(pacoteAguardandoRota.GetDestino()))
-    //     {
-    //         //std::cout << numPacotesAguardandoRota << "\n";
-    //         pacoteAguardandoRota.AdicionarNext(tabelaRoteamento->ObterNextPara(pacoteAguardandoRota.GetDestino()));
-    //         camadaEnlace->AdicionarPacoteParaEnvio(pacoteAguardandoRota);
-    //         PacotesAguardandoRota.pop_back();
-    //         numPacotesAguardandoRota = PacotesAguardandoRota.size();
-    //     }
-    // }
 }
 
 void CamadaRede::ImprimeInformacoesOrigemDestino(Pacote pacote, bool isDestino)

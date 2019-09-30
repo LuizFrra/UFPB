@@ -58,10 +58,10 @@ void Coordenador::EnviarMensagem(uint Origem, uint Destino, std::string Data)
         }
         contadorHospedeiros++;
     }
-    //std::cout << "\n";
-    //ImprimirMac((*OrigemIT)->PegarEnderecoMac());
-    //std::cout << "\n";
-    //ImprimirMac((*DestinoIT)->PegarEnderecoMac());
+    // std::cout << "\n";
+    // ImprimirMac((*OrigemIT)->PegarEnderecoMac());
+    // std::cout << "\n";
+    // ImprimirMac((*DestinoIT)->PegarEnderecoMac());
     (*OrigemIT)->EnviarMensagem(Data, (*DestinoIT)->PegarEnderecoMac());
 }
 
@@ -151,8 +151,24 @@ void Coordenador::ImprimirMatrizDeAdjacencia()
     int contadorHospedeiros = 0;
     int contadorHospedeirosInterno = 0;
 
-    for(auto it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
+    std::cout << "    ";
+    for(int i = 1; i <= Hospedeiros.size(); i++)
     {
+        if(i < 10)
+            std::cout << std::dec << i << "  ";
+        else
+        {
+            std::cout << std::dec << i << " ";
+        }   
+    }
+    std::cout << "\n";
+    for(auto it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
+    {   
+        if(contadorHospedeiros + 1 < 10)
+            std::cout << std::dec << contadorHospedeiros + 1 << " . ";
+        else
+            std::cout << std::dec << contadorHospedeiros + 1 << ". ";
+        
         for(auto it2 = Hospedeiros.begin(); it2 != Hospedeiros.end(); ++it2)
         {
             if(contadorHospedeiros == contadorHospedeirosInterno)
@@ -173,6 +189,7 @@ void Coordenador::ImprimirMatrizDeAdjacencia()
         contadorHospedeiros++;
         std::cout << "\n";
     }
+    std::cout << "\n";
 }
 
 bool Coordenador::ValidaCoordenadas(std::pair<uint, uint> Coordenadas)
