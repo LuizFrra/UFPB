@@ -52,16 +52,16 @@ void TabelaRoteamento::AprenderRoteamento(std::vector<std::vector<int>> Caminho)
         {
             if(Origem != *mac)
             {
-                ImprimirMac(*mac);
-                std::cout << "\n";
+                //ImprimirMac(*mac);
+                //std::cout << "\n";
                 Roteamentos.push_back(std::make_pair(*mac, *mac));
                 macVizinho = *mac;
                 IsVizinho = false;
             }
         }else
         {
-            ImprimirMac(*mac);
-            std::cout << "\n";
+            //ImprimirMac(*mac);
+            //std::cout << "\n";
             Roteamentos.push_back(std::make_pair(*mac, macVizinho));
         }
     }
@@ -78,16 +78,16 @@ void TabelaRoteamento::AprenderRoteamento(std::vector<std::vector<int>> Caminho)
         {
             if(Origem != *mac)
             {
-                ImprimirMac(*mac);
-                std::cout << "\n";
+              //  ImprimirMac(*mac);
+               // std::cout << "\n";
                 Roteamentos.push_back(std::make_pair(*mac, *mac));
                 macVizinho = *mac;
                 IsVizinho = false;
             }
         }else
         {
-            ImprimirMac(*mac);
-            std::cout << "\n";
+            //ImprimirMac(*mac);
+            //std::cout << "\n";
             Roteamentos.push_back(std::make_pair(*mac, macVizinho));
         }
     }

@@ -18,6 +18,51 @@ void CamadaRede::DefinirCamadaDeBaixo(CamadaEnlace *camadaEnlace)
     this->camadaEnlace = camadaEnlace;
 }
 
+Pacote CamadaRede::CriarPacoteRREPPara(Pacote pacoteRREQ)
+{
+    Pacote pacoteRREP = Pacote(hospedeiro->PegarEnderecoMac(), pacoteRREQ.GetOrigem(), TipoPacote::RREP, PacoteID);
+    PacoteID++;
+    
+    auto caminhoRREQ = pacoteRREQ.PegarCaminho();
+    std::reverse(caminhoRREQ.begin(), caminhoRREQ.end());
+    for(auto it = caminhoRREQ.begin(); it != caminhoRREQ.end(); ++it)
+    {
+        pacoteRREP.AdicionarCaminho(*it);
+    }
+
+    return pacoteRREP;
+}
+
+Pacote CamadaRede::CriarPacoteRREQPara(Pacote pacote)
+{
+    PacotesAguardandoRota.push_back(pacote);
+    Pacote pacoteRREQ = Pacote(hospedeiro->PegarEnderecoMac(), pacote.GetDestino(), TipoPacote::RREQ, PacoteID);
+    PacoteID++;
+    pacoteRREQ.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
+    camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREQ);
+
+    return pacoteRREQ;
+}
+
+bool CamadaRede::AdicionarDestinoAoPacote(Pacote &pacote)
+{
+    pacote.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
+
+    return true;
+}
+
+bool CamadaRede::AdicionarPacoteAosRecebidos(Pacote pacote)
+{
+    auto pacoteIdentificacao = std::make_pair(pacote.GetIdentificador(), pacote.GetOrigem());
+    auto iteradorPacotesRecebidos = std::find(PacotesRecebidos.begin(), PacotesRecebidos.end(), pacoteIdentificacao);
+
+    if(iteradorPacotesRecebidos != PacotesRecebidos.end())
+        return false;
+
+    PacotesRecebidos.push_back(pacoteIdentificacao);
+    return true;
+}
+
 void CamadaRede::EnviarMensagem(Pacote pacote)
 {
     pacote.AdicionarUID(PacoteID);
@@ -34,193 +79,333 @@ void CamadaRede::EnviarMensagem(Pacote pacote)
     else
     {
         // Nessa condição Não há um caminho para o pacote e o memso ira ficar em espera ate que seja encontrada
-        PacotesAguardandoRota.push_back(pacote);
-        Pacote pacoteRREQ = Pacote(hospedeiro->PegarEnderecoMac(), pacote.GetDestino(), TipoPacote::RREQ, PacoteID);
-        pacoteRREQ.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
-        PacoteID++;
-        camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREQ);
+        CriarPacoteRREQPara(pacote);
+        // PacotesAguardandoRota.push_back(pacote);
+        // Pacote pacoteRREQ = Pacote(hospedeiro->PegarEnderecoMac(), pacote.GetDestino(), TipoPacote::RREQ, PacoteID);
+        // pacoteRREQ.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
+        // PacoteID++;
+        // camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREQ);
     }
 }
 
 void CamadaRede::ReceberPacoteCamadaEnlance(Pacote pacote)
 {
+    // Obtem principais dados do pacote
     auto destinoPacote = pacote.GetDestino();
     auto tipoPacote = pacote.GetTipoPacote();
-    auto macHospedeiro = hospedeiro->PegarEnderecoMac();
-    // Verifica se ta recebendo um pacote enviado por ele mesmo e return
-    if(pacote.GetOrigem() == hospedeiro->PegarEnderecoMac())
-        return;
+    auto pacoteFoward = pacote.GetNext();
+    auto origemPacote = pacote.GetOrigem();
+    auto identificadorPacote = pacote.GetIdentificador();
+    // Verifica se o pacote que está chegando foi enviado pelo proprio host
+    // Ele não pode receber um pacote originado por ele
+    if(origemPacote == hospedeiro->PegarEnderecoMac())
+        return; // Se for apenas ignora o pacote
 
-    // Pega as informacoes do pacote como origem e identificador para verificar se ja foi recebido posteriormente
-    std::pair<uint, std::vector<int>> DadosPacote = std::make_pair(pacote.GetIdentificador(), pacote.GetOrigem());
+    // Adiciona o pacote a lista de recebidos, caso a funcao retorne true, foi adicionado com sucesso
+    // Caso retorne false, significa que é um pacote que já passou por esse hospedeiro
+    if(!AdicionarPacoteAosRecebidos(pacote))
+        return; // Se é um pacote antigo, apenas ignora
     
-    // Procura se ja recebeu um pacote com mesmo identificador e com mesma origem
-    auto itPacotesRecebidos = std::find(PacotesRecebidos.begin(), PacotesRecebidos.end(), DadosPacote);
+    if(tipoPacote == TipoPacote::RREP && pacote.GetNext() != hospedeiro->PegarEnderecoMac())
+       return;
 
-    // Caso tenha recebido ignora, caso contrario adiciona na lista de pacotes recebidos
-    if(itPacotesRecebidos != PacotesRecebidos.end())
-    {
-        std::cout << "Pacote : " << pacote.GetIdentificador() << " Originado de : ";
-        ImprimirMac(pacote.GetOrigem());
-        std::cout << " ||| Ja Passou Aqui : ";
-        ImprimirMac(macHospedeiro);
-        std::cout << "\n";
-        return;
-    }
-    else
-    {
-        PacotesRecebidos.push_back(DadosPacote);
-    }
+    ImprimeInformacoesOrigemDestino(pacote, false);
 
-    std::cout << "Pacote Originado em : ";
-    ImprimirMac(pacote.GetOrigem());
-    std::cout << " Passou por mim : ";
-    ImprimirMac(hospedeiro->PegarEnderecoMac());
-    std::cout << "\n";
-    
-    //std::cout << "vamo";
-    if(tipoPacote == TipoPacote::DATA && destinoPacote == macHospedeiro)
+    // Verifica se um pacote de Dados e o endereco de destino é o mesmo do hospedeiro atual
+    if(tipoPacote == TipoPacote::DATA && origemPacote == hospedeiro->PegarEnderecoMac())
     {
-        std::cout << "\n\n\n Mensagem Recebida : ";
-        std::cout << "\n\n Enviada Por : ";
-        ImprimirMac(pacote.GetOrigem());
-        std::cout << "\n\n Para : ";
-        ImprimirMac(pacote.GetDestino());
-        std::cout << "\n\n";
-        // Pacote com dados, Pegar o dado e imprime
-        // RESPONDER PACOTE COM ACK
-        std::cout << pacote.GetDados(macHospedeiro) << "\n";
-        //std::cout << "Eu Sou o Destino";
-    }
-    else if(tipoPacote == TipoPacote::DATA && destinoPacote != macHospedeiro)
-    {
-        if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(pacote.GetDestino()))
+        if(DEBUG)
         {
-            pacote.AdicionarNext(tabelaRoteamento->ObterNextPara(pacote.GetDestino()));
-            camadaEnlace->AdicionarPacoteParaEnvio(pacote);
+            std::cout << " Abaixo Conteudo do Pacote : \n";
+            std::cout << pacote.GetDados(hospedeiro->PegarEnderecoMac()) << "\n";
+        }
+    }
+    // Verifica se um pacote é do tipo RREQ e o Destino não é o hospedeiro atual
+    else if(tipoPacote == TipoPacote::RREQ && destinoPacote != hospedeiro->PegarEnderecoMac())
+    {
+        // Caso afirmativo, adiciona o proprio endereco ao caminho do pacote
+        pacote.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
+        
+        // Verifica se o vizinho é alcançavel
+        // Como meu possível vizinho foi adicionado antes do hospedeiro atual, sua posicao é uma antes da do hospedeiro Atual
+        auto posicaoVizinho = pacote.PegarCaminho().size() - 2;
+        
+        // Valida a Posicao do Vizinho
+        auto vizinho = posicaoVizinho < pacote.PegarCaminho().size() ? pacote.PegarCaminho().at(posicaoVizinho)
+                                : std::vector<int>();
+        
+        // Se o Vizinho for valido, ou seja, empty retornar false, a rota pode ser aprendida
+        if(vizinho.empty())
+            tabelaRoteamento->AprenderRoteamento(pacote.PegarCaminho());
+        
+        // Feito isso, é possível adicionar o pacote na camada de enlance para que seja inundado
+        camadaEnlace->AdicionarPacoteParaEnvio(pacote);
+
+    }
+    // Verifica se um pacote é do tipo RREQ e o Destino é o hospedeiro Atual
+    else if(tipoPacote == TipoPacote::RREQ && destinoPacote == hospedeiro->PegarEnderecoMac())
+    {
+        // Caso afirmativo, adiciona o proprio endereco ao caminho do pacote
+        pacote.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
+        // Pega todo o caminho do pacote ate chegar ao destino
+        auto caminhoPacote = pacote.PegarCaminho();
+        // Cria um pacote de RREP
+        auto pacoteRREP = CriarPacoteRREPPara(pacote);
+        // Verifica se consegue Alcancar o Hospedeiro Que lhe enviou este pacote, pois a rota só pode ser aprendida
+        // Se quem lhe enviou o pacote for alcançavel pelo hospedeiro Atual
+        // Como o caminho é invertido ao criar o RREP, o vizinho deve está na posicao 1
+        auto posicaoVizinho = 1;
+        
+        // Verifica se a posicao do Vizinho é uma posicao valida
+        auto vizinho = posicaoVizinho < caminhoPacote.size() ? pacoteRREP.PegarCaminho().at(posicaoVizinho) 
+                                : std::vector<int>();
+        
+        if(vizinho.empty())
+        {
+            // Caso tenha verdadeiro, tentou acessar uma posicao que não existe
+            // Portanto Apenas cria um RREQ para o pacote e o coloca na lista de espera
+            // A rota Não pode ser aprendida
+            return;
         }
         else
         {
-            PacotesAguardandoRota.push_back(pacote);
-            Pacote pacoteRREQ = Pacote(hospedeiro->PegarEnderecoMac(), pacote.GetDestino(), TipoPacote::RREQ, PacoteID);
-            pacoteRREQ.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
-            PacoteID++;
-            camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREQ);
-        }
-        
-    }
-    else if(tipoPacote == TipoPacote::RREQ && macHospedeiro != destinoPacote)
-    {
-        // Pacote de Route Request porem não é destino
-        // Adicionar a assinatura ao pacote e reenvia o mesmo
-        std::cout << "Nao sou o destino : ";
-        ImprimirMac(pacote.GetDestino());
-        std::cout << " Reencaminhando Pacote para Vizinhos \n";
-        pacote.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
-        camadaEnlace->AdicionarPacoteParaEnvio(pacote);
-    }
-    else if(tipoPacote == TipoPacote::RREQ && macHospedeiro == destinoPacote)
-    {
-        std::cout << "Eu Sou o Destino : ";
-        ImprimirMac(macHospedeiro);
-        std::cout << "\n";
-        // Pacote de Route Request porém é Destino
-        // Pega o caminho do pacote, E inverte o Mesmo
-        pacote.AdicionarCaminho(macHospedeiro);
-        auto pacoteCaminho = pacote.PegarCaminho();
-        std::cout << "Esse pacote Passou por : \n";
-        Pacote pacoteRespostaRREP = Pacote(macHospedeiro, pacote.GetOrigem(), TipoPacote::RREP, PacoteID);
-        PacoteID++;
-        for(auto it = pacoteCaminho.rbegin(); it != pacoteCaminho.rend(); ++it)
-        {      
-                ImprimirMac(*it);
-                pacoteRespostaRREP.AdicionarCaminho(*it);
-                std::cout << "\n";
-        }
-        std::cout << "Ate Chegar Aqui\n\n";
-        // Ver Se Consegue alcancar o Ultimo que envio para mim, estará na posicao 1
-        auto possivelVizinho = pacoteRespostaRREP.PegarCaminho().at(1);
-        auto vizinhoAlcancavel = hospedeiro->AlcancoMac(possivelVizinho);
-
-        if(vizinhoAlcancavel)
-        {
-            tabelaRoteamento->AprenderRoteamento(pacoteRespostaRREP.PegarCaminho());
-            
-            if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(possivelVizinho))
+            // Caso seja verdadeiro, verificar se o vizinho é alcançavel
+            if(hospedeiro->AlcancoMac(vizinho))
             {
-                pacoteRespostaRREP.AdicionarNext(tabelaRoteamento->ObterNextPara(possivelVizinho));
-                camadaEnlace->AdicionarPacoteParaEnvio(pacoteRespostaRREP);
-                // Iterar sob os pacotes aguardando espera para ver se tem caminho e enviar
+                // Aprende A Rota
+                tabelaRoteamento->AprenderRoteamento(pacoteRREP.PegarCaminho());
+                
+                // Caso senha Alcançavel, adiciona o mesmo no NEXT  do pacote
+                pacoteRREP.AdicionarNext(vizinho);
+                
+                //ImprimirMac(vizinho);
+                // Envia o pacote para a camada De enlace
+                camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREP);
             }
-        }else
-        {
-            PacotesAguardandoRota.push_back(pacoteRespostaRREP);
-            Pacote pacoteRREQ = Pacote(macHospedeiro, pacote.GetOrigem(), TipoPacote::RREP, PacoteID);
-            PacoteID++;
-            camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREQ);
-        }
-    }else if(tipoPacote == TipoPacote::RREP && macHospedeiro != pacote.GetDestino())
-    {
-        int posicaoOrigem = 0;
-        //std::cout << pacote.PegarCaminho().size();
-        auto caminho = pacote.PegarCaminho();
-        for(auto iterador = caminho.begin(); iterador != caminho.end(); ++iterador)
-        {
-            if(macHospedeiro == *iterador)
-                break;
-            //ImprimirMac(*iterador);
-            posicaoOrigem++;
-        }
-        // Nao faço a minima ideia do que acontece aqui -- debugar
-        if(posicaoOrigem >= caminho.size()) posicaoOrigem = posicaoOrigem - 2;
-        //std::cout << pacote.PegarCaminho().size() << "\n\n";
-        auto possivelVizinho = pacote.PegarCaminho().at(posicaoOrigem + 1);
-        auto vizinhoAlcancavel = hospedeiro->AlcancoMac(possivelVizinho);
-        if(vizinhoAlcancavel)
-        {
-            //std::cout << "aqui";
-            tabelaRoteamento->AprenderRoteamento(caminho);
-            //std::cout << "aqui\n\n\n";
-            if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(possivelVizinho))
-            {
-                pacote.AdicionarNext(tabelaRoteamento->ObterNextPara(possivelVizinho));
-                camadaEnlace->AdicionarPacoteParaEnvio(pacote);
-                // Iterar sob os pacotes aguardando espera para ver se tem caminho e enviar
-            }
-        }else
-        {
-            PacotesAguardandoRota.push_back(pacote);
-            Pacote pacoteRREQ = Pacote(macHospedeiro, pacote.GetOrigem(), TipoPacote::RREP, PacoteID);
-            PacoteID++;
-            camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREQ);
-        }
-    }else if(tipoPacote == TipoPacote::RREP && macHospedeiro == pacote.GetDestino())
-    {
-        std::cout << "O Pacote de Route Reply Originado por : ";
-        ImprimirMac(pacote.GetOrigem());
-        std::cout << " Chegou Ao Destino : ";
-        ImprimirMac(macHospedeiro);
-        std::cout << "\n";
-        auto caminho = pacote.PegarCaminho();
-        tabelaRoteamento->AprenderRoteamento(caminho);
-    }
-    
-    int numPacotesAguardandoRota = PacotesAguardandoRota.size();
-    for(int i = numPacotesAguardandoRota - 1; i >= 0; i--)
-    {
-        Pacote pacoteAguardandoRota = PacotesAguardandoRota.at(i);
-        //ImprimirMac(pacoteAguardandoRota.GetDestino());
-        if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(pacoteAguardandoRota.GetDestino()))
-        {
-            //std::cout << numPacotesAguardandoRota << "\n";
-            pacoteAguardandoRota.AdicionarNext(tabelaRoteamento->ObterNextPara(pacoteAguardandoRota.GetDestino()));
-            camadaEnlace->AdicionarPacoteParaEnvio(pacoteAguardandoRota);
-            PacotesAguardandoRota.pop_back();
-            numPacotesAguardandoRota = PacotesAguardandoRota.size();
         }
     }
-    //std::cout << numPacotesAguardandoRota << "\n";
 }
+
+void CamadaRede::ImprimeInformacoesOrigemDestino(Pacote pacote, bool isDestino)
+{
+    std::cout << "Pacote do tipo ";
+    auto tipoPacote = pacote.GetTipoPacote();
+    
+    switch (tipoPacote)
+    {
+        case TipoPacote::RREQ:
+            std::cout << "RREQ";
+            break;
+        case TipoPacote::RREP:
+            std::cout << "RREP";
+            break;
+        case TipoPacote::DATA:
+            std::cout << "DATA";
+            break;
+        default:
+            break;
+    } 
+
+    std::cout << ", Originado Em : ";
+    ImprimirMac(pacote.GetOrigem());
+    std::cout << ", Com identificador : " << pacote.GetIdentificador() << ", Chegou a";
+    if(isDestino)
+        std::cout << "o Destino";
+    ImprimirMac(hospedeiro->PegarEnderecoMac());
+    std::cout << ".\n";
+}
+// void CamadaRede::ReceberPacoteCamadaEnlance(Pacote pacote)
+// {
+//     auto destinoPacote = pacote.GetDestino();
+//     auto tipoPacote = pacote.GetTipoPacote();
+//     auto macHospedeiro = hospedeiro->PegarEnderecoMac();
+//     // Verifica se ta recebendo um pacote enviado por ele mesmo e return
+//     if(pacote.GetOrigem() == hospedeiro->PegarEnderecoMac())
+//         return;
+
+//     // Pega as informacoes do pacote como origem e identificador para verificar se ja foi recebido posteriormente
+//     std::pair<uint, std::vector<int>> DadosPacote = std::make_pair(pacote.GetIdentificador(), pacote.GetOrigem());
+    
+//     // Procura se ja recebeu um pacote com mesmo identificador e com mesma origem
+//     auto itPacotesRecebidos = std::find(PacotesRecebidos.begin(), PacotesRecebidos.end(), DadosPacote);
+
+//     // Caso tenha recebido ignora, caso contrario adiciona na lista de pacotes recebidos
+//     if(itPacotesRecebidos != PacotesRecebidos.end())
+//     {
+//         std::cout << "Pacote : " << pacote.GetIdentificador() << " Originado de : ";
+//         ImprimirMac(pacote.GetOrigem());
+//         std::cout << " ||| Ja Passou Aqui : ";
+//         ImprimirMac(macHospedeiro);
+//         std::cout << "\n";
+//         return;
+//     }
+//     else
+//     {
+//         PacotesRecebidos.push_back(DadosPacote);
+//     }
+
+//     std::cout << "Pacote Originado em : ";
+//     ImprimirMac(pacote.GetOrigem());
+//     std::cout << " Passou por mim : ";
+//     ImprimirMac(hospedeiro->PegarEnderecoMac());
+//     std::cout << "\n";
+    
+//     //std::cout << "vamo";
+//     if(tipoPacote == TipoPacote::DATA && destinoPacote == macHospedeiro)
+//     {
+//         std::cout << "================================================================\n";
+//         std::cout << "================================================================\n";
+//         std::cout << "================================================================\n";
+//         std::cout << "\n\n\nMensagem Recebida : ";
+//         std::cout << "\n\nEnviada Por : ";
+//         ImprimirMac(pacote.GetOrigem());
+//         std::cout << "\n\nPara : ";
+//         ImprimirMac(pacote.GetDestino());
+//         std::cout << "\n\n";
+//         // Pacote com dados, Pegar o dado e imprime
+//         // RESPONDER PACOTE COM ACK
+//         std::cout << pacote.GetDados(macHospedeiro) << "\n";
+//         std::cout << "================================================================\n";
+//         std::cout << "================================================================\n";
+//         std::cout << "================================================================\n";
+//         //std::cout << "Eu Sou o Destino";
+//     }
+//     else if(tipoPacote == TipoPacote::DATA && destinoPacote != macHospedeiro)
+//     {
+//         if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(pacote.GetDestino()))
+//         {
+//             pacote.AdicionarNext(tabelaRoteamento->ObterNextPara(pacote.GetDestino()));
+//             camadaEnlace->AdicionarPacoteParaEnvio(pacote);
+//         }
+//         else
+//         {
+//             PacotesAguardandoRota.push_back(pacote);
+//             Pacote pacoteRREQ = Pacote(hospedeiro->PegarEnderecoMac(), pacote.GetDestino(), TipoPacote::RREQ, PacoteID);
+//             pacoteRREQ.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
+//             PacoteID++;
+//             camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREQ);
+//         }
+        
+//     }
+//     else if(tipoPacote == TipoPacote::RREQ && macHospedeiro != destinoPacote)
+//     {
+//         // Pacote de Route Request porem não é destino
+//         // Adicionar a assinatura ao pacote e reenvia o mesmo
+//         std::cout << "Nao sou o destino : ";
+//         ImprimirMac(pacote.GetDestino());
+//         std::cout << " Reencaminhando Pacote para Vizinhos \n";
+//         pacote.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
+//         camadaEnlace->AdicionarPacoteParaEnvio(pacote);
+//     }
+//     else if(tipoPacote == TipoPacote::RREQ && macHospedeiro == destinoPacote)
+//     {
+//         std::cout << "Eu Sou o Destino : ";
+//         ImprimirMac(macHospedeiro);
+//         std::cout << "\n";
+//         // Pacote de Route Request porém é Destino
+//         // Pega o caminho do pacote, E inverte o Mesmo
+//         pacote.AdicionarCaminho(macHospedeiro);
+//         auto pacoteCaminho = pacote.PegarCaminho();
+//         std::cout << "Esse pacote Passou por : \n";
+//         Pacote pacoteRespostaRREP = Pacote(macHospedeiro, pacote.GetOrigem(), TipoPacote::RREP, PacoteID);
+//         PacoteID++;
+//         for(auto it = pacoteCaminho.rbegin(); it != pacoteCaminho.rend(); ++it)
+//         {      
+//                 ImprimirMac(*it);
+//                 pacoteRespostaRREP.AdicionarCaminho(*it);
+//                 std::cout << "\n";
+//         }
+//         std::cout << "Ate Chegar Aqui\n\n";
+//         // Ver Se Consegue alcancar o Ultimo que envio para mim, estará na posicao 1
+//         auto possivelVizinho = pacoteRespostaRREP.PegarCaminho().at(1);
+//         auto vizinhoAlcancavel = hospedeiro->AlcancoMac(possivelVizinho);
+
+//         if(vizinhoAlcancavel)
+//         {
+//             tabelaRoteamento->AprenderRoteamento(pacoteRespostaRREP.PegarCaminho());
+            
+//             if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(possivelVizinho))
+//             {
+//                 pacoteRespostaRREP.AdicionarNext(tabelaRoteamento->ObterNextPara(possivelVizinho));
+//                 camadaEnlace->AdicionarPacoteParaEnvio(pacoteRespostaRREP);
+//                 // Iterar sob os pacotes aguardando espera para ver se tem caminho e enviar
+//             }
+//         }else
+//         {
+//             PacotesAguardandoRota.push_back(pacoteRespostaRREP);
+//             Pacote pacoteRREQ = Pacote(macHospedeiro, pacote.GetOrigem(), TipoPacote::RREQ, PacoteID);
+//             PacoteID++;
+//             pacoteRREQ.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
+//             camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREQ);
+//         }
+//     }else if(tipoPacote == TipoPacote::RREP && macHospedeiro != pacote.GetDestino())
+//     {
+//         int posicaoOrigem = 0;
+//         //std::cout << pacote.PegarCaminho().size();
+//         auto caminho = pacote.PegarCaminho();
+//         for(auto iterador = caminho.begin(); iterador != caminho.end(); ++iterador)
+//         {
+//             if(macHospedeiro == *iterador)
+//                 break;
+//             //ImprimirMac(*iterador);
+//             posicaoOrigem++;
+//         }
+//         //std::cout << "\n\n" << caminho.size() << " " << posicaoOrigem << "\n\n";
+//         if(posicaoOrigem >= caminho.size() - 1 /*|| caminho.size() == 0*/) return;
+//         // Nao faço a minima ideia do que acontece aqui -- debugar
+        
+//         //if(posicaoOrigem >= caminho.size()) posicaoOrigem = -1;
+        
+//         //std::cout << std::dec << posicaoOrigem << std::endl;
+//         //std::cout << pacote.PegarCaminho().size() << "\n\n";
+//         auto possivelVizinho = pacote.PegarCaminho().at(posicaoOrigem + 1);
+//         auto vizinhoAlcancavel = hospedeiro->AlcancoMac(possivelVizinho);
+//         if(vizinhoAlcancavel)
+//         {
+//             //std::cout << "aqui";
+//             tabelaRoteamento->AprenderRoteamento(caminho);
+//             //std::cout << "aqui\n\n\n";
+//             if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(possivelVizinho))
+//             {
+//                 pacote.AdicionarNext(tabelaRoteamento->ObterNextPara(possivelVizinho));
+//                 camadaEnlace->AdicionarPacoteParaEnvio(pacote);
+//                 // Iterar sob os pacotes aguardando espera para ver se tem caminho e enviar
+//             }
+//         }else
+//         {
+//             PacotesAguardandoRota.push_back(pacote);
+//             Pacote pacoteRREQ = Pacote(macHospedeiro, pacote.GetOrigem(), TipoPacote::RREQ, PacoteID);
+//             pacoteRREQ.AdicionarCaminho(hospedeiro->PegarEnderecoMac());
+//             PacoteID++;
+//             camadaEnlace->AdicionarPacoteParaEnvio(pacoteRREQ);
+//         }
+//     }else if(tipoPacote == TipoPacote::RREP && macHospedeiro == pacote.GetDestino())
+//     {
+//         std::cout << "O Pacote de Route Reply Originado por : ";
+//         ImprimirMac(pacote.GetOrigem());
+//         std::cout << " Chegou Ao Destino : ";
+//         ImprimirMac(macHospedeiro);
+//         std::cout << "\n";
+//         auto caminho = pacote.PegarCaminho();
+//         tabelaRoteamento->AprenderRoteamento(caminho);
+//     }
+    
+//     int numPacotesAguardandoRota = PacotesAguardandoRota.size();
+//     for(int i = numPacotesAguardandoRota - 1; i >= 0; i--)
+//     {
+//         Pacote pacoteAguardandoRota = PacotesAguardandoRota.at(i);
+//         //ImprimirMac(pacoteAguardandoRota.GetDestino());
+//         if(tabelaRoteamento->VerificarSeExisteRotaParaDestino(pacoteAguardandoRota.GetDestino()))
+//         {
+//             //std::cout << numPacotesAguardandoRota << "\n";
+//             pacoteAguardandoRota.AdicionarNext(tabelaRoteamento->ObterNextPara(pacoteAguardandoRota.GetDestino()));
+//             camadaEnlace->AdicionarPacoteParaEnvio(pacoteAguardandoRota);
+//             PacotesAguardandoRota.pop_back();
+//             numPacotesAguardandoRota = PacotesAguardandoRota.size();
+//         }
+//     }
+//     //std::cout << numPacotesAguardandoRota << "\n";
+// }
 
 void CamadaRede::ImprimirMac(std::vector<int> vetorMac)
 {

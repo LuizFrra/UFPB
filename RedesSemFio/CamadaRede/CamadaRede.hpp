@@ -2,6 +2,8 @@
 
 #ifndef _CAMADA_DE_REDE_H_
 #define _CAMADA_DE_REDE_H_
+#define DEBUG true
+
 
 #include "../Pacote/Pacote.hpp"
 #include "../TabelaRoteamento/TabelaRoteamento.hpp"
@@ -43,6 +45,11 @@ public:
     void ImprimirMac(std::vector<int> vetorMac);
     void EnviarMensagem(Pacote pacote);
     void ReceberPacoteCamadaEnlance(Pacote pacote);
+    bool AdicionarPacoteAosRecebidos(Pacote pacote);
+    Pacote CriarPacoteRREPPara(Pacote pacoteRREQ);
+    Pacote CriarPacoteRREQPara(Pacote pacote);
+    bool AdicionarDestinoAoPacote(Pacote &pacote);
+    void ImprimeInformacoesOrigemDestino(Pacote pacote, bool isDestino);
     ~CamadaRede();
 };
 
