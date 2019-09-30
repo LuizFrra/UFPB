@@ -65,7 +65,7 @@ void Coordenador::EnviarMensagem(uint Origem, uint Destino, std::string Data)
     (*OrigemIT)->EnviarMensagem(Data, (*DestinoIT)->PegarEnderecoMac());
 }
 
-void Coordenador::EnviarPacote()
+int Coordenador::EnviarPacote()
 {
     if(HospedeirosQueDesejamRealizarAlgo.size() > 0)
     {
@@ -73,6 +73,7 @@ void Coordenador::EnviarPacote()
         tarefa->EnviarPacoteParaVizinho();
         HospedeirosQueDesejamRealizarAlgo.pop_front();
     }
+    return HospedeirosQueDesejamRealizarAlgo.size();
 }
 
 std::list<Hospedeiro*> *Coordenador::ObterHospedeiros()

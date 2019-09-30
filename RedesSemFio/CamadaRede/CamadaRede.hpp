@@ -38,6 +38,7 @@ private:
     // Lista de pacotes recebidos, primeiro pair é  o ID do mesmo e o segundo pair quem originiou o mesmo
     std::vector<std::pair<uint, std::vector<int>>> PacotesRecebidos;
     
+    void VerificarNextPacotesEEnviar();
     /* data */
 public:
     CamadaRede(Hospedeiro *hospedeiro);

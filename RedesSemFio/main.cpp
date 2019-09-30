@@ -12,54 +12,32 @@ int main(int argc, char const *argv[])
     coordenador->AdicionarHospedeiro(std::make_pair(1, 4), 2);
     coordenador->AdicionarHospedeiro(std::make_pair(3, 3), 2);
     coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 1);
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    //coordenador->AdicionarHospedeiro(Coordenadas, 1);
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->AdicionarHospedeiro(Coordenadas, 1);
     
     coordenador->ImprimirHospedeiros(false);
     coordenador->ImprimirMatrizDeAdjacencia();
     coordenador->EnviarMensagem(1, 3, "De 1 Para 3");
     coordenador->EnviarMensagem(1, 2, "De 1 Para 2");
-    coordenador->EnviarPacote();
-    coordenador->EnviarPacote();
-    coordenador->EnviarPacote();
-    coordenador->EnviarPacote();
-    coordenador->EnviarPacote();
-    coordenador->EnviarPacote();
-    coordenador->EnviarPacote();
-    coordenador->EnviarPacote();
-    coordenador->EnviarPacote();
-    coordenador->EnviarPacote();
-    coordenador->EnviarPacote();
-    // coordenador->EnviarMensagem(5, 3, "De 5 Para 3");
-    // coordenador->AdicionarHospedeiro(std::make_pair(5, 3), 2);
-    // coordenador->EnviarPacote();
-    // coordenador->EnviarPacote();
-    // coordenador->EnviarMensagem(2, 1, "De 2 Para 1");
-    // coordenador->EnviarPacote();
-    // coordenador->EnviarPacote();
-    // coordenador->EnviarPacote();
-    // coordenador->EnviarPacote();
-    // coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
-    // coordenador->EnviarPacote();
-    // coordenador->EnviarPacote();
-    // coordenador->EnviarPacote();
-    // coordenador->EnviarPacote();
-    // coordenador->EnviarPacote();    
-    // while (std::cin)
-    // {
-    //     coordenador->EnviarPacote();
-
-    // }
+    coordenador->EnviarMensagem(5, 3, "De 5 Para 3");
+    coordenador->AdicionarHospedeiro(std::make_pair(5, 3), 2);
+    coordenador->EnviarMensagem(2, 1, "De 2 Para 1");
+    coordenador->AdicionarHospedeiro(std::make_pair(4, 3), 2);
+    coordenador->EnviarMensagem(16, 3, "De 16 Para 3");
     
+    while (coordenador->EnviarPacote())
+    {
+
+    }
     //camadaFisica->ImprimirEnderecosMac();
     return 0;
 }
