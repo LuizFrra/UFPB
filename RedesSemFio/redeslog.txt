@@ -1,0 +1,40 @@
+Pacote do tipo RREQ, Originado Em :   6A  D8  5F  41  93  37, Com identificador : 2, Chegou a  D1  8D  43  C1  E5   A.
+Pacote do tipo RREQ, Originado Em :   6A  D8  5F  41  93  37, Com identificador : 2, Chegou a  A2  F4  A5  23  79  42.
+Pacote do tipo RREQ, Originado Em :   A2  F4  A5  23  79  42, Com identificador : 2, Chegou a  D1  8D  43  C1  E5   A.
+Pacote do tipo RREQ, Originado Em :   A2  F4  A5  23  79  42, Com identificador : 2, Chegou a  6B  E1  C9  E8  BB   7.
+Pacote do tipo RREQ, Originado Em :   A2  F4  A5  23  79  42, Com identificador : 2, Chegou a  6B  7C  A6  AB  F2  35.
+1.   6A  D8  5F  41  93  37
+2.   D1  8D  43  C1  E5   A
+3.   A2  F4  A5  23  79  42
+4.   6B  E1  C9  E8  BB   7
+5.   6B  7C  A6  AB  F2  35
+    1  2  3  4  5  
+1 . 9  1  0  0  0  
+2 . 1  9  1  0  0  
+3 . 0  1  9  1  1  
+4 . 0  0  1  9  1  
+5 . 0  0  1  1  9  
+
+Pacote do tipo RREQ, Originado Em :   6A  D8  5F  41  93  37, Com identificador : 2, Chegou ao Destino  6B  E1  C9  E8  BB   7.
+Pacote do tipo RREQ, Originado Em :   6A  D8  5F  41  93  37, Com identificador : 2, Chegou a  6B  7C  A6  AB  F2  35.
+Pacote do tipo RREQ, Originado Em :   A2  F4  A5  23  79  42, Com identificador : 2, Chegou ao Destino  6A  D8  5F  41  93  37.
+Pacote do tipo DATA, Originado Em :   A2  F4  A5  23  79  42, Com identificador : 1, Chegou ao Destino  6A  D8  5F  41  93  37.
+Abaixo Conteudo do Pacote : 
+de 3 para 1
+Pacote do tipo RREQ, Originado Em :   D1  8D  43  C1  E5   A, Com identificador : 2, Chegou a  6A  D8  5F  41  93  37.
+Pacote do tipo RREQ, Originado Em :   D1  8D  43  C1  E5   A, Com identificador : 2, Chegou a  A2  F4  A5  23  79  42.
+Pacote do tipo RREP, Originado Em :   6B  E1  C9  E8  BB   7, Com identificador : 1, Chegou a  A2  F4  A5  23  79  42.
+Pacote do tipo RREP, Originado Em :   6A  D8  5F  41  93  37, Com identificador : 3, Chegou a  D1  8D  43  C1  E5   A.
+Pacote do tipo RREQ, Originado Em :   D1  8D  43  C1  E5   A, Com identificador : 2, Chegou ao Destino  6B  E1  C9  E8  BB   7.
+Pacote do tipo RREQ, Originado Em :   D1  8D  43  C1  E5   A, Com identificador : 2, Chegou a  6B  7C  A6  AB  F2  35.
+Pacote do tipo RREP, Originado Em :   6B  E1  C9  E8  BB   7, Com identificador : 1, Chegou a  D1  8D  43  C1  E5   A.
+Pacote do tipo RREP, Originado Em :   6A  D8  5F  41  93  37, Com identificador : 3, Chegou ao Destino  A2  F4  A5  23  79  42.
+Pacote do tipo RREP, Originado Em :   6B  E1  C9  E8  BB   7, Com identificador : 2, Chegou a  A2  F4  A5  23  79  42.
+Pacote do tipo RREP, Originado Em :   6B  E1  C9  E8  BB   7, Com identificador : 1, Chegou ao Destino  6A  D8  5F  41  93  37.
+Pacote do tipo RREP, Originado Em :   6B  E1  C9  E8  BB   7, Com identificador : 2, Chegou ao Destino  D1  8D  43  C1  E5   A.
+Pacote do tipo DATA, Originado Em :   D1  8D  43  C1  E5   A, Com identificador : 1, Chegou ao Destino  6B  E1  C9  E8  BB   7.
+Abaixo Conteudo do Pacote : 
+de 2 para 4
+Pacote do tipo DATA, Originado Em :   6A  D8  5F  41  93  37, Com identificador : 1, Chegou ao Destino  6B  E1  C9  E8  BB   7.
+Abaixo Conteudo do Pacote : 
+de 1 para 3

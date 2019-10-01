@@ -104,30 +104,40 @@ bool Coordenador::HospedeiroAlcancaMac(Hospedeiro *hospedeiro, std::vector<int> 
 
 void Coordenador::ImprimirMac(std::vector<int> vetorMac)
 {
+    fs.open("redeslog.txt", std::ios::out | std::ios::app);
     for(auto it2 = vetorMac.begin(); it2 != vetorMac.end(); ++it2)
     {
+        fs << std::hex << std::setw(4) << std::uppercase <<  *it2;
         std::cout << std::hex << std::setw(4) << std::uppercase <<  *it2;
     }
+    fs.close();
 }
 
 void Coordenador::ImprimirHospedeiros(bool MostratAlcancaveis)
 {   int contadorHospedeiros = 0;
 
+    fs.open("redeslog.txt", std::ios::out | std::ios::app);
     for(std::list<Hospedeiro*>::iterator it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
     {
         std::cout << std::dec << ++contadorHospedeiros << ". ";
+        fs << std::dec << contadorHospedeiros << ". ";
         std::vector<int> vetorMac = (*it)->PegarEnderecoMac();
+        fs.close();
         ImprimirMac(vetorMac);
 
         if(MostratAlcancaveis)
             ImprimirHospedeirosAlcancaveisPorHospedeiro(it);
 
+        fs.open("redeslog.txt", std::ios::out | std::ios::app);
         std::cout << "\n";
+        fs << "\n";
     }
+    fs.close();
 }
 
 void Coordenador::ImprimirHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedeiro*>::iterator hospedeiro)
 {
+    fs.open("redeslog.txt", std::ios::out | std::ios::app);
     int contadorHospedeirosAlcancaveis = 0;
     for(auto it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
     {
@@ -136,11 +146,16 @@ void Coordenador::ImprimirHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedei
         {  
             if((*hospedeiro)->IsRecheable((*it)->PegarCoordenadas()))
             {
+                fs << "\n" << "    ";
                 std::cout << "\n" << "    ";
                 auto vetorMac = (*it)->PegarEnderecoMac();
                 std::cout << std::dec << contadorHospedeirosAlcancaveis << ". ";
+                fs << std::dec << contadorHospedeirosAlcancaveis << ". ";
+                fs.close();
                 ImprimirMac(vetorMac);
+                fs.open("redeslog.txt", std::ios::out | std::ios::app);
                 std::cout << "\n";
+                fs.close();
             }
         }
    }
@@ -148,48 +163,66 @@ void Coordenador::ImprimirHospedeirosAlcancaveisPorHospedeiro(std::list<Hospedei
 
 void Coordenador::ImprimirMatrizDeAdjacencia()
 {   
+    fs.open("redeslog.txt", std::ios::out | std::ios::app);
     int contadorHospedeiros = 0;
     int contadorHospedeirosInterno = 0;
 
     std::cout << "    ";
+    fs << "    ";
     for(int i = 1; i <= Hospedeiros.size(); i++)
     {
         if(i < 10)
+        {
             std::cout << std::dec << i << "  ";
+            fs << std::dec << i << "  ";
+        }
         else
         {
             std::cout << std::dec << i << " ";
+            fs << std::dec << i << " ";
         }   
     }
     std::cout << "\n";
+    fs << "\n";
     for(auto it = Hospedeiros.begin(); it != Hospedeiros.end(); ++it)
     {   
         if(contadorHospedeiros + 1 < 10)
+        {
             std::cout << std::dec << contadorHospedeiros + 1 << " . ";
+            fs << std::dec << contadorHospedeiros + 1 << " . ";
+        }
         else
+        {
             std::cout << std::dec << contadorHospedeiros + 1 << ". ";
-        
+            fs << std::dec << contadorHospedeiros + 1 << ". ";
+        }
         for(auto it2 = Hospedeiros.begin(); it2 != Hospedeiros.end(); ++it2)
         {
             if(contadorHospedeiros == contadorHospedeirosInterno)
             {
                 std::cout << "9  ";
+                fs << "9  ";
             }
             else if((*it)->IsRecheable((*it2)->PegarCoordenadas()))
             {
                 std::cout << "1  ";
+                fs << "1  ";
             }       
             else
             {
                 std::cout << "0  ";
+                fs << "0  ";
             }  
             contadorHospedeirosInterno++;
         }
         contadorHospedeirosInterno = 0;
         contadorHospedeiros++;
+        fs << "\n";
         std::cout << "\n";
     }
+    fs << "\n";
     std::cout << "\n";
+    fs.close();
 }
 
 bool Coordenador::ValidaCoordenadas(std::pair<uint, uint> Coordenadas)
@@ -239,15 +272,22 @@ void Coordenador::CriarMapa()
 
 void Coordenador::ImprimirEnderecosMac()
 {
+    fs.open("redeslog.txt", std::ios::out | std::ios::app);
     for(std::list<std::vector<int>>::iterator it1 = EnderecosMacUtilizados.begin(); it1 != EnderecosMacUtilizados.end(); ++it1)
     {
         std::cout << "1. ";
+        fs << "1, ";
         // for(std::vector<int>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2)
         // {
         //     std::cout << std::hex << std::setw(4) << std::uppercase << (*it2);
         // }
+        fs.close();
         ImprimirMac(*it1);
+
+        fs.open("redeslog.txt", std::ios::out | std::ios::app);
         std::cout << "\n";
+        fs << "\n";
+        fs.close();
     }
 }
 

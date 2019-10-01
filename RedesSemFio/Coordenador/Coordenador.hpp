@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <algorithm>
 #include "../Hospedeiro/Hospedeiro.hpp"
-
+#include <fstream>
 
 class Coordenador
 {
@@ -36,6 +36,7 @@ private:
     // Funcao Para validar Coordenadas
     bool ValidaCoordenadas(std::pair<uint, uint> Coordenadas);
     
+    std::fstream fs;
     /* data */
 public:
     void ImprimirEnderecosMac();
